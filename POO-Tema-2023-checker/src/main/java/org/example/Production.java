@@ -1,17 +1,45 @@
 package org.example;
 
 import java.util.List;
+import java.util.SortedSet;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.helper.ProductionDeserializer;
+
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Movie.class, name = "Movie"),
+        @JsonSubTypes.Type(value = Series.class, name = "Series")
+})
 public abstract class Production implements Comparable<Object> {
-    protected String title;
-    protected List<String> directors;
-    protected List<String> actors;
-    protected List<Genre> genres;
-    protected List<Rating> ratings;
-    protected String description;
-    protected double averageRating;
+    protected String title;//*
+    private String types;/////
+    protected List<String> directors;//*
+    protected List<String> actors;//*
+    protected List<Genre> genres;//*
+    protected List<Rating> ratings;//*
+    protected String description;//*
+    protected double averageRating;//*
+    //private int duration;
+   // private int releaseYear;
+    private String  plot;
+
+
 
     // Constructor
+    public Production(){
+        this.title = null;
+        this.directors = null;
+        this.actors = null;
+        this.genres = null;
+        this.ratings = null;
+        this.description = null;
+        this.averageRating = 0;
+        this.plot = null;
+        this.types = null;
+    }
     public Production(String title, List<String> directors, List<String> actors, List<Genre> genres,
                       List<Rating> ratings, String description) {
         this.title = title;
@@ -21,6 +49,7 @@ public abstract class Production implements Comparable<Object> {
         this.ratings = ratings;
         this.description = description;
         this.calculateAverageRating();
+
     }
 
     // Method to calculate the average rating
@@ -53,5 +82,42 @@ public abstract class Production implements Comparable<Object> {
     }
 
     public void removeReviewsByUser(Object username) {
+    }
+    ///*****************
+    public String getTitle() {
+        return title;
+    }
+
+    public String getTypes() {
+        return types;
+    }
+
+    public List<String> getDirectors() {
+        return directors;
+    }
+
+    public List<String> getActors() {
+        return actors;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+
+    public String getPlot() {
+        return plot;
     }
 }

@@ -3,20 +3,25 @@ package org.example;
 import java.util.List;
 
 public class Movie extends Production {
-    private int duration;  // Duration of the movie in minutes
-    private int releaseYear;  // Year of release for the movie
+    private final String duration;  // Duration of the movie in minutes
+    private final int releaseYear;  // Year of release for the movie
     // Add any other optional details specific to a Movie
 
     // Constructor
+    public Movie() {
+        super();
+        this.duration = null;
+        this.releaseYear = 0;
+    }
     public Movie(String title, List<String> directors, List<String> actors, List<Genre> genres,
-                 List<Rating> ratings, String description, int duration, int releaseYear) {
+                 List<Rating> ratings, String description, String duration, int releaseYear) {
         super(title, directors, actors, genres, ratings, description);
         this.duration = duration;
         this.releaseYear = releaseYear;
     }
 
     // Getter methods for duration and releaseYear
-    public int getDuration() {
+    public String getDuration() {
         return duration;
     }
 

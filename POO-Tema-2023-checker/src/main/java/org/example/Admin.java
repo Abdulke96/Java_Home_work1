@@ -1,10 +1,11 @@
 package org.example;
 
-import java.util.List;
-
 public class Admin extends Staff {
 
     // Constructor
+    public Admin() {
+        super("");
+    }
     public Admin(String fullName) {
         super(fullName);
     }
@@ -51,7 +52,7 @@ public class Admin extends Staff {
 
         // Remove requests associated with the user
         for (Request request : RequestsHolder.getRequests()) {
-            if (request.getRequestingUser().equals(user.getUsername())) {
+            if (request.getUsername().equals(user.getUsername())) {
                 RequestsHolder.removeRequest(request);
             }
         }

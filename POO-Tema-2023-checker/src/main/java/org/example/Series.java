@@ -5,16 +5,22 @@ import java.util.Map;
 
 public class Series extends Production {
     private int releaseYear;  // Year of release for the series
-    private int numberOfSeasons;  // Number of seasons in the series
+    private int numSeasons;  // Number of seasons in the series
     private Map<String, List<Episode>> seasons;  // Map of season names to a list of episodes
 
     // Constructor
+    public Series() {
+        super();
+        this.releaseYear = 0;
+        this.numSeasons = 0;
+        this.seasons = null;
+    }
     public Series(String title, List<String> directors, List<String> actors, List<Genre> genres,
-                  List<Rating> ratings, String description, int releaseYear, int numberOfSeasons,
+                  List<Rating> ratings, String description, int releaseYear, int numSeasons,
                   Map<String, List<Episode>> seasons) {
         super(title, directors, actors, genres, ratings, description);
         this.releaseYear = releaseYear;
-        this.numberOfSeasons = numberOfSeasons;
+        this.numSeasons = numSeasons;
         this.seasons = seasons;
     }
 
@@ -23,8 +29,8 @@ public class Series extends Production {
         return releaseYear;
     }
 
-    public int getNumberOfSeasons() {
-        return numberOfSeasons;
+    public int getNumSeasons() {
+        return numSeasons;
     }
 
     // Getter method for seasons
@@ -41,7 +47,7 @@ public class Series extends Production {
         System.out.println("Genres: " + genres);
         System.out.println("Description: " + description);
         System.out.println("Release Year: " + releaseYear);
-        System.out.println("Number of Seasons: " + numberOfSeasons);
+        System.out.println("Number of Seasons: " + numSeasons);
         System.out.println("Average Rating: " + averageRating);
 
         // Display details for each season and its episodes

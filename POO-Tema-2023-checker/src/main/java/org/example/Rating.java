@@ -2,14 +2,19 @@ package org.example;
 
 public class Rating {
     private String username;
-    private int score;
-    private String comments;
+    private int rating;
+    private String comment;
 
     // Constructor
-    public Rating(String username, int score, String comments) {
+    public Rating() {
+        this.username = null;
+        this.rating = 0;
+        this.comment = null;
+    }
+    public Rating(String username, int rating, String comment) {
         this.username = username;
-        this.score = score;
-        this.comments = comments;
+        this.rating = rating;
+        this.comment = comment;
     }
 
     // Getter methods
@@ -17,12 +22,12 @@ public class Rating {
         return username;
     }
 
-    public int getScore() {
-        return score;
+    public int getRating() {
+        return rating;
     }
 
-    public String getComments() {
-        return comments;
+    public String getComment() {
+        return comment;
     }
 
     // Other methods as needed
@@ -30,8 +35,8 @@ public class Rating {
     // Example method to display information about the rating
     public void displayInfo() {
         System.out.println("Username: " + username);
-        System.out.println("Score: " + score);
-        System.out.println("Comments: " + comments);
+        System.out.println("Score: " + rating);
+        System.out.println("Comments: " + comment);
         // Display other fields as needed
     }
 

@@ -17,23 +17,31 @@ import java.util.TreeSet;
         @JsonSubTypes.Type(value = Admin.class, name = "Admin")
 })
 public abstract class User implements Comparable<User> {
-    private class Information {
+    private static class Information {
         private Credentials credentials;
         private String name;
         private String gender;
         private int age;
         private LocalDateTime birthDate;
+        private String country;
         public Information(){
+            this.credentials = new Credentials();
+            this.name = null;
+            this.gender = null;
+            this.age = 0;
+            this.birthDate = LocalDateTime.now();
+            this.country = "default";
 
         }
 
         // Constructor for Information class
-        public Information(Credentials credentials, String name, String gender, int age, LocalDateTime birthDate) {
+        public  Information(Credentials credentials, String name, String gender, int age, LocalDateTime birthDate) {
             this.credentials = credentials;
             this.name = name;
             this.gender = gender;
             this.age = age;
             this.birthDate = birthDate;
+            this.country = "default";
         }
 
         // Getter methods for Information class
@@ -56,26 +64,88 @@ public abstract class User implements Comparable<User> {
         public LocalDateTime getBirthDate() {
             return birthDate;
         }
+        public String getCountry(){
+            return country;
+        }
+        public String toString() {
+            return "Information{" +
+                    "credentials=" + credentials +
+                    ", name='" + name + '\'' +
+                    ", gender='" + gender + '\'' +
+                    ", age=" + age +
+                    ", birthDate=" + birthDate +
+                    ", country='" + country + '\'' +
+                    '}';
+        }
     }
 
     private AccountType accountType;
     private final String username;
+    private Information information;
     private int experience;
     private List<String> notifications;
     private final SortedSet<Object> favorites;  // Assuming Object can be Movie, Series, or Actor
+    private final List<String> productionsContribution;
+    private final List<String> actorsContribution;
+    private final List<String> favoriteProductions;
+    private final List<String> favoriteActors;
+
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    public List<String> getNotifications() {
+        return notifications;
+    }
+
+    public List<String> getProductionsContribution() {
+        return productionsContribution;
+    }
+
+    public List<String> getActorsContribution() {
+        return actorsContribution;
+    }
+
+    public List<String> getFavoriteProductions() {
+        return favoriteProductions;
+    }
+
+    public List<String> getFavoriteActors() {
+        return favoriteActors;
+    }
+
+
 
     // Constructor
+    public User(){
+        this.username =null;
+        this.experience = 0;
+        this.favorites = new TreeSet<>();// Other initialization as needed
+        this.information = new Information();
+        this.accountType = null;
+        this.notifications = null;
+        this.productionsContribution = null;
+        this.actorsContribution = null;
+        this.favoriteProductions = null;
+        this.favoriteActors = null;
+        
+
+
+    }
     public User(String fullName) {
         this.username = generateUniqueUsername(fullName);
         this.experience = 0;
         this.favorites = new TreeSet<>();// Other initialization as needed
-    }
-    public User(){
-        this.username = "";
-        this.experience = 0;
-        this.favorites = new TreeSet<>();
+        this.information = new Information();
+        this.accountType = null;
+        this.notifications = null;
+        this.productionsContribution = null;
+        this.actorsContribution = null;
+        this.favoriteProductions = null;
+        this.favoriteActors = null;
 
     }
+
 
     // Method to generate a unique username
     private String generateUniqueUsername(String fullName) {
@@ -126,4 +196,5 @@ public abstract class User implements Comparable<User> {
     public Information getInformation() {
         return new Information();
     }
+
 }

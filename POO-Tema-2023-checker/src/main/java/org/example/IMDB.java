@@ -1,9 +1,24 @@
 package org.example;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.helper.ActorDeserializer;
+import org.helper.ProductionDeserializer;
+
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+
 public class IMDB {
     private List<User> users;  // User is a base class for Regular, Contributor, and Admin
     private List<Actor> actors; // Actor is a base class for Actor and Director
@@ -34,24 +49,51 @@ public class IMDB {
         try {
             // Load users from users.json
             ObjectMapper objectMapper = new ObjectMapper();
+            JavaTimeModule javaTimeModule = new JavaTimeModule();
+            javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
+            objectMapper.registerModule(javaTimeModule);
+            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
             File usersFile = new File ("POO-Tema-2023-checker/src/main/resources/input/accounts.json");
             User[] loadedUsers = objectMapper.readValue(usersFile, User[].class);
             this.users = List.of(loadedUsers);
             System.out.println("Users loaded successfully.");
+            //****************************
+//            System.out.println(loadedUsers[0].getUsername());
+//            System.out.println(loadedUsers[0].getPassword());
+//            System.out.println(loadedUsers[0].getInformation());
+//            System.out.println(loadedUsers[0].getExperience());
+//            System.out.println(Arrays.toString(loadedUsers[0].getFavorites()));
+//            //****************************
 
             // Load actors from actors.json
+            SimpleModule module = new SimpleModule();
+            module.addDeserializer(Actor.class, new ActorDeserializer());
+            objectMapper.registerModule(module);
             File actorsFile = new File("POO-Tema-2023-checker/src/main/resources/input/actors.json");
             Actor[] loadedActors = objectMapper.readValue(actorsFile, Actor[].class);
             this.actors = List.of(loadedActors);
-            System.out.println("Actors loaded successfully.");
+//            //****************************
+//            System.out.println("Actors loaded successfully.");
+//            System.out.println(loadedActors[0].getName());
+//            System.out.println(loadedActors[0].getPerformances().toString());
+//            System.out.println(loadedActors[0].getBiography());
+//            //****************************
 
             // Load requests from requests.json
             File requestsFile = new File("POO-Tema-2023-checker/src/main/resources/input/requests.json");
             Request[] loadedRequests = objectMapper.readValue(requestsFile, Request[].class);
             this.requests = List.of(loadedRequests);
             System.out.println("Requests loaded successfully.");
+            //****************************
+//               System.out.println(loadedRequests[0].getUsername());
+//                System.out.println(loadedRequests[0].getDescription());
+//                System.out.println(loadedRequests[0].getCreatedDate());
 
             // Load productions from production.json
+            SimpleModule production = new SimpleModule();
+            production.addDeserializer(Production.class, new ProductionDeserializer());
+            objectMapper.registerModule(module);
             File productionsFile = new File("POO-Tema-2023-checker/src/main/resources/input/production.json");
             Production[] loadedProductions = objectMapper.readValue(productionsFile, Production[].class);
             this.productions = List.of(loadedProductions);
@@ -126,5 +168,31 @@ public class IMDB {
         IMDB imdb = new IMDB(null, null, null, null);
         imdb.run();
     }
+    ///****************************
+//    private static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
+//        @Override
+//        public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+//            String dateString = p.getText();
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // Adjust the pattern
+//            return LocalDate.parse(dateString, formatter).atStartOfDay();
+//        }
+//    }
+    public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
+        @Override
+        public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            String dateString = p.getText();
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+            try {
+                // Try to parse as date-time
+                return LocalDateTime.parse(dateString, dateTimeFormatter);
+            } catch (Exception e) {
+                // If parsing as date-time fails, try to parse as date
+                return LocalDate.parse(dateString, dateFormatter).atStartOfDay();
+            }
+        }
+    }
+    //***********************
 }
 

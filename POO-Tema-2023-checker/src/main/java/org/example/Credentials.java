@@ -51,5 +51,14 @@ public class Credentials {
         }
     }
 
+
     // Other methods as needed
+    public String toString() {
+        return "Credentials{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", creationDate=" + creationDate +
+                '}';
+
+    }
 }

@@ -5,14 +5,17 @@ import java.util.List;
 public class Regular extends User implements RequestsManager {
 
     // Constructor
+    public Regular() {
+        super("");
+    }
     public Regular(String fullName) {
         super(fullName);
     }
 
     // Methods from the RequestsManager interface
 
-    public void createRequest(RequestTypes requestType, String title, String description) {
-        Request request = new Request(requestType, title, description, (String) getUsername());
+    public void createRequest(RequestTypes requestType, String description) {
+        Request request = new Request(requestType, description, (String) getUsername());
         RequestsHolder.addRequest(request);
         // Additional logic for handling the created request
     }

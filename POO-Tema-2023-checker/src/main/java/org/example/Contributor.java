@@ -2,9 +2,8 @@ package org.example;
 
 import java.util.List;
 
-public class Contributor extends Staff implements RequestsManager {
+public class Contributor extends Staff implements RequestsManager {// Constructor
 
-    // Constructor
 
     public Contributor() {
         super("");
@@ -12,8 +11,8 @@ public class Contributor extends Staff implements RequestsManager {
 
     // Methods from the RequestsManager interface
 
-    public void createRequest(RequestTypes requestType, String title, String description) {
-        Request request = new Request(requestType, title, description, (String) getUsername());
+    public void createRequest(RequestTypes requestType, String description) {
+        Request request = new Request(requestType ,description, (String) getUsername());
         RequestsHolder.addRequest(request);
         // Additional logic for handling the created request
     }
