@@ -1,10 +1,21 @@
 package org.example;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.helper.UserDeserializer;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "userType")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Regular.class, name = "Regular"),
+        @JsonSubTypes.Type(value = Contributor.class, name = "Contributor"),
+        @JsonSubTypes.Type(value = Admin.class, name = "Admin")
+})
 public abstract class User implements Comparable<User> {
     private class Information {
         private Credentials credentials;
@@ -12,6 +23,9 @@ public abstract class User implements Comparable<User> {
         private String gender;
         private int age;
         private LocalDateTime birthDate;
+        public Information(){
+
+        }
 
         // Constructor for Information class
         public Information(Credentials credentials, String name, String gender, int age, LocalDateTime birthDate) {
@@ -43,6 +57,7 @@ public abstract class User implements Comparable<User> {
             return birthDate;
         }
     }
+
     private AccountType accountType;
     private final String username;
     private int experience;
@@ -53,8 +68,13 @@ public abstract class User implements Comparable<User> {
     public User(String fullName) {
         this.username = generateUniqueUsername(fullName);
         this.experience = 0;
+        this.favorites = new TreeSet<>();// Other initialization as needed
+    }
+    public User(){
+        this.username = "";
+        this.experience = 0;
         this.favorites = new TreeSet<>();
-        // Other initialization as needed
+
     }
 
     // Method to generate a unique username
@@ -99,5 +119,11 @@ public abstract class User implements Comparable<User> {
 
     protected Production[] getFavorites() {
         return new Production[0];
+    }
+    public int getExperience() {
+        return experience;
+    }
+    public Information getInformation() {
+        return new Information();
     }
 }

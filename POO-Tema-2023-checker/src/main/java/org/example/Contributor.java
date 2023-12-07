@@ -5,8 +5,9 @@ import java.util.List;
 public class Contributor extends Staff implements RequestsManager {
 
     // Constructor
-    public Contributor(String fullName) {
-        super(fullName);
+
+    public Contributor() {
+        super("");
     }
 
     // Methods from the RequestsManager interface

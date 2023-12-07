@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class Actor {
 
-    private String actorName;
-    private List<Map.Entry<String, String>> roles;  // Name:Type pairs
-    private String biography;
+    private final String actorName;
+    private final List<Map.Entry<String, String>> roles;  // Name:Type pairs
+    private final String biography;
 
     // Constructor
     public Actor(String actorName, List<Map.Entry<String, String>> roles, String biography) {

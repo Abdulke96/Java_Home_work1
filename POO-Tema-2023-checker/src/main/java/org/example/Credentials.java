@@ -8,9 +8,14 @@ public class Credentials {
     private final String email;
     private final String password;
     private final LocalDateTime creationDate;
+    public Credentials(){
+        this.email = "default";
+        this.password = "default";
+        this.creationDate = LocalDateTime.now();
+    }
 
     // Private constructor to enforce the use of the builder
-    private Credentials(Builder builder) {
+  public   Credentials(Builder builder) {
         this.email = builder.email;
         this.password = builder.password;
         this.creationDate = LocalDateTime.now();

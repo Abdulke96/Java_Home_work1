@@ -24,8 +24,7 @@ public class Regular extends User implements RequestsManager {
 
     // Method to add a review (Rating) for a production
     public void addReview(Production production, int score, String comments) {
-        int experience = 0;
-        if (experience > 0) {
+        if (getExperience() > 0) {
             Rating rating = new Rating((String) getUsername(), score, comments);
             production.addRating(rating);
             updateExperience(1); // Regular user gains 1 point of experience for each review

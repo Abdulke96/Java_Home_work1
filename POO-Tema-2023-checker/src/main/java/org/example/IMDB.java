@@ -1,14 +1,15 @@
 package org.example;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
-
 public class IMDB {
     private List<User> users;  // User is a base class for Regular, Contributor, and Admin
     private List<Actor> actors; // Actor is a base class for Actor and Director
     private List<Request> requests; // Request is a base class for AddProductionRequest and RemoveProductionRequest
     private List<Production> productions;  // Assuming Production is a base class for Movies and Series
     private User currentUser;  // To keep track of the currently authenticated user
-
     // Constructor
     public IMDB(List<User> users, List<Actor> actors, List<Request> requests, List<Production> productions) {
         this.users = users;
@@ -21,18 +22,44 @@ public class IMDB {
     public void run() {
         // Load data from JSON files
         loadDataFromJsonFiles();
-
         // Authenticate the user
-        authenticateUser();
-
+       // authenticateUser();
         // Start the application flow based on the user's role
-        startApplicationFlow();
+       // startApplicationFlow();
     }
 
     // Method to load data from JSON files
-    private void loadDataFromJsonFiles() {
-        // Implementation to load data from JSON files goes here
-        System.out.println("Loading data from JSON files...");
+    private void loadDataFromJsonFiles()  {
+            System.out.println("Loading data from JSON files...");
+        try {
+            // Load users from users.json
+            ObjectMapper objectMapper = new ObjectMapper();
+            File usersFile = new File ("POO-Tema-2023-checker/src/main/resources/input/accounts.json");
+            User[] loadedUsers = objectMapper.readValue(usersFile, User[].class);
+            this.users = List.of(loadedUsers);
+            System.out.println("Users loaded successfully.");
+
+            // Load actors from actors.json
+            File actorsFile = new File("POO-Tema-2023-checker/src/main/resources/input/actors.json");
+            Actor[] loadedActors = objectMapper.readValue(actorsFile, Actor[].class);
+            this.actors = List.of(loadedActors);
+            System.out.println("Actors loaded successfully.");
+
+            // Load requests from requests.json
+            File requestsFile = new File("POO-Tema-2023-checker/src/main/resources/input/requests.json");
+            Request[] loadedRequests = objectMapper.readValue(requestsFile, Request[].class);
+            this.requests = List.of(loadedRequests);
+            System.out.println("Requests loaded successfully.");
+
+            // Load productions from production.json
+            File productionsFile = new File("POO-Tema-2023-checker/src/main/resources/input/production.json");
+            Production[] loadedProductions = objectMapper.readValue(productionsFile, Production[].class);
+            this.productions = List.of(loadedProductions);
+            System.out.println("Productions loaded successfully.");
+
+        } catch (IOException e) {
+            System.out.println("Error loading data from JSON files: " + e.getMessage());
+        }
     }
 
     // Method to authenticate the user
@@ -45,7 +72,6 @@ public class IMDB {
 
         // Perform authentication logic based on the provided username and password
         this.currentUser = authenticate(username, password);
-        System.out.println("i am here");
         if (this.currentUser == null) {
             System.out.println("Authentication failed. Exiting the application.");
             System.exit(0);
@@ -79,6 +105,7 @@ public class IMDB {
     private void regularFlow() {
         System.out.println("Regular user flow: Explore and interact with the system");
         // Implementation for regular user flow goes here
+
     }
 
     // Method to perform authentication logic
@@ -94,13 +121,10 @@ public class IMDB {
         }
         return null; // Authentication failed
     }
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // Create a new instance of the IMDB class and run the application
-
         IMDB imdb = new IMDB(null, null, null, null);
         imdb.run();
-
     }
 }
 
