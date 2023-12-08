@@ -16,7 +16,7 @@ import java.util.TreeSet;
         @JsonSubTypes.Type(value = Contributor.class, name = "Contributor"),
         @JsonSubTypes.Type(value = Admin.class, name = "Admin")
 })
-public abstract class User implements Comparable<User> {
+public abstract class User<T extends Comparable<T>> {
     private static class Information {
         private Credentials credentials;
         private String name;
@@ -173,11 +173,6 @@ public abstract class User implements Comparable<User> {
 
     // Other methods as needed
 
-    // Comparable interface implementation for sorting users by experience
-    @Override
-    public int compareTo(User otherUser) {
-        return Integer.compare(otherUser.experience, this.experience);
-    }
 
     public Object getUsername() {
         return username;

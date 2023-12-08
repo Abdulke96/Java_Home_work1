@@ -20,18 +20,26 @@ import java.util.List;
 import java.util.Scanner;
 
 public class IMDB {
+    private static IMDB instance = null;
     private List<User> users;  // User is a base class for Regular, Contributor, and Admin
     private List<Actor> actors; // Actor is a base class for Actor and Director
     private List<Request> requests; // Request is a base class for AddProductionRequest and RemoveProductionRequest
     private List<Production> productions;  // Assuming Production is a base class for Movies and Series
     private User currentUser;  // To keep track of the currently authenticated user
     // Constructor
-    public IMDB(List<User> users, List<Actor> actors, List<Request> requests, List<Production> productions) {
+   private IMDB(List<User> users, List<Actor> actors, List<Request> requests, List<Production> productions) {
         this.users = users;
         this.actors = actors;
         this.requests = requests;
         this.productions = productions;
     }
+    public static synchronized IMDB getInstance() {
+        if (instance == null) {
+            instance = new IMDB(null, null, null, null);
+        }
+        return instance;
+    }
+
 
     // Method to run the application
     public void run() {
@@ -59,9 +67,9 @@ public class IMDB {
 //            //****************************
             System.out.println("the frist user: "+users.get(0).getEmail());
             System.out.println(" the password : "+users.get(0).getPassword());
-//            System.out.println("the info : "+users.get(0).getInformation());
-//            System.out.println("exprience : "+users.get(0).getExperience());
-//            System.out.println("favorite genres : "+ Arrays.toString(users.get(0).getFavorites()));
+            System.out.println("the info : "+users.get(0).getInformation());
+            System.out.println("exprience : "+users.get(0).getExperience());
+            System.out.println("favorite genres : "+ Arrays.toString(users.get(0).getFavorites()));
 //            //****************************
 
             // Load actors from actors.json
@@ -189,7 +197,7 @@ public class IMDB {
     }
     public static void main(String[] args) throws IOException {
         // Create a new instance of the IMDB class and run the application
-        IMDB imdb = new IMDB(null, null, null, null);
+        IMDB imdb = IMDB.getInstance();
         imdb.run();
     }
     public static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
