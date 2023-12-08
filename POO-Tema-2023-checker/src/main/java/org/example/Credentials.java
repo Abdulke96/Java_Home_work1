@@ -9,8 +9,8 @@ public class Credentials {
     private final String password;
     private final LocalDateTime creationDate;
     public Credentials(){
-        this.email = "default";
-        this.password = "default";
+        this.email = null;
+        this.password = null;
         this.creationDate = LocalDateTime.now();
     }
 

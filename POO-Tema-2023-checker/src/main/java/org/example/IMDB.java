@@ -38,14 +38,13 @@ public class IMDB {
         // Load data from JSON files
         loadDataFromJsonFiles();
         // Authenticate the user
-       // authenticateUser();
+       authenticateUser();
         // Start the application flow based on the user's role
-       // startApplicationFlow();
+        startApplicationFlow();
     }
 
     // Method to load data from JSON files
     private void loadDataFromJsonFiles()  {
-            System.out.println("Loading data from JSON files...");
         try {
             // Load users from users.json
             ObjectMapper objectMapper = new ObjectMapper();
@@ -57,14 +56,13 @@ public class IMDB {
             File usersFile = new File ("POO-Tema-2023-checker/src/main/resources/input/accounts.json");
             User[] loadedUsers = objectMapper.readValue(usersFile, User[].class);
             this.users = List.of(loadedUsers);
-            System.out.println("Users loaded successfully.");
-            //****************************
-            System.out.println(loadedUsers[0].getUsername());
-            System.out.println(loadedUsers[0].getPassword());
-            System.out.println(loadedUsers[0].getInformation());
-            System.out.println(loadedUsers[0].getExperience());
-            System.out.println(Arrays.toString(loadedUsers[0].getFavorites()));
-            //****************************
+//            //****************************
+            System.out.println("the frist user: "+users.get(0).getEmail());
+            System.out.println(" the password : "+users.get(0).getPassword());
+//            System.out.println("the info : "+users.get(0).getInformation());
+//            System.out.println("exprience : "+users.get(0).getExperience());
+//            System.out.println("favorite genres : "+ Arrays.toString(users.get(0).getFavorites()));
+//            //****************************
 
             // Load actors from actors.json
             SimpleModule module = new SimpleModule();
@@ -73,24 +71,24 @@ public class IMDB {
             File actorsFile = new File("POO-Tema-2023-checker/src/main/resources/input/actors.json");
             Actor[] loadedActors = objectMapper.readValue(actorsFile, Actor[].class);
             this.actors = List.of(loadedActors);
-            //****************************
-            System.out.println("Actors loaded successfully.");
-            System.out.println(loadedActors[0].getName());
-            System.out.println(loadedActors[0].getPerformances().toString());
-            System.out.println(loadedActors[0].getBiography());
-            //****************************
+//            //****************************
+//            System.out.println("Actors loaded successfully.");
+//            System.out.println(loadedActors[0].getName());
+//            System.out.println(loadedActors[0].getPerformances().toString());
+//            System.out.println(loadedActors[0].getBiography());
+//            //****************************
 
             // Load requests from requests.json
             File requestsFile = new File("POO-Tema-2023-checker/src/main/resources/input/requests.json");
             Request[] loadedRequests = objectMapper.readValue(requestsFile, Request[].class);
             this.requests = List.of(loadedRequests);
             System.out.println("Requests loaded successfully.");
-            //****************************
-               System.out.println(loadedRequests[0].getUsername());
-                System.out.println(loadedRequests[0].getDescription());
-                System.out.println(loadedRequests[0].getCreatedDate());
-
-            // Load productions from production.json
+//            //****************************
+//               System.out.println(loadedRequests[0].getUsername());
+//                System.out.println(loadedRequests[0].getDescription());
+//                System.out.println(loadedRequests[0].getCreatedDate());
+//
+//            // Load productions from production.json
             SimpleModule production = new SimpleModule();
             production.addDeserializer(Production.class, new ProductionDeserializer());
             objectMapper.registerModule(production);
@@ -99,16 +97,16 @@ public class IMDB {
             this.productions = List.of(loadedProductions);
             System.out.println("Productions loaded successfully.");
             //****************************
-         System.out.println(loadedProductions[0].getTitle());
-            System.out.println(loadedProductions[0].getTypes());
-            System.out.println(loadedProductions[0].getDirectors());
-            System.out.println(loadedProductions[0].getActors());
-            System.out.println(loadedProductions[0].getGenres());
-            System.out.println(loadedProductions[0].getRatings());
-            System.out.println(loadedProductions[0].getDescription());
-            System.out.println(loadedProductions[0].getAverageRating());
-            System.out.println(loadedProductions[0].getPlot());
-            //****************************
+//         System.out.println(loadedProductions[0].getTitle());
+//            System.out.println(loadedProductions[0].getTypes());
+//            System.out.println(loadedProductions[0].getDirectors());
+//            System.out.println(loadedProductions[0].getActors());
+//            System.out.println(loadedProductions[0].getGenres());
+//            System.out.println(loadedProductions[0].getRatings());
+//            System.out.println(loadedProductions[0].getDescription());
+//            System.out.println(loadedProductions[0].getAverageRating());
+//            System.out.println(loadedProductions[0].getPlot());
+//            //****************************
 
         } catch (IOException e) {
             System.out.println("Error loading data from JSON files: " + e.getMessage());
@@ -117,10 +115,11 @@ public class IMDB {
 
     // Method to authenticate the user
     private void authenticateUser() {
+        System.out.println("Welcome back! Enter your credentials!");
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter your username: ");
+        System.out.print("email: ");
         String username = scanner.nextLine();
-        System.out.print("Enter your password: ");
+        System.out.print("password: ");
         String password = scanner.nextLine();
 
         // Perform authentication logic based on the provided username and password
@@ -151,7 +150,20 @@ public class IMDB {
     }
 
     private void contributorFlow() {
-        System.out.println("Contributor flow: Contribute to the system");
+        System.out.println("Welcome back user " + currentUser.getEmail() + "!");
+        System.out.println("Username: " + currentUser.getUsername());
+        System.out.println("User experience: " + currentUser.getExperience());
+        System.out.println("Choose an Action:");
+        System.out.println("1) View productions details");
+        System.out.println("2) view actors details");
+        System.out.println("3) view notifications");
+        System.out.println("4) search for actors/movies/series");
+        System.out.println("5) add/Delete actors/movies/series to/from favorites");
+        System.out.println("6) update movie details");
+        System.out.println("7) update actor details");
+        System.out.println("8) solve requests");
+        System.out.println("9) logout");
+
         // Implementation for contributor flow goes here
     }
 
@@ -162,17 +174,18 @@ public class IMDB {
     }
 
     // Method to perform authentication logic
-    private User authenticate(String username, String password) {
-        // Implement authentication logic based on the provided username and password
-        // Return the authenticated user or null if authentication fails
-        // Example: Loop through the list of users and check if the provided credentials match any user
-
+    private User authenticate(String email, String password) {
         for (User user : users) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                return user;
+            if (user.getEmail().equals(email)) {
+                if (user.getPassword().equals(password)) {
+                    return user;
+                } else {
+                    break;
+                }
             }
         }
-        return null; // Authentication failed
+
+        return null;
     }
     public static void main(String[] args) throws IOException {
         // Create a new instance of the IMDB class and run the application
@@ -195,6 +208,6 @@ public class IMDB {
             }
         }
     }
-    //***********************
+
 }
 

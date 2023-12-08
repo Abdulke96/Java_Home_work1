@@ -184,7 +184,10 @@ public abstract class User implements Comparable<User> {
     }
 
     public Object getPassword() {
-        return "";
+        return information.getCredentials().getPassword();
+    }
+    public Object getEmail() {
+        return information.getCredentials().getEmail();
     }
 
     protected Production[] getFavorites() {
