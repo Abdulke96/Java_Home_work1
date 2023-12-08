@@ -1,12 +1,19 @@
 package org.example;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import java.util.List;
 
 public class Episode extends Production {
-    private String episodeName;  // Name of the episode
-    private int duration;  // Duration of the episode in minutes
+    private final String episodeName;  // Name of the episode
+    private final int duration;  // Duration of the episode in minutes
     // Add any other optional details specific to an Episode
 
     // Constructor
+    public Episode() {
+        super();
+        this.episodeName = null;
+        this.duration = 0;
+    }
     public Episode(String title, List<String> directors, List<String> actors, List<Genre> genres,
                    List<Rating> ratings, String description, String episodeName, int duration) {
         super(title, directors, actors, genres, ratings, description);

@@ -5,14 +5,18 @@ import java.util.SortedSet;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.helper.ProductionDeserializer;
 
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Movie.class, name = "Movie"),
-        @JsonSubTypes.Type(value = Series.class, name = "Series")
+        @JsonSubTypes.Type(value = Series.class, name = "Series"),
+        @JsonSubTypes.Type(value = Episode.class, name = "Episode"),
+        // Add more types if needed
 })
+@JsonTypeName("Production")
 public abstract class Production implements Comparable<Object> {
     protected String title;//*
     private String types;/////

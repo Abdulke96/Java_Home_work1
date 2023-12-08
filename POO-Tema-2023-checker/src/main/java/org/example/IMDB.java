@@ -59,12 +59,12 @@ public class IMDB {
             this.users = List.of(loadedUsers);
             System.out.println("Users loaded successfully.");
             //****************************
-//            System.out.println(loadedUsers[0].getUsername());
-//            System.out.println(loadedUsers[0].getPassword());
-//            System.out.println(loadedUsers[0].getInformation());
-//            System.out.println(loadedUsers[0].getExperience());
-//            System.out.println(Arrays.toString(loadedUsers[0].getFavorites()));
-//            //****************************
+            System.out.println(loadedUsers[0].getUsername());
+            System.out.println(loadedUsers[0].getPassword());
+            System.out.println(loadedUsers[0].getInformation());
+            System.out.println(loadedUsers[0].getExperience());
+            System.out.println(Arrays.toString(loadedUsers[0].getFavorites()));
+            //****************************
 
             // Load actors from actors.json
             SimpleModule module = new SimpleModule();
@@ -73,12 +73,12 @@ public class IMDB {
             File actorsFile = new File("POO-Tema-2023-checker/src/main/resources/input/actors.json");
             Actor[] loadedActors = objectMapper.readValue(actorsFile, Actor[].class);
             this.actors = List.of(loadedActors);
-//            //****************************
-//            System.out.println("Actors loaded successfully.");
-//            System.out.println(loadedActors[0].getName());
-//            System.out.println(loadedActors[0].getPerformances().toString());
-//            System.out.println(loadedActors[0].getBiography());
-//            //****************************
+            //****************************
+            System.out.println("Actors loaded successfully.");
+            System.out.println(loadedActors[0].getName());
+            System.out.println(loadedActors[0].getPerformances().toString());
+            System.out.println(loadedActors[0].getBiography());
+            //****************************
 
             // Load requests from requests.json
             File requestsFile = new File("POO-Tema-2023-checker/src/main/resources/input/requests.json");
@@ -86,18 +86,29 @@ public class IMDB {
             this.requests = List.of(loadedRequests);
             System.out.println("Requests loaded successfully.");
             //****************************
-//               System.out.println(loadedRequests[0].getUsername());
-//                System.out.println(loadedRequests[0].getDescription());
-//                System.out.println(loadedRequests[0].getCreatedDate());
+               System.out.println(loadedRequests[0].getUsername());
+                System.out.println(loadedRequests[0].getDescription());
+                System.out.println(loadedRequests[0].getCreatedDate());
 
             // Load productions from production.json
             SimpleModule production = new SimpleModule();
             production.addDeserializer(Production.class, new ProductionDeserializer());
-            objectMapper.registerModule(module);
+            objectMapper.registerModule(production);
             File productionsFile = new File("POO-Tema-2023-checker/src/main/resources/input/production.json");
             Production[] loadedProductions = objectMapper.readValue(productionsFile, Production[].class);
             this.productions = List.of(loadedProductions);
             System.out.println("Productions loaded successfully.");
+            //****************************
+         System.out.println(loadedProductions[0].getTitle());
+            System.out.println(loadedProductions[0].getTypes());
+            System.out.println(loadedProductions[0].getDirectors());
+            System.out.println(loadedProductions[0].getActors());
+            System.out.println(loadedProductions[0].getGenres());
+            System.out.println(loadedProductions[0].getRatings());
+            System.out.println(loadedProductions[0].getDescription());
+            System.out.println(loadedProductions[0].getAverageRating());
+            System.out.println(loadedProductions[0].getPlot());
+            //****************************
 
         } catch (IOException e) {
             System.out.println("Error loading data from JSON files: " + e.getMessage());
@@ -168,16 +179,7 @@ public class IMDB {
         IMDB imdb = new IMDB(null, null, null, null);
         imdb.run();
     }
-    ///****************************
-//    private static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
-//        @Override
-//        public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-//            String dateString = p.getText();
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // Adjust the pattern
-//            return LocalDate.parse(dateString, formatter).atStartOfDay();
-//        }
-//    }
-    public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
+    public static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
         @Override
         public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             String dateString = p.getText();

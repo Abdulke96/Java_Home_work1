@@ -31,8 +31,7 @@ public class ProductionDeserializer extends StdDeserializer<Production> {
             case "Movie":
                 return jp.getCodec().treeToValue(node, Movie.class);
             case "Series":
-                return jp.getCodec().treeToValue(node, Series.class);
-            // Add more cases for other subclasses if needed
+               return jp.getCodec().treeToValue(node, Series.class);
             default:
                 throw new UnsupportedOperationException("Unsupported production type: " + type);
         }

@@ -1,12 +1,16 @@
 package org.example;
 
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.util.List;
 import java.util.Map;
-
+import org.helper.SeriesSeasonsDeserializer;
 public class Series extends Production {
-    private int releaseYear;  // Year of release for the series
-    private int numSeasons;  // Number of seasons in the series
-    private Map<String, List<Episode>> seasons;  // Map of season names to a list of episodes
+    private final int releaseYear;  // Year of release for the series
+    private final int numSeasons;  // Number of seasons in the series
+    @JsonDeserialize(using = SeriesSeasonsDeserializer.class)
+    private final Map<String, List<Episode>> seasons;  // Map of season names to a list of episodes
 
     // Constructor
     public Series() {
