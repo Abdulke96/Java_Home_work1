@@ -43,11 +43,37 @@ public class IMDB {
 
     // Method to run the application
     public void run() {
-        // Load data from JSON files
+        chooseUIMode();
+    }
+    private void chooseUIMode() {
+        System.out.println("Choose the user interface mode:");
+        System.out.println("1) CLI (Command Line Interface)");
+        System.out.println("2) GUI (Graphical User Interface)");
+
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+                runCLI();
+                break;
+            case 2:
+                runGUI();
+                break;
+            default:
+                System.out.println("Invalid choice. Exiting the application.");
+                System.exit(0);
+        }
+    }
+
+    private void runGUI() {
+        System.out.println("GUI mode is not implemented yet. Exiting the application.");
+        System.exit(0);
+    }
+
+    private void runCLI() {
         loadDataFromJsonFiles();
-        // Authenticate the user
-       authenticateUser();
-        // Start the application flow based on the user's role
+        authenticateUser();
         startApplicationFlow();
     }
 
