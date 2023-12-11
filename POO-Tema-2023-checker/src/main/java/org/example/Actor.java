@@ -1,9 +1,11 @@
 package org.example;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Map;
 
-public class Actor {
+public class Actor implements Comparable<Object> {
 
     private final String name;
     private final List<Map.Entry<String, String>> performances;  // Name:Type pairs
@@ -16,6 +18,7 @@ public class Actor {
         this.performances = null;
         this.biography = null;
     }
+
     public Actor(String name, List<Map.Entry<String, String>> performances, String biography) {
         this.name = name;
         this.performances = performances;
@@ -56,4 +59,8 @@ public class Actor {
         return stringBuilder.toString();
     }
 
+    @Override
+    public int compareTo(@NotNull Object o) {
+        return 0;
+    }
 }

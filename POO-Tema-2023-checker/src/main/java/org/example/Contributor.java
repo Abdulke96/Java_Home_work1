@@ -2,12 +2,12 @@ package org.example;
 
 import java.util.List;
 
-public class Contributor extends Staff implements RequestsManager {// Constructor
+public class Contributor<T> extends Staff implements RequestsManager,ExperienceStrategy  {// Constructor
 
 
-    public Contributor() {
-        super("");
-    }
+//    public Contributor() {
+//        super("");
+//    }
 
     // Methods from the RequestsManager interface
 
@@ -88,5 +88,10 @@ public class Contributor extends Staff implements RequestsManager {// Constructo
 
     public void updateActor(Actor a) {
 
+    }
+
+    @Override
+    public int calculateExperience() {
+        return 0;
     }
 }

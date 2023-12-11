@@ -1,4 +1,5 @@
 package org.example;
 
-public class Observer {
+public interface Observer {
+    void update(String notification);
 }

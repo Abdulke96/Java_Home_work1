@@ -2,15 +2,15 @@ package org.example;
 
 import java.util.List;
 
-public class Regular extends User implements RequestsManager {
+public class Regular<T> extends User implements RequestsManager, ExperienceStrategy {
 
     // Constructor
     public Regular() {
-        super("");
+
     }
-    public Regular(String fullName) {
-        super(fullName);
-    }
+//    public Regular(String fullName) {
+//        super(fullName);
+//    }
 
     // Methods from the RequestsManager interface
 
@@ -53,6 +53,13 @@ public class Regular extends User implements RequestsManager {
     public void removeRequest(Request r) {
 
     }
+
+    @Override
+    public int calculateExperience() {
+        return 0;
+    }
+
+
 
     // Other methods as needed
 }

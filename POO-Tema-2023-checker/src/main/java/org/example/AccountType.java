@@ -1,5 +1,5 @@
 package org.example;
 
 public enum AccountType {
-    REGULAR, CONTRIBUTOR, ADMIN
+    Regular, Contributor, Admin
 }

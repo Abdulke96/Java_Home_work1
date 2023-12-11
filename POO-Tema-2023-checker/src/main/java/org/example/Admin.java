@@ -1,14 +1,14 @@
 package org.example;
 
-public class Admin extends Staff {
+public class Admin<T> extends Staff  implements ExperienceStrategy{
 
     // Constructor
     public Admin() {
-        super("");
+
     }
-    public Admin(String fullName) {
-        super(fullName);
-    }
+//    public Admin(String fullName) {
+//        super(fullName);
+//    }
 
     public void resolveRequests() {
 
@@ -89,6 +89,11 @@ public class Admin extends Staff {
 
     public void updateActor(Actor a) {
 
+    }
+
+    @Override
+    public int calculateExperience() {
+        return 0;
     }
 
     // Other methods as needed

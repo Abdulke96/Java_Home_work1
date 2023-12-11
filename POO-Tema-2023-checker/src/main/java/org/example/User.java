@@ -2,10 +2,9 @@ package org.example;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.helper.UserDeserializer;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -16,7 +15,7 @@ import java.util.TreeSet;
         @JsonSubTypes.Type(value = Contributor.class, name = "Contributor"),
         @JsonSubTypes.Type(value = Admin.class, name = "Admin")
 })
-public abstract class User<T extends Comparable<T>> {
+public abstract class User<T extends Comparable<T>>{
     private static class Information {
         private Credentials credentials;
         private String name;
@@ -24,25 +23,14 @@ public abstract class User<T extends Comparable<T>> {
         private int age;
         private LocalDateTime birthDate;
         private String country;
-        public Information(){
-            this.credentials = new Credentials();
-            this.name = null;
-            this.gender = null;
-            this.age = 0;
-            this.birthDate = LocalDateTime.now();
-            this.country = "default";
-
-        }
-
-        // Constructor for Information class
-        public  Information(Credentials credentials, String name, String gender, int age, LocalDateTime birthDate) {
-            this.credentials = credentials;
-            this.name = name;
-            this.gender = gender;
-            this.age = age;
-            this.birthDate = birthDate;
-            this.country = "default";
-        }
+       private Information(InformationBuilder builder) {
+           this.credentials = builder.credentials;
+           this.name = builder.name;
+           this.gender = builder.gender;
+           this.age = builder.age;
+           this.birthDate = builder.birthDate;
+           this.country = builder.country;
+       }
 
         // Getter methods for Information class
         public Credentials getCredentials() {
@@ -77,25 +65,59 @@ public abstract class User<T extends Comparable<T>> {
                     ", country='" + country + '\'' +
                     '}';
         }
-    }
+       public static class InformationBuilder {
+            private Credentials credentials;
+            private String name;
+            private String gender;
+            private int age;
+            private LocalDateTime birthDate;
+            private String country;
+            public InformationBuilder(){
+                this.credentials = new Credentials();
+                this.name = null;
+                this.gender = null;
+                this.age = 0;
+                this.birthDate = LocalDateTime.now();
+                this.country = "default";
 
-    private AccountType accountType;
-    private final String username;
-    private Information information;
-    private int experience;
-    private List<String> notifications;
-    private final SortedSet<Object> favorites;  // Assuming Object can be Movie, Series, or Actor
-    private final List<String> productionsContribution;
-    private final List<String> actorsContribution;
-    private final List<String> favoriteProductions;
-    private final List<String> favoriteActors;
+            }
+            // Getter methods for Information class
+            public InformationBuilder credentials(Credentials credentials) {
+                this.credentials = credentials;
+                return this;
 
-    public AccountType getAccountType() {
-        return accountType;
-    }
 
-    public List<String> getNotifications() {
-        return notifications;
+            }
+
+            public  InformationBuilder name( String name) {
+                this.name = name;
+                return this;
+            }
+
+            public  InformationBuilder gender( String gender) {
+                this.gender = gender;
+                return this;
+            }
+
+            public  InformationBuilder age( int age) {
+                this.age = age;
+                return this;
+            }
+
+            public  InformationBuilder birthDate( LocalDateTime birthDate) {
+                this.birthDate = birthDate;
+                return this;
+            }
+            public  InformationBuilder country( String country) {
+                this.country = country;
+                return this;
+            }
+
+           public User.Information build() {
+                return new User.Information(this);
+           }
+       }
+
     }
 
     public List<String> getProductionsContribution() {
@@ -106,6 +128,11 @@ public abstract class User<T extends Comparable<T>> {
         return actorsContribution;
     }
 
+    //********************
+    private final List<String> productionsContribution;
+    private final List<String> actorsContribution;
+    private final List<String> favoriteProductions;
+
     public List<String> getFavoriteProductions() {
         return favoriteProductions;
     }
@@ -114,6 +141,21 @@ public abstract class User<T extends Comparable<T>> {
         return favoriteActors;
     }
 
+    private final List<String> favoriteActors;
+    //*********************
+    private AccountType userType;
+    private final String username;
+    private Information information;
+    private int experience;
+    private List<String> notifications;
+  public SortedSet<T> favorites;  // Assuming Object can be Movie, Series, or Actor
+    public AccountType getUserType() {
+        return userType;
+    }
+
+    public List<String> getNotifications() {
+        return notifications;
+    }
 
 
     // Constructor
@@ -121,58 +163,36 @@ public abstract class User<T extends Comparable<T>> {
         this.username =null;
         this.experience = 0;
         this.favorites = new TreeSet<>();// Other initialization as needed
-        this.information = new Information();
-        this.accountType = null;
-        this.notifications = null;
-        this.productionsContribution = null;
-        this.actorsContribution = null;
-        this.favoriteProductions = null;
-        this.favoriteActors = null;
-        
+        this.information = new Information.InformationBuilder().build();
+        this.userType = null;
+        this.notifications = new ArrayList<>();
+        this.productionsContribution = new ArrayList<>();
+        this.actorsContribution = new ArrayList<>();
+        this.favoriteActors = new ArrayList<>();
+        this.favoriteProductions = new ArrayList<>();
 
 
-    }
-    public User(String fullName) {
-        this.username = generateUniqueUsername(fullName);
-        this.experience = 0;
-        this.favorites = new TreeSet<>();// Other initialization as needed
-        this.information = new Information();
-        this.accountType = null;
-        this.notifications = null;
-        this.productionsContribution = null;
-        this.actorsContribution = null;
-        this.favoriteProductions = null;
-        this.favoriteActors = null;
 
     }
-
 
     // Method to generate a unique username
     private String generateUniqueUsername(String fullName) {
-        // Logic to generate a unique username based on the full name
-        // You can implement your own logic or use a library for this purpose
         return ""; // Replace with actual implementation
     }
 
     // Methods for adding/removing favorites
     public void addToFavorites(Object favorite) {
-        favorites.add(favorite);
+        favorites.add((T) favorite);
     }
 
     public void removeFromFavorites(Object favorite) {
         favorites.remove(favorite);
     }
 
-    // Method to update user experience
     public void updateExperience(int points) {
         experience += points;
     }
-
-    // Method to handle user logout
     public abstract void logout();
-
-    // Other methods as needed
-
 
     public Object getUsername() {
         return username;
@@ -192,7 +212,7 @@ public abstract class User<T extends Comparable<T>> {
         return experience;
     }
     public Information getInformation() {
-        return new Information();
+        return new Information.InformationBuilder().build();
     }
 
 }

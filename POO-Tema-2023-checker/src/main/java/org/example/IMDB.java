@@ -9,25 +9,27 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.helper.ActorDeserializer;
 import org.helper.ProductionDeserializer;
+import org.helper.Constants;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import org.gui.Auth;
 
-public class IMDB {
+public class IMDB  extends JFrame {
     private static IMDB instance = null;
-    private List<User> users;  // User is a base class for Regular, Contributor, and Admin
-    private List<Actor> actors; // Actor is a base class for Actor and Director
-    private List<Request> requests; // Request is a base class for AddProductionRequest and RemoveProductionRequest
-    private List<Production> productions;  // Assuming Production is a base class for Movies and Series
-    private User currentUser;  // To keep track of the currently authenticated user
+   private List<User<?>> users;  // User is a base class for Regular, Contributor, and Admin
+    public List<Actor> actors; // Actor is a base class for Actor and Director
+   private List<Request> requests; // Request is a base class for AddProductionRequest and RemoveProductionRequest
+    public List<Production> productions;  // Assuming Production is a base class for Movies and Series
+    private User<?> currentUser;  // To keep track of the currently authenticated user
     // Constructor
-   private IMDB(List<User> users, List<Actor> actors, List<Request> requests, List<Production> productions) {
+   private IMDB(List<User<?>> users, List<Actor> actors, List<Request> requests, List<Production> productions) {
         this.users = users;
         this.actors = actors;
         this.requests = requests;
@@ -43,40 +45,10 @@ public class IMDB {
 
     // Method to run the application
     public void run() {
-        chooseUIMode();
-    }
-    private void chooseUIMode() {
-        System.out.println("Choose the user interface mode:");
-        System.out.println("1) CLI (Command Line Interface)");
-        System.out.println("2) GUI (Graphical User Interface)");
-
-        Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
-
-        switch (choice) {
-            case 1:
-                runCLI();
-                break;
-            case 2:
-                runGUI();
-                break;
-            default:
-                System.out.println("Invalid choice. Exiting the application.");
-                System.exit(0);
-        }
-    }
-
-    private void runGUI() {
-        System.out.println("GUI mode is not implemented yet. Exiting the application.");
-        System.exit(0);
-    }
-
-    private void runCLI() {
         loadDataFromJsonFiles();
         authenticateUser();
         startApplicationFlow();
     }
-
     // Method to load data from JSON files
     private void loadDataFromJsonFiles()  {
         try {
@@ -86,61 +58,42 @@ public class IMDB {
             javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
             objectMapper.registerModule(javaTimeModule);
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
-            File usersFile = new File ("POO-Tema-2023-checker/src/main/resources/input/accounts.json");
-            User[] loadedUsers = objectMapper.readValue(usersFile, User[].class);
+            System.out.println("readig from file"+ Constants.account);
+            File usersFile = new File (Constants.account);
+            User<?>[] loadedUsers = objectMapper.readValue(usersFile, User[].class);
             this.users = List.of(loadedUsers);
-//            //****************************
-            System.out.println("the frist user: "+users.get(0).getEmail());
-            System.out.println(" the password : "+users.get(0).getPassword());
-            System.out.println("the info : "+users.get(0).getInformation());
-            System.out.println("exprience : "+users.get(0).getExperience());
-            System.out.println("favorite genres : "+ Arrays.toString(users.get(0).getFavorites()));
-//            //****************************
-
+            System.out.println("Users loaded successfully.");
+            System.out.println("email: " + users.get(0).getEmail());
+            System.out.println("password: " + users.get(0).getPassword());
             // Load actors from actors.json
+            System.out.println("readig from file"+ Constants.actors);
             SimpleModule module = new SimpleModule();
             module.addDeserializer(Actor.class, new ActorDeserializer());
             objectMapper.registerModule(module);
-            File actorsFile = new File("POO-Tema-2023-checker/src/main/resources/input/actors.json");
+            File actorsFile = new File(Constants.actors);
             Actor[] loadedActors = objectMapper.readValue(actorsFile, Actor[].class);
             this.actors = List.of(loadedActors);
-//            //****************************
-//            System.out.println("Actors loaded successfully.");
-//            System.out.println(loadedActors[0].getName());
-//            System.out.println(loadedActors[0].getPerformances().toString());
-//            System.out.println(loadedActors[0].getBiography());
-//            //****************************
+            System.out.println("Actors loaded successfully.");
+            System.out.println("name"+ actors.get(0).getName());
+            System.out.println("performanace: " + actors.get(0).getPerformances() );
 
+            System.out.println("readig from file"+ Constants.requests);
             // Load requests from requests.json
-            File requestsFile = new File("POO-Tema-2023-checker/src/main/resources/input/requests.json");
+            File requestsFile = new File(Constants.requests);
             Request[] loadedRequests = objectMapper.readValue(requestsFile, Request[].class);
             this.requests = List.of(loadedRequests);
             System.out.println("Requests loaded successfully.");
-//            //****************************
-//               System.out.println(loadedRequests[0].getUsername());
-//                System.out.println(loadedRequests[0].getDescription());
-//                System.out.println(loadedRequests[0].getCreatedDate());
-//
-//            // Load productions from production.json
+            System.out.println("email: " + requests.get(0).getType());
+          // Load productions from production.json
+            System.out.println("readig from file"+ Constants.production);
             SimpleModule production = new SimpleModule();
             production.addDeserializer(Production.class, new ProductionDeserializer());
             objectMapper.registerModule(production);
-            File productionsFile = new File("POO-Tema-2023-checker/src/main/resources/input/production.json");
+            File productionsFile = new File(Constants.production);
             Production[] loadedProductions = objectMapper.readValue(productionsFile, Production[].class);
             this.productions = List.of(loadedProductions);
             System.out.println("Productions loaded successfully.");
-            //****************************
-//         System.out.println(loadedProductions[0].getTitle());
-//            System.out.println(loadedProductions[0].getTypes());
-//            System.out.println(loadedProductions[0].getDirectors());
-//            System.out.println(loadedProductions[0].getActors());
-//            System.out.println(loadedProductions[0].getGenres());
-//            System.out.println(loadedProductions[0].getRatings());
-//            System.out.println(loadedProductions[0].getDescription());
-//            System.out.println(loadedProductions[0].getAverageRating());
-//            System.out.println(loadedProductions[0].getPlot());
-//            //****************************
+            System.out.println("email: " + productions.get(0).getTitle());
 
         } catch (IOException e) {
             System.out.println("Error loading data from JSON files: " + e.getMessage());
@@ -208,8 +161,8 @@ public class IMDB {
     }
 
     // Method to perform authentication logic
-    private User authenticate(String email, String password) {
-        for (User user : users) {
+    private User<?> authenticate(String email, String password) {
+        for (User<?> user : users) {
             if (user.getEmail().equals(email)) {
                 if (user.getPassword().equals(password)) {
                     return user;
@@ -225,6 +178,7 @@ public class IMDB {
         // Create a new instance of the IMDB class and run the application
         IMDB imdb = IMDB.getInstance();
         imdb.run();
+
     }
     public static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
         @Override
@@ -242,6 +196,7 @@ public class IMDB {
             }
         }
     }
+
 
 }
 
