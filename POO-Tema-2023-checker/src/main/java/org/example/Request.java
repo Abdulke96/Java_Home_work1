@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 public class Request {
     private final RequestTypes type;
     private final LocalDateTime createdDate;
-   // private String title;
     private final String description;
     private final String username;
     private String to;

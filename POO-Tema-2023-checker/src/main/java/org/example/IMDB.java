@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import org.gui.Auth;
@@ -29,15 +30,14 @@ public class IMDB  extends JFrame {
     public List<Production> productions;  // Assuming Production is a base class for Movies and Series
     private User<?> currentUser;  // To keep track of the currently authenticated user
     // Constructor
-   private IMDB(List<User<?>> users, List<Actor> actors, List<Request> requests, List<Production> productions) {
-        this.users = users;
-        this.actors = actors;
-        this.requests = requests;
-        this.productions = productions;
+   private IMDB(List<User<?>> users, List<Actor> actors, List<Request> requests, List<Production> productions) { this.users = (users != null) ? users : new ArrayList<>();
+       this.actors = (actors != null) ? actors : new ArrayList<>();
+       this.requests = (requests != null) ? requests : new ArrayList<>();
+       this.productions = (productions != null) ? productions : new ArrayList<>();
     }
     public static synchronized IMDB getInstance() {
         if (instance == null) {
-            instance = new IMDB(null, null, null, null);
+            instance = new IMDB(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
         return instance;
     }
@@ -55,45 +55,45 @@ public class IMDB  extends JFrame {
             // Load users from users.json
             ObjectMapper objectMapper = new ObjectMapper();
             JavaTimeModule javaTimeModule = new JavaTimeModule();
-            javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
+           javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
             objectMapper.registerModule(javaTimeModule);
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            System.out.println("readig from file"+ Constants.account);
+           // System.out.println("readig from file"+ Constants.account);
             File usersFile = new File (Constants.account);
             User<?>[] loadedUsers = objectMapper.readValue(usersFile, User[].class);
             this.users = List.of(loadedUsers);
-            System.out.println("Users loaded successfully.");
-            System.out.println("email: " + users.get(0).getEmail());
-            System.out.println("password: " + users.get(0).getPassword());
+//           System.out.println("Users loaded successfully.");
+//            System.out.println("email: " + users.get(0).getEmail());
+//            System.out.println("password: " + users.get(0).getPassword());
             // Load actors from actors.json
-            System.out.println("readig from file"+ Constants.actors);
+           // System.out.println("readig from file"+ Constants.actors);
             SimpleModule module = new SimpleModule();
             module.addDeserializer(Actor.class, new ActorDeserializer());
             objectMapper.registerModule(module);
             File actorsFile = new File(Constants.actors);
             Actor[] loadedActors = objectMapper.readValue(actorsFile, Actor[].class);
             this.actors = List.of(loadedActors);
-            System.out.println("Actors loaded successfully.");
-            System.out.println("name"+ actors.get(0).getName());
-            System.out.println("performanace: " + actors.get(0).getPerformances() );
+//            System.out.println("Actors loaded successfully.");
+//            System.out.println("name"+ actors.get(0).getName());
+//            System.out.println("performanace: " + actors.get(0).getPerformances() );
 
-            System.out.println("readig from file"+ Constants.requests);
+            //System.out.println("readig from file"+ Constants.requests);
             // Load requests from requests.json
             File requestsFile = new File(Constants.requests);
             Request[] loadedRequests = objectMapper.readValue(requestsFile, Request[].class);
             this.requests = List.of(loadedRequests);
-            System.out.println("Requests loaded successfully.");
-            System.out.println("email: " + requests.get(0).getType());
-          // Load productions from production.json
-            System.out.println("readig from file"+ Constants.production);
+//            System.out.println("Requests loaded successfully.");
+//            System.out.println("email: " + requests.get(0).getType());
+//          // Load productions from production.json
+//            System.out.println("readig from file"+ Constants.production);
             SimpleModule production = new SimpleModule();
             production.addDeserializer(Production.class, new ProductionDeserializer());
             objectMapper.registerModule(production);
             File productionsFile = new File(Constants.production);
             Production[] loadedProductions = objectMapper.readValue(productionsFile, Production[].class);
             this.productions = List.of(loadedProductions);
-            System.out.println("Productions loaded successfully.");
-            System.out.println("email: " + productions.get(0).getTitle());
+//            System.out.println("Productions loaded successfully.");
+//            System.out.println("email: " + productions.get(0).getTitle());
 
         } catch (IOException e) {
             System.out.println("Error loading data from JSON files: " + e.getMessage());
@@ -105,15 +105,15 @@ public class IMDB  extends JFrame {
         System.out.println("Welcome back! Enter your credentials!");
         Scanner scanner = new Scanner(System.in);
         System.out.print("email: ");
-        String username = scanner.nextLine();
+        String username = "aa"; //scanner.nextLine();
         System.out.print("password: ");
-        String password = scanner.nextLine();
+        String password = "skkss";//scanner.nextLine();
 
         // Perform authentication logic based on the provided username and password
         this.currentUser = authenticate(username, password);
         if (this.currentUser == null) {
             System.out.println("Authentication failed. Exiting the application.");
-            System.exit(0);
+          // authenticateUser();
         } else {
             System.out.println("Authentication successful. Welcome, " + currentUser.getUsername() + "!");
         }

@@ -26,8 +26,6 @@ public abstract class Production implements Comparable<Object> {
     protected List<Rating> ratings;//*
     protected String description;//*
     protected double averageRating;//*
-    //private int duration;
-   // private int releaseYear;
     private String  plot;
 
 
@@ -75,8 +73,7 @@ public abstract class Production implements Comparable<Object> {
     // Method required for sorting productions based on title
     @Override
     public int compareTo(Object o) {
-        if (o instanceof Production) {
-            Production otherProduction = (Production) o;
+        if (o instanceof Production otherProduction) {
             return this.title.compareTo(otherProduction.title);
         }
         return 0; // Handle other cases as needed

@@ -1,5 +1,7 @@
 package org.example;
 
+import java.lang.reflect.Constructor;
+
 public class Admin<T> extends Staff  implements ExperienceStrategy{
 
     // Constructor
@@ -99,15 +101,29 @@ public class Admin<T> extends Staff  implements ExperienceStrategy{
     // Other methods as needed
 }
 
-class UserFactory {
+//class UserFactory {
+//    public static <T extends User> T create(String fullName, Class<T> userType) {
+//        try {
+//            // Assuming the user type class has a constructor that takes a String parameter (fullName)
+//            return userType.getConstructor(String.class).newInstance(fullName);
+//        } catch (Exception e) {
+//            // Handle instantiation exceptions
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+//}
 
-    // Factory method to create a user based on the user type
+class UserFactory {
     public static <T extends User> T create(String fullName, Class<T> userType) {
         try {
-            // Assuming the user type class has a constructor that takes a String parameter (fullName)
-            return userType.getDeclaredConstructor(String.class).newInstance(fullName);
+            Constructor<T> constructor = userType.getDeclaredConstructor(String.class);
+
+            // Make the constructor accessible, if it is not already
+            constructor.setAccessible(true);
+
+            return constructor.newInstance(fullName);
         } catch (Exception e) {
-            // Handle instantiation exceptions
             e.printStackTrace();
             return null;
         }

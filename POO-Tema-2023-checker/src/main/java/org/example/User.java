@@ -2,7 +2,7 @@ package org.example;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,18 @@ public abstract class User<T extends Comparable<T>>{
         private String name;
         private String gender;
         private int age;
+
         private LocalDateTime birthDate;
         private String country;
+        private Information() {
+            InformationBuilder builder = new InformationBuilder();
+            this.credentials = builder.credentials;
+            this.name = builder.name;
+            this.gender = builder.gender;
+            this.age = builder.age;
+            this.birthDate = builder.birthDate;
+            this.country = builder.country;
+        }
        private Information(InformationBuilder builder) {
            this.credentials = builder.credentials;
            this.name = builder.name;
@@ -78,7 +88,7 @@ public abstract class User<T extends Comparable<T>>{
                 this.gender = null;
                 this.age = 0;
                 this.birthDate = LocalDateTime.now();
-                this.country = "default";
+                this.country = null;
 
             }
             // Getter methods for Information class
@@ -113,8 +123,8 @@ public abstract class User<T extends Comparable<T>>{
                 return this;
             }
 
-           public User.Information build() {
-                return new User.Information(this);
+           public Information build() {
+                return new Information(this);
            }
        }
 
