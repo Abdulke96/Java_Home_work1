@@ -38,9 +38,9 @@ public class Constants {
             return path2;
         }
     }
-    static int[] admincode = {1,2,3,4,5,6,9,10,11,12,13};
-    static int[] contributorcode = {1,2,3,4,5,7,9,10,11,12,13};
-    static int[] regularcode = {1,2,3,4,5,7,8,13};
+    static int[] admincode = {1,2,3,4,5,6,9,10,11,12,13,14};
+    static int[] contributorcode = {1,2,3,4,5,7,9,10,11,12,13,14};
+    static int[] regularcode = {1,2,3,4,5,7,8,13,14};
     static List<String > adminActions = Arrays.asList(
             "1) View productions details",
             "2) View actors details", // for all
@@ -52,7 +52,8 @@ public class Constants {
              "10) Update movie details", // for admin and contributor
              "11) Update actor details", // for admin and contributor
              "12) Solve requests"// for admin and contributor
-            ,"13) Logout" // for all
+            ,"13) Logout",
+            "14) Exit"// for all
     );
     static List<String > contributorActions = Arrays.asList(
             "1) View productions details",
@@ -65,7 +66,9 @@ public class Constants {
             "10) Update movie details", // for admin and contributor
             "11) Update actor details", // for admin and contributor
             "12) Solve requests",// for admin and contributor
-            "13) Logout" // for all
+            "13) Logout",
+            "14) Exit"
+
     );
 
     static List <String> regularActions = Arrays.asList(
@@ -76,7 +79,8 @@ public class Constants {
             "5) Add/Delete actors/movies/series to/from favorites",
             "7)Create/Delete a request",
             "8) Adding/Deleting a review for a product.",
-            "13) Logout" // for all
+            "13) Logout",
+            "14) Exit"
     );
    public static int[]  displayOption(User user){
        if(user instanceof Admin){

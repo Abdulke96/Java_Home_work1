@@ -61,9 +61,11 @@ public class IMDB  extends JFrame {
     }
 
     public void runCli() {
-       loadDataFromJsonFiles();
+        loadDataFromJsonFiles();
+       while(this.currentUser==null){
        authenticateUser();
        startApplicationFlow();
+       }
 
     }
     public void runGui() {
@@ -103,7 +105,7 @@ public class IMDB  extends JFrame {
         }
     }
 
-    private void authenticateUser() {
+  public void authenticateUser() {
         System.out.println("Welcome back! Enter your credentials!");
 
         Scanner scanner = new Scanner(System.in);
@@ -128,12 +130,10 @@ public class IMDB  extends JFrame {
     }
 
     private void startApplicationFlow() {
-        if (currentUser instanceof Admin) {
-            ApplicationFlow.adminFlow();
-        } else if (currentUser instanceof Contributor) {
-            ApplicationFlow.contributorFlow();
-        } else if (currentUser instanceof Regular) {
-            ApplicationFlow.regularFlow();
+        if (currentUser!=null) {
+            ApplicationFlow.appFlow();
+        } else {
+            System.out.println("No user logged in.");
         }
     }
 
