@@ -1,14 +1,16 @@
 package org.example;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class Episode extends Production {
-    private final String episodeName;  // Name of the episode
-    private final int duration;  // Duration of the episode in minutes
-    // Add any other optional details specific to an Episode
-
-    // Constructor
+    private final String episodeName;
+    private final int duration;
     public Episode() {
         super();
         this.episodeName = null;
@@ -21,16 +23,6 @@ public class Episode extends Production {
         this.duration = duration;
     }
 
-    // Getter methods for episodeName and duration
-    public String getEpisodeName() {
-        return episodeName;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    // Override displayInfo method to include Episode-specific details
     @Override
     public void displayInfo() {
         System.out.println("Episode Title: " + title);
@@ -41,6 +33,5 @@ public class Episode extends Production {
         System.out.println("Description: " + description);
         System.out.println("Duration: " + duration + " minutes");
         System.out.println("Average Rating: " + averageRating);
-        // Include any other specific details for Episode
     }
 }

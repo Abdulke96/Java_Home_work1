@@ -5,56 +5,42 @@ import java.util.List;
 public class Contributor<T> extends Staff implements RequestsManager,ExperienceStrategy  {// Constructor
 
 
-//    public Contributor() {
-//        super("");
-//    }
-
-    // Methods from the RequestsManager interface
-
+    public Contributor() {
+        super("");
+    }
+    public Contributor(String fullName) {
+        super(fullName);
+    }
     public void createRequest(RequestTypes requestType, String description) {
-        Request request = new Request(requestType ,description, (String) getUsername());
-        RequestsHolder.addRequest(request);
-        // Additional logic for handling the created request
+//        Request request = new Request(requestType ,description, (String) getUsername());
+//        RequestsHolder.addRequest(request);
+
     }
 
 
     public void deleteRequest(Request request) {
-        RequestsHolder.removeRequest(request);
-        // Additional logic for handling the deleted request
+//        RequestsHolder.removeRequest(request);
     }
 
-    // Other methods as needed
-
-    // Override logout method
     public void logout() {
-        // Additional logic for contributor logout
         System.out.println("Contributor logged out.");
     }
 
-    // Concrete implementation for resolving requests
-
     public void resolveRequests() {
-        // Implementation specific to Contributor for resolving requests
         System.out.println("Contributor resolving requests.");
     }
 
-    // Concrete implementation for adding a production
-
     public void addProduction(Production production) {
-        // Implementation specific to Contributor for adding productions
+
         System.out.println("Contributor adding production.");
     }
 
-    // Concrete implementation for removing a production
 
     public void removeProduction(Production production) {
-        // Implementation specific to Contributor for removing productions
         System.out.println("Contributor removing production.");
     }
 
-    // Concrete implementation for updating production information
     public void updateProductionInformation(Production production) {
-        // Implementation specific to Contributor for updating production information
         System.out.println("Contributor updating production information.");
     }
 
@@ -65,33 +51,13 @@ public class Contributor<T> extends Staff implements RequestsManager,ExperienceS
     public void removeRequest(Request r) {
 
     }
-
-    public void addProductionSystem(Production p) {
-
-    }
-
-    public void addActorSystem(Actor a) {
-
-    }
-
-    public void removeProductionSystem(String name) {
-
-    }
-
-    public void removeActorSystem(String name) {
-
-    }
-
-    public void updateProduction(Production p) {
-
-    }
-
-    public void updateActor(Actor a) {
-
-    }
-
     @Override
     public int calculateExperience() {
         return 0;
+    }
+
+    @Override
+    public void update(String notification) {
+
     }
 }

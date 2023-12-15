@@ -6,20 +6,25 @@ import java.util.SortedSet;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import lombok.Getter;
 import org.helper.ProductionDeserializer;
+import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = Movie.class, name = "Movie"),
-        @JsonSubTypes.Type(value = Series.class, name = "Series"),
-        @JsonSubTypes.Type(value = Episode.class, name = "Episode"),
-        // Add more types if needed
-})
-@JsonTypeName("Production")
+@Getter
+//@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+//@JsonSubTypes({
+//        @JsonSubTypes.Type(value = Movie.class, name = "Movie"),
+//        @JsonSubTypes.Type(value = Series.class, name = "Series"),
+//        @JsonSubTypes.Type(value = Episode.class, name = "Episode"),
+//})
+//@JsonTypeName("Production")
+@Data
 public abstract class Production implements Comparable<Object> {
+    ///*****************
     protected String title;//*
-    private String types;/////
+    private String type;/////
     protected List<String> directors;//*
     protected List<String> actors;//*
     protected List<Genre> genres;//*
@@ -40,7 +45,7 @@ public abstract class Production implements Comparable<Object> {
         this.description = null;
         this.averageRating = 0;
         this.plot = null;
-        this.types = null;
+        this.type = null;
     }
     public Production(String title, List<String> directors, List<String> actors, List<Genre> genres,
                       List<Rating> ratings, String description) {
@@ -51,10 +56,11 @@ public abstract class Production implements Comparable<Object> {
         this.ratings = ratings;
         this.description = description;
         this.calculateAverageRating();
+        this.plot = null;
+        this.type = null;
 
     }
 
-    // Method to calculate the average rating
     private void calculateAverageRating() {
         if (ratings != null && !ratings.isEmpty()) {
             double sum = 0;
@@ -67,58 +73,24 @@ public abstract class Production implements Comparable<Object> {
         }
     }
 
-    // Abstract method to display information specific to each subclass
     public abstract void displayInfo();
-
-    // Method required for sorting productions based on title
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(@NotNull Object o) {
         if (o instanceof Production otherProduction) {
             return this.title.compareTo(otherProduction.title);
         }
-        return 0; // Handle other cases as needed
+        return 0;
     }
 
     public void addRating(Rating rating) {
+//        ratings.add(rating);
+//        calculateAverageRating();
     }
 
     public void removeReviewsByUser(Object username) {
-    }
-    ///*****************
-    public String getTitle() {
-        return title;
-    }
-
-    public String getTypes() {
-        return types;
-    }
-
-    public List<String> getDirectors() {
-        return directors;
-    }
-
-    public List<String> getActors() {
-        return actors;
-    }
-
-    public List<Genre> getGenres() {
-        return genres;
-    }
-
-    public List<Rating> getRatings() {
-        return ratings;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public double getAverageRating() {
-        return averageRating;
+//        ratings.removeIf(rating -> rating.getUsername().equals(username));
+//        calculateAverageRating();
     }
 
 
-    public String getPlot() {
-        return plot;
-    }
 }

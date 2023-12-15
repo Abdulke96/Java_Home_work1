@@ -1,13 +1,12 @@
 package org.example;
 
 import java.util.List;
-
+import lombok.*;
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class Movie extends Production {
-    private final String duration;  // Duration of the movie in minutes
-    private final int releaseYear;  // Year of release for the movie
-    // Add any other optional details specific to a Movie
-
-    // Constructor
+    private final String duration;
+    private final int releaseYear;
     public Movie() {
         super();
         this.duration = null;
@@ -20,16 +19,6 @@ public class Movie extends Production {
         this.releaseYear = releaseYear;
     }
 
-    // Getter methods for duration and releaseYear
-    public String getDuration() {
-        return duration;
-    }
-
-    public int getReleaseYear() {
-        return releaseYear;
-    }
-
-    // Override displayInfo method to include Movie-specific details
     @Override
     public void displayInfo() {
         System.out.println("Movie Title: " + title);
@@ -40,6 +29,5 @@ public class Movie extends Production {
         System.out.println("Duration: " + duration + " minutes");
         System.out.println("Release Year: " + releaseYear);
         System.out.println("Average Rating: " + averageRating);
-        // Include any other specific details for Movie
     }
 }

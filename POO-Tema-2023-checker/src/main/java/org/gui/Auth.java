@@ -1,5 +1,7 @@
 package org.gui;
 
+import lombok.Getter;
+import org.example.IMDB;
 import org.example.User;
 
 import javax.swing.*;
@@ -8,16 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Auth extends JFrame implements ActionListener {
-    public String getUserText() {
-        return userText;
-    }
 
-    public String getPwdText() {
-        return pwdText;
-    }
-
+    @Getter
     private String userText;
-    private String pwdText;
     Container container = getContentPane();
     JLabel userLabel = new JLabel("EMAIL");
     JLabel welcomeLabel = new JLabel("Welcome back! enter your credentials!");
@@ -51,14 +46,7 @@ public class Auth extends JFrame implements ActionListener {
     }
 
     public void addComponentsToContainer() {
-        container.add(welcomeLabel);
-        container.add(userLabel);
-        container.add(passwordLabel);
-        container.add(userTextField);
-        container.add(passwordField);
-        container.add(showPassword);
-        container.add(loginButton);
-        container.add(resetButton);
+        IMDB.addToContainer(welcomeLabel, userLabel, passwordLabel, userTextField, passwordField, showPassword, loginButton, resetButton, container);
     }
 
     public void addActionEvent() {
@@ -81,7 +69,7 @@ public class Auth extends JFrame implements ActionListener {
         if (e.getSource() == loginButton) {
 
             userText = userTextField.getText();
-            pwdText = new String(passwordField.getPassword());
+            String pwdText = new String(passwordField.getPassword());
 
         }
         if (e.getSource() == resetButton) {

@@ -5,14 +5,19 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 import java.util.Map;
-import org.helper.SeriesSeasonsDeserializer;
-public class Series extends Production {
-    private final int releaseYear;  // Year of release for the series
-    private final int numSeasons;  // Number of seasons in the series
-    @JsonDeserialize(using = SeriesSeasonsDeserializer.class)
-    private final Map<String, List<Episode>> seasons;  // Map of season names to a list of episodes
 
-    // Constructor
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import org.helper.SeriesSeasonsDeserializer;
+@EqualsAndHashCode(callSuper = true)
+@Data
+public class Series extends Production {
+    private final int releaseYear;
+    private final int numSeasons;
+    @JsonDeserialize(using = SeriesSeasonsDeserializer.class)
+    private final Map<String, List<Episode>> seasons;
+
     public Series() {
         super();
         this.releaseYear = 0;
@@ -28,21 +33,6 @@ public class Series extends Production {
         this.seasons = seasons;
     }
 
-    // Getter methods for releaseYear and numberOfSeasons
-    public int getReleaseYear() {
-        return releaseYear;
-    }
-
-    public int getNumSeasons() {
-        return numSeasons;
-    }
-
-    // Getter method for seasons
-    public Map<String, List<Episode>> getSeasons() {
-        return seasons;
-    }
-
-    // Override displayInfo method to include Series-specific details
     @Override
     public void displayInfo() {
         System.out.println("Series Title: " + title);
@@ -54,19 +44,15 @@ public class Series extends Production {
         System.out.println("Number of Seasons: " + numSeasons);
         System.out.println("Average Rating: " + averageRating);
 
-        // Display details for each season and its episodes
         for (Map.Entry<String, List<Episode>> entry : seasons.entrySet()) {
             String seasonName = entry.getKey();
             List<Episode> episodes = entry.getValue();
 
             System.out.println("Season: " + seasonName);
-
-            // Display details for each episode in the season
             for (Episode episode : episodes) {
                 episode.displayInfo();
             }
         }
-        // Include any other specific details for Series
     }
 }
 

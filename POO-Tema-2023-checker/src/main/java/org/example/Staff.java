@@ -2,31 +2,27 @@ package org.example;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.helper.ContributionsHandler;
 
 import java.util.List;
 import java.util.SortedSet;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
 public abstract class Staff<T extends Comparable<T>> extends User<T> implements StaffInterface {
-    public List<Request> getAssignedRequests() {
-        return assignedRequests;
-    }
-
-    public SortedSet<T> getContributions() {
-        return contributions;
-    }
 
     private List<Request> assignedRequests;
     @JsonDeserialize(using = ContributionsHandler.class)
-    public SortedSet<T> contributions;  // Assuming Object can be Movie or Actor
-    // Constructor
-//    public Staff(String fullName) {
-//        super(fullName);
-//        this.assignedRequests = null;
-//        this.contributions = null;
-//
-//        // Initialize assignedRequests and addedItems as needed
-//    }
+    public SortedSet<T> contributions;
+    public Staff(String fullName) {
+        super(fullName);
+        this.assignedRequests = null;
+        this.contributions = null;
+
+    }
     public void addProductionSystem(Production p){
 
     }

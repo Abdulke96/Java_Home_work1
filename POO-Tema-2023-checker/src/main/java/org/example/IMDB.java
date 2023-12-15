@@ -7,11 +7,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.constants.ApplicationFlow;
+import org.constants.UserMode;
+import org.gui.ApplicationFlowGUI;
 import org.helper.ActorDeserializer;
 import org.helper.ProductionDeserializer;
-import org.helper.Constants;
+import org.constants.Constants;
 
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -20,16 +27,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import org.gui.Auth;
-
+import lombok.*;
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class IMDB  extends JFrame {
     private static IMDB instance = null;
-   private List<User<?>> users;  // User is a base class for Regular, Contributor, and Admin
-    public List<Actor> actors; // Actor is a base class for Actor and Director
-   private List<Request> requests; // Request is a base class for AddProductionRequest and RemoveProductionRequest
-    public List<Production> productions;  // Assuming Production is a base class for Movies and Series
-    private User<?> currentUser;  // To keep track of the currently authenticated user
-    // Constructor
+    private List<User<?>> users;
+    private List<Actor> actors;
+    private List<Request> requests;
+    private List<Production> productions;
+    private User<?> currentUser;
    private IMDB(List<User<?>> users, List<Actor> actors, List<Request> requests, List<Production> productions) { this.users = (users != null) ? users : new ArrayList<>();
        this.actors = (actors != null) ? actors : new ArrayList<>();
        this.requests = (requests != null) ? requests : new ArrayList<>();
@@ -41,126 +48,95 @@ public class IMDB  extends JFrame {
         }
         return instance;
     }
-
-
-    // Method to run the application
     public void run() {
         loadDataFromJsonFiles();
-        authenticateUser();
-        startApplicationFlow();
+        System.out.println(this.users.get(0).getEmail());
+        System.out.println(this.users.get(0).getPassword());
+       int mode = UserMode.chooseUserMode();
+      switch (mode) {
+            case 1 -> runCli();
+            case 2 -> runGui();
+            case 3 -> System.exit(0);
+        }
     }
-    // Method to load data from JSON files
+
+    public void runCli() {
+       loadDataFromJsonFiles();
+       authenticateUser();
+       startApplicationFlow();
+
+    }
+    public void runGui() {
+        authenticateGUIUser();
+    }
     private void loadDataFromJsonFiles()  {
         try {
-            // Load users from users.json
             ObjectMapper objectMapper = new ObjectMapper();
             JavaTimeModule javaTimeModule = new JavaTimeModule();
            javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
             objectMapper.registerModule(javaTimeModule);
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-           // System.out.println("readig from file"+ Constants.account);
             File usersFile = new File (Constants.account);
             User<?>[] loadedUsers = objectMapper.readValue(usersFile, User[].class);
             this.users = List.of(loadedUsers);
-//           System.out.println("Users loaded successfully.");
-//            System.out.println("email: " + users.get(0).getEmail());
-//            System.out.println("password: " + users.get(0).getPassword());
-            // Load actors from actors.json
-           // System.out.println("readig from file"+ Constants.actors);
+
             SimpleModule module = new SimpleModule();
             module.addDeserializer(Actor.class, new ActorDeserializer());
             objectMapper.registerModule(module);
             File actorsFile = new File(Constants.actors);
             Actor[] loadedActors = objectMapper.readValue(actorsFile, Actor[].class);
             this.actors = List.of(loadedActors);
-//            System.out.println("Actors loaded successfully.");
-//            System.out.println("name"+ actors.get(0).getName());
-//            System.out.println("performanace: " + actors.get(0).getPerformances() );
 
-            //System.out.println("readig from file"+ Constants.requests);
-            // Load requests from requests.json
+
             File requestsFile = new File(Constants.requests);
             Request[] loadedRequests = objectMapper.readValue(requestsFile, Request[].class);
             this.requests = List.of(loadedRequests);
-//            System.out.println("Requests loaded successfully.");
-//            System.out.println("email: " + requests.get(0).getType());
-//          // Load productions from production.json
-//            System.out.println("readig from file"+ Constants.production);
             SimpleModule production = new SimpleModule();
             production.addDeserializer(Production.class, new ProductionDeserializer());
             objectMapper.registerModule(production);
             File productionsFile = new File(Constants.production);
             Production[] loadedProductions = objectMapper.readValue(productionsFile, Production[].class);
             this.productions = List.of(loadedProductions);
-//            System.out.println("Productions loaded successfully.");
-//            System.out.println("email: " + productions.get(0).getTitle());
 
         } catch (IOException e) {
             System.out.println("Error loading data from JSON files: " + e.getMessage());
         }
     }
 
-    // Method to authenticate the user
     private void authenticateUser() {
         System.out.println("Welcome back! Enter your credentials!");
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("email: ");
-        String username = "aa"; //scanner.nextLine();
-        System.out.print("password: ");
-        String password = "skkss";//scanner.nextLine();
 
-        // Perform authentication logic based on the provided username and password
-        this.currentUser = authenticate(username, password);
-        if (this.currentUser == null) {
-            System.out.println("Authentication failed. Exiting the application.");
-          // authenticateUser();
-        } else {
-            System.out.println("Authentication successful. Welcome, " + currentUser.getUsername() + "!");
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.print("email: ");
+            String username = scanner.nextLine();
+            System.out.print("password: ");
+            String password = scanner.nextLine();
+
+            try {
+                this.currentUser = authenticate(username, password);
+                if (this.currentUser != null) {
+                    System.out.println("Authentication successful. Welcome, " + currentUser.getUsername() + "!");
+                    break;
+                } else {
+                    System.out.println("Authentication failed. Retry.");
+                }
+            } catch (Exception e) {
+                System.out.println("Error during authentication: " + e.getMessage());
+            }
         }
     }
 
-    // Method to start the application flow based on the user's role
     private void startApplicationFlow() {
         if (currentUser instanceof Admin) {
-            adminFlow();
+            ApplicationFlow.adminFlow();
         } else if (currentUser instanceof Contributor) {
-            contributorFlow();
+            ApplicationFlow.contributorFlow();
         } else if (currentUser instanceof Regular) {
-            regularFlow();
+            ApplicationFlow.regularFlow();
         }
     }
 
-    // Methods to manage choices for each user role
-    private void adminFlow() {
-        System.out.println("Admin flow: Manage system data and requests");
-        // Implementation for admin flow goes here
-    }
-
-    private void contributorFlow() {
-        System.out.println("Welcome back user " + currentUser.getEmail() + "!");
-        System.out.println("Username: " + currentUser.getUsername());
-        System.out.println("User experience: " + currentUser.getExperience());
-        System.out.println("Choose an Action:");
-        System.out.println("1) View productions details");
-        System.out.println("2) view actors details");
-        System.out.println("3) view notifications");
-        System.out.println("4) search for actors/movies/series");
-        System.out.println("5) add/Delete actors/movies/series to/from favorites");
-        System.out.println("6) update movie details");
-        System.out.println("7) update actor details");
-        System.out.println("8) solve requests");
-        System.out.println("9) logout");
-
-        // Implementation for contributor flow goes here
-    }
-
-    private void regularFlow() {
-        System.out.println("Regular user flow: Explore and interact with the system");
-        // Implementation for regular user flow goes here
-
-    }
-
-    // Method to perform authentication logic
     private User<?> authenticate(String email, String password) {
         for (User<?> user : users) {
             if (user.getEmail().equals(email)) {
@@ -175,9 +151,9 @@ public class IMDB  extends JFrame {
         return null;
     }
     public static void main(String[] args) throws IOException {
-        // Create a new instance of the IMDB class and run the application
         IMDB imdb = IMDB.getInstance();
         imdb.run();
+
 
     }
     public static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
@@ -188,13 +164,91 @@ public class IMDB  extends JFrame {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
             try {
-                // Try to parse as date-time
                 return LocalDateTime.parse(dateString, dateTimeFormatter);
             } catch (Exception e) {
-                // If parsing as date-time fails, try to parse as date
                 return LocalDate.parse(dateString, dateFormatter).atStartOfDay();
             }
         }
+    }
+    //GUI utility methods
+    public void authenticateGUIUser() {
+        JFrame frame = new JFrame("Login Form");
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        screenSize.height = screenSize.height/2;
+        screenSize.width = screenSize.width/2;
+        frame.setMinimumSize(new Dimension(300, 200));
+        frame.setSize(screenSize.width, screenSize.height);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(true);
+        frame.setLocation(screenSize.width/2, screenSize.height/2);
+        frame.setLayout(null);
+
+        JLabel welcomeLabel = new JLabel("Welcome to IMDB");
+        welcomeLabel.setBounds(screenSize.width/2 ,screenSize.height/2, screenSize.width/2, screenSize.height/2);
+        JLabel userLabel = new JLabel("Email");
+        userLabel.setBounds(screenSize.width/2-100, screenSize.height/2-100, 100, 30);
+        JLabel passwordLabel = new JLabel("Password");
+        passwordLabel.setBounds(screenSize.width/2-100, screenSize.height/2-50, 100, 30);
+        JTextField userTextField = new JTextField();
+        userTextField.setBounds(screenSize.width/2, screenSize.height/2-100, 150, 30);
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setBounds(screenSize.width/2, screenSize.height/2-50, 150, 30);
+        JCheckBox showPassword = new JCheckBox("Show Password");
+        showPassword.setBounds(screenSize.width/2, screenSize.height/2-20, 150, 30);
+        JButton loginButton = new JButton("Login");
+        loginButton.setBounds(screenSize.width/2-100, screenSize.height/2, 100, 30);
+        JButton resetButton = new JButton("Reset");
+        resetButton.setBounds(screenSize.width/2, screenSize.height/2, 100, 30);
+
+        Container container = frame.getContentPane();
+        addToContainer(welcomeLabel, userLabel, passwordLabel, userTextField, passwordField, showPassword, loginButton, resetButton, container);
+
+        loginButton.addActionListener(e -> {
+            String userText;
+            userText = userTextField.getText();
+            String pwdText = new String(passwordField.getPassword());
+            try {
+                this.currentUser = authenticate(userText, pwdText);
+                if (this.currentUser != null) {
+                   // JOptionPane.showMessageDialog(null, "Authentication successful. Welcome, " + currentUser.getUsername() + "!");
+                    frame.dispose();
+                   new ApplicationFlowGUI(currentUser);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Authentication failed. Retry.");
+                }
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(null, "Error during authentication: " + exception.getMessage());
+            }
+        });
+
+        resetButton.addActionListener(e -> {
+            userTextField.setText("");
+            passwordField.setText("");
+        });
+
+        showPassword.addActionListener(e -> {
+            if (showPassword.isSelected()) {
+                passwordField.setEchoChar((char) 0);
+            } else {
+                passwordField.setEchoChar('*');
+            }
+        });
+
+
+        frame.setVisible(true);
+
+
+    }
+
+    public static void addToContainer(JLabel welcomeLabel, JLabel userLabel, JLabel passwordLabel, JTextField userTextField, JPasswordField passwordField, JCheckBox showPassword, JButton loginButton, JButton resetButton, Container container) {
+        container.add(welcomeLabel);
+        container.add(userLabel);
+        container.add(passwordLabel);
+        container.add(userTextField);
+        container.add(passwordField);
+        container.add(showPassword);
+        container.add(loginButton);
+        container.add(resetButton);
     }
 
 

@@ -3,6 +3,12 @@ package org.example;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.Data;
+import lombok.Getter;
+import org.hamcrest.Factory;
+
+import java.security.PublicKey;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +21,14 @@ import java.util.TreeSet;
         @JsonSubTypes.Type(value = Contributor.class, name = "Contributor"),
         @JsonSubTypes.Type(value = Admin.class, name = "Admin")
 })
-public abstract class User<T extends Comparable<T>>{
+@Data
+public abstract class User<T extends Comparable<T>> implements Observer{
+    @Data
     private static class Information {
         private Credentials credentials;
         private String name;
         private String gender;
         private int age;
-
         private LocalDateTime birthDate;
         private String country;
         private Information() {
@@ -41,40 +48,6 @@ public abstract class User<T extends Comparable<T>>{
            this.birthDate = builder.birthDate;
            this.country = builder.country;
        }
-
-        // Getter methods for Information class
-        public Credentials getCredentials() {
-            return credentials;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getGender() {
-            return gender;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public LocalDateTime getBirthDate() {
-            return birthDate;
-        }
-        public String getCountry(){
-            return country;
-        }
-        public String toString() {
-            return "Information{" +
-                    "credentials=" + credentials +
-                    ", name='" + name + '\'' +
-                    ", gender='" + gender + '\'' +
-                    ", age=" + age +
-                    ", birthDate=" + birthDate +
-                    ", country='" + country + '\'' +
-                    '}';
-        }
        public static class InformationBuilder {
             private Credentials credentials;
             private String name;
@@ -83,11 +56,12 @@ public abstract class User<T extends Comparable<T>>{
             private LocalDateTime birthDate;
             private String country;
             public InformationBuilder(){
+
                 this.credentials = new Credentials();
                 this.name = null;
                 this.gender = null;
                 this.age = 0;
-                this.birthDate = LocalDateTime.now();
+                this.birthDate = null;
                 this.country = null;
 
             }
@@ -129,43 +103,24 @@ public abstract class User<T extends Comparable<T>>{
        }
 
     }
-
-    public List<String> getProductionsContribution() {
-        return productionsContribution;
-    }
-
-    public List<String> getActorsContribution() {
-        return actorsContribution;
-    }
-
-    //********************
+    @Getter
     private final List<String> productionsContribution;
+    @Getter
     private final List<String> actorsContribution;
+    @Getter
     private final List<String> favoriteProductions;
 
-    public List<String> getFavoriteProductions() {
-        return favoriteProductions;
-    }
-
-    public List<String> getFavoriteActors() {
-        return favoriteActors;
-    }
-
+    @Getter
     private final List<String> favoriteActors;
-    //*********************
+    @Getter
     private AccountType userType;
     private final String username;
     private Information information;
+    @Getter
     private int experience;
+    @Getter
     private List<String> notifications;
   public SortedSet<T> favorites;  // Assuming Object can be Movie, Series, or Actor
-    public AccountType getUserType() {
-        return userType;
-    }
-
-    public List<String> getNotifications() {
-        return notifications;
-    }
 
 
     // Constructor
@@ -184,16 +139,30 @@ public abstract class User<T extends Comparable<T>>{
 
 
     }
+    public User(String fullName) {
+        this.username = generateUniqueUsername(fullName);
+        this.experience = 0;
+        this.favorites = new TreeSet<>();
+        this.information = new Information.InformationBuilder().build();
+        this.userType = null;
+        this.notifications = new ArrayList<>();
+        this.productionsContribution = new ArrayList<>();
+        this.actorsContribution = new ArrayList<>();
+        this.favoriteActors = new ArrayList<>();
+        this.favoriteProductions = new ArrayList<>();
 
-    // Method to generate a unique username
+
+
+    }
+
     private String generateUniqueUsername(String fullName) {
         return ""; // Replace with actual implementation
     }
-
-    // Methods for adding/removing favorites
-    public void addToFavorites(Object favorite) {
-        favorites.add((T) favorite);
+    public void addToFavorites(T favorite) {
+        favorites.add(favorite);
     }
+
+
 
     public void removeFromFavorites(Object favorite) {
         favorites.remove(favorite);
@@ -214,13 +183,14 @@ public abstract class User<T extends Comparable<T>>{
     public Object getEmail() {
         return information.getCredentials().getEmail();
     }
-
+    @Override
+    public void update(String notification) {
+        notifications.add(notification);
+    }
     protected Production[] getFavorites() {
         return new Production[0];
     }
-    public int getExperience() {
-        return experience;
-    }
+
     public Information getInformation() {
         return new Information.InformationBuilder().build();
     }
