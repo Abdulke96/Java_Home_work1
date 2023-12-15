@@ -11,27 +11,65 @@ public  class  ApplicationFlow {
         System.out.println("Welcome back user " + currentUser.getEmail() + "!");
         System.out.println("Username: " + currentUser.getUsername());
         System.out.println("User experience: " + currentUser.getExperience());
+
+
         System.out.println("Choose an Action:");
-        System.out.println("1) View productions details"); // for all
-        System.out.println("2) View actors details"); // for all
-        System.out.println("3) View notifications"); // for all
-        System.out.println("4) Search for actors/movies/series"); // for all
-        System.out.println("5) Add/Delete actors/movies/series to/from favorites"); // for all
-        System.out.println("6) Add/Delete user");//only for admin
-        System.out.println("7)Create/Delete a request"); // for regular and contributor
-        System.out.println("8) Add/Delete actor/movie/series/ from system"); // for admin and contributor
-        System.out.println("9) Update movie details"); // for admin and contributor
-        System.out.println("10) Update actor details"); // for admin and contributor
-        System.out.println("11) Solve requests");// for admin and contributor
-        System.out.println("12) Logout"); // for all
+       int[] code = Constants.displayOption(currentUser);
         System.out.println("Enter your choice:");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
-        if(choice ==1 ){
-            System.out.println("favowrite" +currentUser.favorites);
-            System.out.println(" exprience"+currentUser.getExperience());
-            System.out.println("production conntribution"+currentUser.getProductionsContribution());
+        while ( !Constants.contains(code,choice)){
+            System.out.println("Invalid choice");
+            System.out.println("Enter your choice:");
+            choice = scanner.nextInt();
         }
+        switch (choice) {
+            case 1:
+                System.out.println("You chose to add a production");
+                break;
+            case 2:
+                System.out.println("You chose to remove a production");
+                break;
+            case 3:
+                System.out.println("You chose to update a production");
+                break;
+            case 4:
+                System.out.println("You chose to create a request");
+                break;
+            case 5:
+                System.out.println("You chose to remove a request");
+                break;
+            case 6:
+                System.out.println("You chose to resolve requests");
+                break;
+            case 7:
+                System.out.println("You chose to logout");
+                break;
+                case 8:
+                System.out.println("You chose to view productions details");
+                break;
+            case 9:
+                System.out.println("You chose to view actors details");
+                break;
+            case 10:
+                System.out.println("You chose to view notifications");
+                break;
+            case 11:
+                System.out.println("You chose to search for actors/movies/series");
+                break;
+            case 12:
+                System.out.println("You chose to add/delete actors/movies/series to/from favorites");
+                break;
+            case 13:
+                System.out.println("You chose to create/delete a request");
+                break;
+            case 14:
+                System.exit(0);
+            default:
+                System.out.println("Invalid choice");
+                break;
+        }
+
 
         // Implementation for contributor flow goes here
     }
