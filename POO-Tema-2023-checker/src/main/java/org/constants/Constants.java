@@ -78,7 +78,7 @@ public class Constants {
             "4) Search for actors/movies/series", // for all
             "5) Add/Delete actors/movies/series to/from favorites",
             "7)Create/Delete a request",
-            "8) Adding/Deleting a review for a product.",
+            "8) Add/Delete a review for a product.",
             "13) Logout",
             "14) Exit"
     );

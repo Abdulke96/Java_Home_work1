@@ -37,7 +37,8 @@ public class IMDB  extends JFrame {
     private List<Request> requests;
     private List<Production> productions;
     private User<?> currentUser;
-   private IMDB(List<User<?>> users, List<Actor> actors, List<Request> requests, List<Production> productions) { this.users = (users != null) ? users : new ArrayList<>();
+    private IMDB(List<User<?>> users, List<Actor> actors, List<Request> requests, List<Production> productions) {
+       this.users = (users != null) ? users : new ArrayList<>();
        this.actors = (actors != null) ? actors : new ArrayList<>();
        this.requests = (requests != null) ? requests : new ArrayList<>();
        this.productions = (productions != null) ? productions : new ArrayList<>();
@@ -52,6 +53,7 @@ public class IMDB  extends JFrame {
         loadDataFromJsonFiles();
         System.out.println(this.users.get(0).getEmail());
         System.out.println(this.users.get(0).getPassword());
+        System.out.println(this.users.get(0).getNotifications());
        int mode = UserMode.chooseUserMode();
       switch (mode) {
             case 1 -> runCli();

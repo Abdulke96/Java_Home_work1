@@ -24,9 +24,17 @@ public class Actor implements Comparable<Object> {
 
     @Override
     public int compareTo(@NotNull Object o) {
-        if (o == null) {
-            throw new NullPointerException();
-        }
+        assert this.name != null;
         return this.name.compareTo(((Actor) o).name);
+    }
+    public void displayInfo(){
+        if (getName() != null)
+            System.out.println("Actor: " + getName());
+
+       if (getPerformances() != null)
+           System.out.println("Performances :\n" + getPerformances());
+       if (getBiography() != null)
+        System.out.println("biography: " + getBiography());
+
     }
 }

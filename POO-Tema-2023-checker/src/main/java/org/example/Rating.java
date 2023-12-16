@@ -21,9 +21,9 @@ public class Rating implements Subject {
         this.comment = comment;
     }
     public void displayInfo() {
-        System.out.println("Username: " + username);
-        System.out.println("Score: " + rating);
-        System.out.println("Comments: " + comment);
+        System.out.println("    Username: " + username);
+        System.out.println("    Score: " + rating);
+        System.out.println("    Comments: " + comment);
     }
 
     public double getValue() {

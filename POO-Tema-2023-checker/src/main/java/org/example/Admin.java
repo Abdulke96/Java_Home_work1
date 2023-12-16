@@ -17,6 +17,7 @@ public class Admin<T> extends Staff  implements ExperienceStrategy{
 
     public void addProduction(Production production) {
 
+
     }
 
     public void removeProduction(Production production) {
@@ -88,15 +89,16 @@ public class Admin<T> extends Staff  implements ExperienceStrategy{
     public int calculateExperience() {
         return 0;
     }
-
-} class UserFactory {
-    @SuppressWarnings("unchecked")
-    public static <T extends User<?>> T create(String fullName, AccountType accountType) {
-        return switch (accountType) {
-            case Regular -> (T) new Regular<T>(fullName);
-            case Contributor -> (T) new Contributor<T>(fullName);
-            case Admin -> (T) new Admin<T>(fullName);
-        };
+   public static class UserFactory {
+        @SuppressWarnings("unchecked")
+        public static <T extends User<?>> T create(String fullName, AccountType accountType) {
+            return switch (accountType) {
+                case Regular -> (T) new Regular<T>(fullName);
+                case Contributor -> (T) new Contributor<T>(fullName);
+                case Admin -> (T) new Admin<T>(fullName);
+            };
+        }
     }
+
 }
 

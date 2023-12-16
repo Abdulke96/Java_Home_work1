@@ -2,13 +2,9 @@ package org.example;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Data;
 import lombok.Getter;
-import org.hamcrest.Factory;
 
-import java.security.PublicKey;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,9 +154,13 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     private String generateUniqueUsername(String fullName) {
         return ""; // Replace with actual implementation
     }
-    public void addToFavorites(T favorite) {
-        favorites.add(favorite);
+    public void addToFavoriteAtors(Actor favorite) {
+        favoriteActors.add(favorite.getName());
     }
+    public void addToFavoriteProductions(Production favorite) {
+        favoriteProductions.add(favorite.getTitle());
+    }
+
 
 
 

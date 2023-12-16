@@ -70,7 +70,7 @@ public class ActorDeserializer extends StdDeserializer<Actor> {
             return old;
         }
         public String toString() {
-            return "{key='" + key + "', value='" + value + "'}";
+            return "\ntitle: "+ key + "\ntype: " + value + "\n";
         }
     }
 }

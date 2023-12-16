@@ -12,22 +12,29 @@ public class Movie extends Production {
         this.duration = null;
         this.releaseYear = 0;
     }
-    public Movie(String title, List<String> directors, List<String> actors, List<Genre> genres,
+    public Movie(String title,String type, List<String> directors, List<String> actors, List<Genre> genres,
                  List<Rating> ratings, String description, String duration, int releaseYear) {
-        super(title, directors, actors, genres, ratings, description);
+        super(title,type, directors, actors, genres, ratings);
         this.duration = duration;
         this.releaseYear = releaseYear;
     }
 
     @Override
     public void displayInfo() {
-        System.out.println("Movie Title: " + title);
-        System.out.println("Directors: " + directors);
-        System.out.println("Actors: " + actors);
-        System.out.println("Genres: " + genres);
-        System.out.println("Description: " + description);
+        System.out.println("Title: " + title);
+        System.out.println("Type: "+ getType());
+        System.out.println("Directors: ");
+        displayDirectors();
+        System.out.println("Actors: ");
+        displayActor();
+        System.out.println("Genres: ");
+        displayGenres();
+        System.out.println("Ratings: ");
+        displayRatings();
+        System.out.println("Plot: " + getPlot() );
+        System.out.println("Average Rating: " + averageRating);
         System.out.println("Duration: " + duration + " minutes");
         System.out.println("Release Year: " + releaseYear);
-        System.out.println("Average Rating: " + averageRating);
+
     }
 }

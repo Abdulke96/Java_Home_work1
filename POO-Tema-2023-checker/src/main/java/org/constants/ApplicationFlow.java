@@ -1,7 +1,6 @@
 package org.constants;
 
-import org.example.IMDB;
-import org.example.User;
+import org.example.*;
 
 import java.util.Scanner;
 
@@ -25,41 +24,40 @@ public  class  ApplicationFlow {
          switch (choice) {
 
              case 1:
-                 System.out.println("You chose to add a production");
-
+                 viewProductionDetails();
                  break;
              case 2:
-                 System.out.println("You chose to remove a production");
+                viewActorsDetails();
                  break;
              case 3:
-                 System.out.println("You chose to update a production");
+                    viewNotifications();
                  break;
              case 4:
-                 System.out.println("You chose to create a request");
+                    searchForActorsMoviesSeries();
                  break;
              case 5:
-                 System.out.println("You chose to remove a request");
+                    addDeleteActorsMoviesSeriesToFavorites();
                  break;
              case 6:
-                 System.out.println("You chose to resolve requests");
+                    addDeleteUser();
                  break;
              case 7:
-                 System.out.println("You chose to logout");
+                 createDeleteRequest();
                  break;
              case 8:
-                 System.out.println("You chose to view productions details");
+                    addDeleteReview();
                  break;
              case 9:
-                 System.out.println("You chose to view actors details");
+                    addDeleteActorMovieSeriesFromSystem();
                  break;
              case 10:
-                 System.out.println("You chose to view notifications");
+                    updateMovieDetails();
                  break;
              case 11:
-                 System.out.println("You chose to search for actors/movies/series");
+                    updateActorDetails();
                  break;
              case 12:
-                 System.out.println("You chose to add/delete actors/movies/series to/from favorites");
+                    solveRequests();
                  break;
              case 13:
                  //IMDB.getInstance().run();
@@ -67,7 +65,6 @@ public  class  ApplicationFlow {
                  break;
              case 14:
                  System.exit(0);
-
              default:
                  System.out.println("Invalid choice");
                  break;
@@ -81,5 +78,163 @@ public  class  ApplicationFlow {
 
 
     }
+    public static void viewProductionDetails( ){
+        for (Production P : IMDB.getInstance().getProductions()){
+            System.out.println("\n======================================\n");
+            P.displayInfo();
+            System.out.println("\n======================================\n");
 
-}
+        }
+    }
+
+    public static void viewActorsDetails(){
+        for (Actor actor: IMDB.getInstance().getActors()){
+            System.out.println("\n======================================\n");
+            actor.displayInfo();
+            System.out.println("\n======================================\n");
+        }
+    }
+    public static void viewNotifications(){
+        for (String notification: IMDB.getInstance().getCurrentUser().getNotifications()){
+            System.out.println("\n======================================\n");
+            for (String note: notification.split("\n")){
+                System.out.println(note);
+            }
+            System.out.println("\n======================================\n");
+        }
+    }
+
+    public static void searchForActorsMoviesSeries(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the name of the actor/movie/series you want to search for:");
+        String name = scanner.nextLine();
+        for (Actor actor: IMDB.getInstance().getActors()){
+            if (actor.getName().equals(name)){
+                actor.displayInfo();
+            }
+        }
+        for (Production production: IMDB.getInstance().getProductions()){
+            if (production.getTitle().equals(name)){
+                production.displayInfo();
+            }
+        }
+    }
+
+    public static void addDeleteActorsMoviesSeriesToFavorites(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the name of the actor/movie/series you want to add/delete to/from favorites:");
+        String name = scanner.nextLine();
+        for (Actor actor: IMDB.getInstance().getActors()){
+            if (actor.getName().equals(name)){
+                if (IMDB.getInstance().getCurrentUser().getFavoriteActors().contains(actor)){
+                    IMDB.getInstance().getCurrentUser().getFavoriteActors().remove(actor);
+                    System.out.println("Actor removed from favorites");
+                }
+                else{
+                    IMDB.getInstance().getCurrentUser().addToFavoriteAtors(actor);
+                    System.out.println("Actor added to favorites");
+                }
+            }
+        }
+        for (Production production: IMDB.getInstance().getProductions()){
+            if (production.getTitle().equals(name)){
+                if (IMDB.getInstance().getCurrentUser().getFavoriteProductions().contains(production)){
+                    IMDB.getInstance().getCurrentUser().getFavoriteProductions().remove(production);
+                    System.out.println("Production removed from favorites");
+                }
+                else{
+                    IMDB.getInstance().getCurrentUser().addToFavoriteProductions(production);
+                    System.out.println("Production added to favorites");
+                }
+            }
+        }
+    }
+
+    public static void addDeleteUser() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the name of the user you want to add/delete:");
+//        String name = scanner.nextLine().trim();
+//        for (User<?> user: IMDB.getInstance().getUsers()){
+//            if (user.getUsername().equals(name)){
+//                if (IMDB.getInstance().getUsers().contains(user)){
+//                    IMDB.getInstance().removeUser(user);
+//                    System.out.println("User" + user.getUsername() + "removed");
+//                }
+//                else{
+////                   while (true){
+////                       System.out.println("Enter the type of the user you want to add:");
+////                       System.out.println("1) Admin");
+////                       System.out.println("2) Contributor");
+////                       System.out.println("3) Regular");
+////                       int choice = scanner.nextInt();
+////                       AccountType type = null;
+////                       switch (choice){
+////                           case 1:
+////                               type = AccountType.Admin;
+////                               break;
+////                           case 2:
+////                               type = AccountType.Contributor;
+////                               break;
+////                           case 3:
+////                               type = AccountType.Regular;
+////                               break;
+////                           default:
+////                               System.out.println("Invalid choice");
+////                               break;
+////                       }
+////                          if (type != null){
+////
+////                            IMDB.getInstance().getUsers().add(Admin.UserFactory.create(name,type));
+////                            System.out.println("User" + user.getUsername() + "added");
+////                            break;
+////                          }
+//                }
+//
+//        }
+//            }
+    }
+      public static void createDeleteRequest(){
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the name of the user you want to add/delete:");
+
+
+        }
+        public static void addDeleteReview(){
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the name of the user you want to add/delete:");
+
+
+        }
+
+        public static void addDeleteActorMovieSeriesFromSystem(){
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the name of the user you want to add/delete:");
+
+
+        }
+
+        public static void updateMovieDetails(){
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the name of the user you want to add/delete:");
+
+
+        }
+
+        public static void updateActorDetails(){
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the name of the user you want to add/delete:");
+
+
+        }
+
+        public static void solveRequests(){
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the name of the user you want to add/delete:");
+
+
+        }
+
+
+    }
+
+
