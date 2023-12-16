@@ -44,10 +44,11 @@ public class Series extends Production {
         System.out.println("Average Rating: " + averageRating);
         System.out.println("Release Year: " + releaseYear);
         System.out.println("Number of Seasons: " + numSeasons);
+        System.out.println("Seasons: ");
         for (Map.Entry<String, List<Episode>> entry : seasons.entrySet()) {
             String seasonName = entry.getKey();
             List<Episode> episodes = entry.getValue();
-            System.out.println("Season: " + seasonName);
+            System.out.println(seasonName);
             for (Episode episode : episodes) {
                 episode.displayInfo();
 

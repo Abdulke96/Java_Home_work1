@@ -113,7 +113,7 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     private final String username;
     private Information information;
     @Getter
-    private int experience;
+    private String experience;
     @Getter
     private List<String> notifications;
   public SortedSet<T> favorites;  // Assuming Object can be Movie, Series, or Actor
@@ -122,7 +122,7 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     // Constructor
     public User(){
         this.username =null;
-        this.experience = 0;
+        this.experience = null;
         this.favorites = new TreeSet<>();// Other initialization as needed
         this.information = new Information.InformationBuilder().build();
         this.userType = null;
@@ -137,7 +137,7 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     }
     public User(String fullName) {
         this.username = generateUniqueUsername(fullName);
-        this.experience = 0;
+        this.experience = null;
         this.favorites = new TreeSet<>();
         this.information = new Information.InformationBuilder().build();
         this.userType = null;

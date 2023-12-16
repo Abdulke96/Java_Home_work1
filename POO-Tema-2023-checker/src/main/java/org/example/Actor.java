@@ -28,13 +28,14 @@ public class Actor implements Comparable<Object> {
         return this.name.compareTo(((Actor) o).name);
     }
     public void displayInfo(){
-        if (getName() != null)
-            System.out.println("Actor: " + getName());
-
-       if (getPerformances() != null)
-           System.out.println("Performances :\n" + getPerformances());
-       if (getBiography() != null)
-        System.out.println("biography: " + getBiography());
-
+        System.out.println("Actor: "+ getName());
+        System.out.println("Performances: ");
+        if (performances!=null)
+            for (Map.Entry<String, String> entry : performances) {
+            System.out.println("    Title: "+entry.getKey());
+            System.out.println("    Type:  "+entry.getValue());
+            }
+        if(biography != null)
+            System.out.println("Biography: " + getBiography());
     }
 }

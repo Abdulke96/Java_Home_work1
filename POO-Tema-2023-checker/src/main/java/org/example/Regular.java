@@ -23,7 +23,7 @@ public class Regular<T> extends User implements RequestsManager, ExperienceStrat
     }
 
     public void addReview(Production production, int score, String comments) {
-        if (getExperience() > 0) {
+        if (getExperience() != null) {
             Rating rating = new Rating((String) getUsername(), score, comments);
             production.addRating(rating);
             updateExperience(1);
