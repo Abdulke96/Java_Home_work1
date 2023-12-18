@@ -1,7 +1,6 @@
 package org.gui;
 
 import org.constants.Constants;
-import org.example.IMDB;
 import org.example.User;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +9,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Semaphore;
 
 public class ApplicationFlowGUI extends JFrame {
     private final User<?> currentUser;
@@ -101,24 +99,63 @@ public class ApplicationFlowGUI extends JFrame {
         List<String > actions = Constants.displayOptionsGuide(currentUser);
         return showMenu(actionsMenu, actions);
     }
+    private JLabel recommendationLabel(){
+        JLabel recommendation = new JLabel("RECOMMENDATION");
+        recommendation.setBackground(Color.ORANGE);
+        recommendation.setFont(new Font("Arial", Font.BOLD, 40));
+        return recommendation;
+    }
+    private JPanel recommendUser(ImageIcon icon, String title, String description, String duration){
+        JPanel recommend = new JPanel(new GridLayout(1,2));
+        JPanel photo = new JPanel();
 
+        icon = new ImageIcon(getScaledImage(icon.getImage(), 400, 400));
+        photo.add(new JLabel(icon));
+
+        JPanel detail = new JPanel();
+        detail.setLayout(new GridLayout(3,1));
+        JLabel durationLabel = new JLabel(duration);
+        durationLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        detail.add(durationLabel);
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 26));
+        detail.add(titleLabel);
+        JTextArea descriptionLabel = new JTextArea(description);
+        descriptionLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        descriptionLabel.setLineWrap(true);
+        detail.add(descriptionLabel);
+
+
+        recommend.add(photo);
+        recommend.add(detail);
+
+        return recommend;
+
+    }
 
     private void createPhotoDisplayAndButtons() {
         photoLabel = new JLabel();
-        photoPanels = new JPanel(new FlowLayout());
-        //
+        photoPanels = new JPanel(new GridLayout(6,1));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
         photoPanels.setBounds(screenSize.width, screenSize.height,screenSize.width, screenSize.height );
-        photoPanels.setBackground(Color.DARK_GRAY);
-        JLabel note = new JLabel("recommendation");
-        note.setSize(40,40);
+
+
+        JLabel recommendation = recommendationLabel();
+        photoPanels.add(recommendation);
+
 
         ImageIcon icon1 = new ImageIcon(Constants.path+"imdb1.png");
-        JLabel rec = new JLabel(icon1);
-        photoPanels.add(note);
-        photoPanels.add(rec);
-        photoPanels.add(new JLabel("LLLLLLLLLLLLLLLLL"));
+        JPanel recommend = recommendUser(icon1, "film", "this iakakakakkakakakaakakkasaa  a foof fils", "23:50");
+        photoPanels.add(recommend);
+
+        JPanel recommend2 = recommendUser(icon1, "fip22lm", "this 22is  a foof fils", "23:250");
+        photoPanels.add(recommend2);
+        JPanel recommend3 = recommendUser(icon1, "fip22lm", "this 22is  a foof fils", "23:250");
+        photoPanels.add(recommend3);
+        JPanel recommend4 = recommendUser(icon1, "fip22lm", "this 22is  a foof fils", "23:250");
+        photoPanels.add(recommend4);
+        JPanel recommend5= recommendUser(icon1, "fip22lm", "this 22is  a foof fils", "23:250");
+        photoPanels.add(recommend5);
 
 
 
