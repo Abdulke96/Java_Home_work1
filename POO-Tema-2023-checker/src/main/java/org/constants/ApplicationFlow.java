@@ -131,7 +131,7 @@ public  class  ApplicationFlow {
                     System.out.println("Actor removed from favorites");
                 }
                 else{
-                    IMDB.getInstance().getCurrentUser().addToFavoriteAtors(actor);
+                    IMDB.getInstance().getCurrentUser().addToFavoriteActors(actor);
                     System.out.println("Actor added to favorites");
                 }
             }

@@ -20,7 +20,7 @@ public class Series extends Production {
         this.seasons = null;
     }
     public Series(String title, String type, List<String> directors, List<String> actors, List<Genre> genres,
-                  List<Rating> ratings, String description, int releaseYear, int numSeasons,
+                  List<Rating> ratings, int releaseYear, int numSeasons,
                   Map<String, List<Episode>> seasons) {
         super(title,type,directors,actors,genres,ratings);
         this.releaseYear = releaseYear;

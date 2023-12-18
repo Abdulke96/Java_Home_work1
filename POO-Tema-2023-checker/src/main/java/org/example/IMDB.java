@@ -174,10 +174,12 @@ public class IMDB  extends JFrame {
     }
     //GUI utility methods
     public void authenticateGUIUser() {
-        JFrame frame = new JFrame("Login Form");
+        //to be removed
+        this.currentUser = this.users.get(0);
+        new ApplicationFlowGUI(currentUser);
+// to me removed
+     JFrame frame = new JFrame("Login Form");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height/2;
-        screenSize.width = screenSize.width/2;
         frame.setMinimumSize(new Dimension(300, 200));
         frame.setSize(screenSize.width, screenSize.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

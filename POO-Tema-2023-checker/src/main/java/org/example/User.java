@@ -22,7 +22,9 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     @Data
     private static class Information {
         private Credentials credentials;
-        private String name;
+        //use
+        @Getter
+        private  String name;
         private String gender;
         private int age;
         private LocalDateTime birthDate;
@@ -111,19 +113,17 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     @Getter
     private AccountType userType;
     private final String username;
+    @Getter
     private Information information;
     @Getter
     private String experience;
     @Getter
     private List<String> notifications;
-  public SortedSet<T> favorites;  // Assuming Object can be Movie, Series, or Actor
-
-
-    // Constructor
+  public SortedSet<T> favorites;
     public User(){
         this.username =null;
         this.experience = null;
-        this.favorites = new TreeSet<>();// Other initialization as needed
+        this.favorites = new TreeSet<>();
         this.information = new Information.InformationBuilder().build();
         this.userType = null;
         this.notifications = new ArrayList<>();
@@ -154,7 +154,7 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     private String generateUniqueUsername(String fullName) {
         return ""; // Replace with actual implementation
     }
-    public void addToFavoriteAtors(Actor favorite) {
+    public void addToFavoriteActors(Actor favorite) {
         favoriteActors.add(favorite.getName());
     }
     public void addToFavoriteProductions(Production favorite) {
@@ -191,8 +191,27 @@ public abstract class User<T extends Comparable<T>> implements Observer{
         return new Production[0];
     }
 
-    public Information getInformation() {
-        return new Information.InformationBuilder().build();
+    // for use
+
+    public String getName(){
+        return  getInformation().getName();
     }
+    public String getGender(){
+        return getInformation().getGender();
+
+    }
+    public String getCountry(){
+        return getInformation().getCountry();
+
+    }
+    public int getAge(){
+        return getInformation().getAge();
+
+    }
+
+    public LocalDateTime getBirthDate(){
+        return getInformation().getBirthDate();
+    }
+
 
 }

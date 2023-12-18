@@ -5,6 +5,8 @@ import org.example.Contributor;
 import org.example.User;
 
 import java.io.File;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +25,27 @@ public class Constants {
     public static final String actors = findFile(actorsPath1, actorsPath2);
     public static final String production = findFile(productionPath1, productionPath2);
     public static final String requests = findFile(requestsPath1, requestsPath2);
+    public static final String path1 = "POO-Tema-2023-checker/src/main/resources/assets/";
+    public static final String path2 = "src/test/resources/testResources/assets/";
+    public static final String path = findpath(path1, path2);
+    public static String findpath(String path1, String path2){
+        try{
+            File file = new File(path1 +"imdb1.png");
+            if(file.exists()){
+                return path1;
+            }
+            else{
+                if (new File(path2+"imdb1.png").exists()){
+                    return path2;
+                }
 
+            }
+        }
+        catch(Exception e){
+            return path2;
+        }
+        return path1;
+    }
     public static String findFile(String path1, String path2){
         try{
             File file = new File(path1);
@@ -47,12 +69,12 @@ public class Constants {
             "3) View notifications", // for all
             "4) Search for actors/movies/series", // for all
             "5) Add/Delete actors/movies/series to/from favorites",
-             "6) Add/Delete user",
-             "9) Add/Delete actor/movie/series/ from system",
-             "10) Update movie details", // for admin and contributor
-             "11) Update actor details", // for admin and contributor
-             "12) Solve requests"// for admin and contributor
-            ,"13) Logout",
+            "6) Add/Delete user",
+            "9) Add/Delete actor/movie/series/ from system",
+            "10) Update movie details", // for admin and contributor
+            "11) Update actor details", // for admin and contributor
+            "12) Solve requests",// for admin and contributor
+            "13) Logout",
             "14) Exit"// for all
     );
     static List<String > contributorActions = Arrays.asList(
@@ -101,8 +123,6 @@ public class Constants {
            }
            return regularcode;
        }
-
-
    }
 
   public static boolean contains(int[] arr, int item) {
@@ -112,5 +132,58 @@ public class Constants {
             }
         }
         return false;
+    }
+    public static List<String> displayOptionsGuide(User user){
+        if(user instanceof Admin){
+            return adminActions;
+        }
+        else if(user instanceof Contributor){
+            return contributorActions;
+        }
+        else{
+            return regularActions;
+        }
+    }
+
+    public static List<String> userInfo(User<?> user){
+       List<String> userInfo = new ArrayList<>();
+
+          userInfo.add("name: "+user.getName());
+          userInfo.add("Email: "+user.getEmail());
+          userInfo.add("User Name: "+user.getUsername());
+          userInfo.add("Country: "+user.getCountry());
+          userInfo.add("Gender: "+user.getGender());
+          userInfo.add("Age: "+user.getAge());
+          userInfo.add("Experience: "+user.getExperience());
+          userInfo.add("Birth Date: "+ user.getBirthDate().format(DateTimeFormatter.ISO_DATE));
+        if(user instanceof Admin){
+            userInfo.add("UserType: Admin");
+        }else if(user instanceof Contributor){
+            userInfo.add("UserType: Contributor ");
+        }else{
+            userInfo.add("UserType: Regular");
+        }
+        userInfo.add("Product Contribution: ");
+
+         for(String s: user.getProductionsContribution()){
+             userInfo.add("          " + s);
+         }
+        userInfo.add("Favorite Production: ");
+
+        for(String s: user.getFavoriteProductions()){
+            userInfo.add("          " + s);
+        }
+        userInfo.add("Actors Contribution: ");
+
+        for(String s: user.getActorsContribution()){
+            userInfo.add("          " + s);
+        }
+
+        userInfo.add("Favorite Actors: ");
+        for(String s: user.getFavoriteActors()){
+            userInfo.add("          " + s);
+        }
+
+return userInfo;
     }
 }

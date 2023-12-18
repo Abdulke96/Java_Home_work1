@@ -1,6 +1,6 @@
 package org.example;
 import org.example.*;
-public class Admin<T> extends Staff  implements ExperienceStrategy{
+public class Admin<T> extends Staff  implements ExperienceStrategy, Observer{
     public Admin() {
         super( "Admin");
 
@@ -57,6 +57,7 @@ public class Admin<T> extends Staff  implements ExperienceStrategy{
     @Override
     public void logout() {
         System.out.println("Admin logged out.");
+        System.exit(0);
     }
 
     public void addProductionSystem(Production p) {

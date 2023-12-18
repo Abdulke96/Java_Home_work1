@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.List;
 
-public class Contributor<T> extends Staff implements RequestsManager,ExperienceStrategy  {// Constructor
+public class Contributor<T> extends Staff implements RequestsManager,ExperienceStrategy , Observer {// Constructor
 
 
     public Contributor() {
@@ -12,8 +12,6 @@ public class Contributor<T> extends Staff implements RequestsManager,ExperienceS
         super(fullName);
     }
     public void createRequest(RequestTypes requestType, String description) {
-//        Request request = new Request(requestType ,description, (String) getUsername());
-//        RequestsHolder.addRequest(request);
 
     }
 

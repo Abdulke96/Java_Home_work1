@@ -7,19 +7,14 @@ import org.jetbrains.annotations.NotNull;
 
 @Data
 public abstract class Production implements Comparable<Object> {
-    ///*****************
-    protected String title;//*
-    private String type;/////
-    protected List<String> directors;//*
-    protected List<String> actors;//*
-    protected List<Genre> genres;//*
-    protected List<Rating> ratings;//*
-    protected double averageRating;//*
+    protected String title;
+    private String type;
+    protected List<String> directors;
+    protected List<String> actors;
+    protected List<Genre> genres;
+    protected List<Rating> ratings;
+    protected double averageRating;
     private String  plot;
-
-
-
-    // Constructor
     public Production(){
         this.title = null;
         this.directors = null;

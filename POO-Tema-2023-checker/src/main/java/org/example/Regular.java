@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.List;
 
-public class Regular<T> extends User implements RequestsManager, ExperienceStrategy {
+public class Regular<T> extends User implements RequestsManager, ExperienceStrategy , Observer{
 
     public Regular() {
 
@@ -34,7 +34,8 @@ public class Regular<T> extends User implements RequestsManager, ExperienceStrat
 
     @Override
     public void logout() {
-        System.out.println("Regular user logged out.");
+       System.exit(0);
+
     }
 
     @Override
@@ -54,6 +55,7 @@ public class Regular<T> extends User implements RequestsManager, ExperienceStrat
 
     @Override
     public void update(String notification) {
+
 
     }
 
