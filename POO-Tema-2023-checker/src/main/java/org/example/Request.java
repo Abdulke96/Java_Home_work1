@@ -35,7 +35,7 @@ public class Request implements Subject{
     private String determineResolvingUser() {
         return switch (type) {
             case DELETE_ACCOUNT, OTHERS -> "ADMIN";
-            case ACTOR_ISSUE, MOVIE_ISSUE -> username;
+            case ACTOR_ISSUE, MOVIE_ISSUE -> "CONTRIBUTOR/ADMIN";
             default -> null;
         };
     }

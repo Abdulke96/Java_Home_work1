@@ -5,6 +5,7 @@ import java.util.Map;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.jetbrains.annotations.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -55,5 +56,35 @@ public class Series extends Production {
             }
         }
     }
+    //GUI helper functions
+    public String guiDisplay(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Title: ").append(title).append("\n");
+        stringBuilder.append("Type: ").append(getType()).append("\n");
+        stringBuilder.append("Directors: ").append("\n");
+        stringBuilder.append(guiDirectorsString());
+        stringBuilder.append("Actors: ").append("\n");
+        stringBuilder.append(guiActorsString());
+        stringBuilder.append("Genres: ").append("\n");
+        stringBuilder.append(guiGenresString());
+        stringBuilder.append("Ratings: ").append("\n");
+        stringBuilder.append(guiRatingsString());
+        stringBuilder.append("Plot: ").append(getPlot()).append("\n");
+        stringBuilder.append("Average Rating: ").append(averageRating).append("\n");
+        stringBuilder.append("Release Year: ").append(releaseYear).append("\n");
+        stringBuilder.append("Number of Seasons: ").append(numSeasons).append("\n");
+        stringBuilder.append("Seasons: ").append("\n");
+        for (Map.Entry<String, List<Episode>> entry : seasons.entrySet()) {
+            String seasonName = entry.getKey();
+            List<Episode> episodes = entry.getValue();
+            stringBuilder.append(seasonName).append("\n");
+            for (Episode episode : episodes) {
+                stringBuilder.append(episode.guiDisplay());
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+
 }
 

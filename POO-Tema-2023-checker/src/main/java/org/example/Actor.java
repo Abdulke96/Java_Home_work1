@@ -7,7 +7,7 @@ import java.util.Map;
 import lombok.*;
 
 @Data
-public class Actor implements Comparable<Object> {
+public class Actor implements Comparable<Actor> {
     private final String name;
     private final List<Map.Entry<String, String>> performances;
     private final String biography;
@@ -23,9 +23,10 @@ public class Actor implements Comparable<Object> {
     }
 
     @Override
-    public int compareTo(@NotNull Object o) {
+    public int compareTo(@NotNull Actor o) {
         assert this.name != null;
-        return this.name.compareTo(((Actor) o).name);
+        assert o.name != null;
+        return this.name.compareTo((o.name));
     }
     public void displayInfo(){
         System.out.println("Actor: "+ getName());
@@ -38,4 +39,20 @@ public class Actor implements Comparable<Object> {
         if(biography != null)
             System.out.println("Biography: " + getBiography());
     }
+    //GUI helper functions
+public String guiActorString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Actor: ").append(getName()).append("\n");
+        stringBuilder.append("Performances: ").append("\n");
+        if (performances!=null)
+            for (Map.Entry<String, String> entry : performances) {
+                stringBuilder.append("    Title: ").append(entry.getKey()).append("\n");
+                stringBuilder.append("    Type:  ").append(entry.getValue()).append("\n");
+            }
+        if(biography != null)
+            stringBuilder.append("Biography: ").append(getBiography()).append("\n");
+        return stringBuilder.toString();
+        }
+
+
 }

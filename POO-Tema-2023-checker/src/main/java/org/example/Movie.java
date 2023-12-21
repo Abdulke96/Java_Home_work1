@@ -2,6 +2,8 @@ package org.example;
 
 import java.util.List;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Movie extends Production {
@@ -37,4 +39,23 @@ public class Movie extends Production {
         System.out.println("Release Year: " + releaseYear);
 
     }
+
+    //GUI helper functions
+    public String guiDisplay(){
+        return "Title: " + title + "\n" +
+                "Type: "+ getType() + "\n" +
+                "Directors: " + "\n" +
+                guiDirectorsString() + "\n" +
+                "Actors: " + "\n" +
+                guiActorsString() + "\n" +
+                "Genres: " + "\n" +
+                guiGenresString() + "\n" +
+                "Ratings: " + "\n" +
+                guiRatingsString() + "\n" +
+                "Plot: " + getPlot() + "\n" +
+                "Average Rating: " + averageRating + "\n" +
+                "Duration: " + duration + " minutes" + "\n" +
+                "Release Year: " + releaseYear + "\n";
+    }
+
 }

@@ -53,7 +53,7 @@ class JsonDataLoadChecker {
                                         checkEquals(user.javaClass, user, testUser),
                                         "Regular $user is not equal to $testUser"
                                     )
-                                    is Contributor<*> -> Assertions.assertTrue(
+                                    is Contributor -> Assertions.assertTrue(
                                         checkEquals(user.javaClass, user, testUser),
                                         "Contributor $user is not equal to $testUser"
                                     )

@@ -2,25 +2,30 @@ package org.constants;
 
 import java.util.Scanner;
 
-public class UserMode  {
+public class ReadInput {
     public static int chooseUserMode() {
-        System.out.println("Please choose user mode:");
-        System.out.println("1. CLI user");
-        System.out.println("2. GUI user");
-        System.out.println("3. Exit");
-        System.out.print("Your choice: ");
+       WriteOutput.write(OutPutConstants.userModeConstants);
+        return readInteger(1,3);
+    }
+    public  static int readInteger(int min, int max){
         int choice = 0;
         try {
             Scanner scanner = new Scanner(System.in);
             choice = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {
             System.out.println("Invalid input!");
-            return chooseUserMode();
+            return readInteger(min,max);
         }
-        if (choice < 1 || choice > 3) {
+        if (choice < min || choice > max) {
             System.out.println("Invalid input!");
-            return chooseUserMode();
+            return readInteger(min,max);
         }
         return choice;
+
+    }
+
+    public static String readLine() {
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
     }
 }

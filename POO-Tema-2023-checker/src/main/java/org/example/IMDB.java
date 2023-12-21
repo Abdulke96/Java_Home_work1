@@ -8,25 +8,23 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.constants.ApplicationFlow;
-import org.constants.UserMode;
+import org.constants.ReadInput;
 import org.gui.ApplicationFlowGUI;
 import org.helper.ActorDeserializer;
 import org.helper.ProductionDeserializer;
 import org.constants.Constants;
 
 import javax.swing.*;
-import javax.swing.text.DefaultEditorKit;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
+
 import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -54,7 +52,7 @@ public class IMDB  extends JFrame {
         System.out.println(this.users.get(0).getEmail());
         System.out.println(this.users.get(0).getPassword());
         System.out.println(this.users.get(0).getNotifications());
-       int mode = UserMode.chooseUserMode();
+       int mode = ReadInput.chooseUserMode();
       switch (mode) {
             case 1 -> runCli();
             case 2 -> runGui();
@@ -82,25 +80,29 @@ public class IMDB  extends JFrame {
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
             File usersFile = new File (Constants.account);
             User<?>[] loadedUsers = objectMapper.readValue(usersFile, User[].class);
-            this.users = List.of(loadedUsers);
+           // this.users = List.of(loadedUsers);
+            this.users = new ArrayList<>(Arrays.asList(loadedUsers));
 
             SimpleModule module = new SimpleModule();
             module.addDeserializer(Actor.class, new ActorDeserializer());
             objectMapper.registerModule(module);
             File actorsFile = new File(Constants.actors);
             Actor[] loadedActors = objectMapper.readValue(actorsFile, Actor[].class);
-            this.actors = List.of(loadedActors);
+            // this.actors = List.of(loadedActors);
+            this.actors = new ArrayList<>(Arrays.asList(loadedActors));
 
 
             File requestsFile = new File(Constants.requests);
             Request[] loadedRequests = objectMapper.readValue(requestsFile, Request[].class);
-            this.requests = List.of(loadedRequests);
+           // this.requests = List.of(loadedRequests);
+            this.requests = new ArrayList<>(Arrays.asList(loadedRequests));
             SimpleModule production = new SimpleModule();
             production.addDeserializer(Production.class, new ProductionDeserializer());
             objectMapper.registerModule(production);
             File productionsFile = new File(Constants.production);
             Production[] loadedProductions = objectMapper.readValue(productionsFile, Production[].class);
-            this.productions = List.of(loadedProductions);
+            //this.productions = List.of(loadedProductions);
+            this.productions = new ArrayList<>(Arrays.asList(loadedProductions));
 
         } catch (IOException e) {
             System.out.println("Error loading data from JSON files: " + e.getMessage());
@@ -109,16 +111,16 @@ public class IMDB  extends JFrame {
 
   public void authenticateUser() {
         System.out.println("Welcome back! Enter your credentials!");
-
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.print("email: ");
-            String username = scanner.nextLine();
+            //String username = ReadInput.readLine();
+            String username = "emily.wilson@example.com";
             System.out.print("password: ");
-            String password = scanner.nextLine();
+           // String password = ReadInput.readLine();
+            String password = "P@ssw0rd!23";
 
             try {
-                this.currentUser = authenticate(username, password);
+               this.currentUser = authenticate(username, password);
                 if (this.currentUser != null) {
                     System.out.println("Authentication successful. Welcome, " + currentUser.getUsername() + "!");
                     break;

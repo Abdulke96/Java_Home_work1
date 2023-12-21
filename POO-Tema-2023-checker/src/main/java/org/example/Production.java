@@ -1,12 +1,15 @@
 package org.example;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
+import org.junit.validator.PublicClassValidator;
 
 @Data
-public abstract class Production implements Comparable<Object> {
+public abstract class Production implements Comparable<Production> {
     protected String title;
     private String type;
     protected List<String> directors;
@@ -51,12 +54,11 @@ public abstract class Production implements Comparable<Object> {
     }
 
     public abstract void displayInfo();
+    public abstract String guiDisplay();
     @Override
-    public int compareTo(@NotNull Object o) {
-        if (o instanceof Production otherProduction) {
-            return this.title.compareTo(otherProduction.title);
-        }
-        return 0;
+    public int compareTo(@NotNull Production other) {
+            return this.title.compareTo(other.title);
+
     }
 
     public void addRating(Rating rating) {
@@ -90,4 +92,37 @@ public abstract class Production implements Comparable<Object> {
             rating.displayInfo();
         }
     }
+
+    //GUI helper functions
+
+    public String guiActorsString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String actor:actors){
+            stringBuilder.append("    ").append(actor).append("\n");
+        }
+        return stringBuilder.toString();
+    }
+    public String guiDirectorsString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String dir: directors){
+            stringBuilder.append("    ").append(dir).append("\n");
+        }
+        return stringBuilder.toString();
+    }
+    public String guiGenresString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(Genre genre: genres){
+            stringBuilder.append("    ").append(genre).append("\n");
+        }
+        return stringBuilder.toString();
+    }
+    public String guiRatingsString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(Rating rating: ratings){
+            stringBuilder.append(rating.guiRatingString()).append("\n");
+        }
+        return stringBuilder.toString();
+    }
+
+
 }

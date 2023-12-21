@@ -25,6 +25,12 @@ public class Rating implements Subject {
         System.out.println("    Score: " + rating);
         System.out.println("    Comments: " + comment);
     }
+    //GUI helper functions
+    public String guiRatingString(){
+        return "    Username: " + username + "\n" +
+                "    Score: " + rating + "\n" +
+                "    Comments: " + comment + "\n";
+    }
 
     public double getValue() {
         return rating;

@@ -1,8 +1,7 @@
 package org.example;
-
 import java.util.List;
 
-public class Contributor<T> extends Staff implements RequestsManager,ExperienceStrategy , Observer {// Constructor
+public class Contributor extends Staff implements RequestsManager , Observer {// Constructor
 
 
     public Contributor() {
@@ -49,11 +48,6 @@ public class Contributor<T> extends Staff implements RequestsManager,ExperienceS
     public void removeRequest(Request r) {
 
     }
-    @Override
-    public int calculateExperience() {
-        return 0;
-    }
-
     @Override
     public void update(String notification) {
 

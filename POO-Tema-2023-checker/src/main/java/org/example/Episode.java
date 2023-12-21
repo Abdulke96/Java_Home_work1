@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -22,4 +23,13 @@ public class Episode extends Production {
         System.out.println("    Episode Name: "+episodeName);
         System.out.println("    Duration: " + duration);
     }
+
+    @Override
+    public String guiDisplay() {
+        return "    Episode Name: "+episodeName + "\n" +
+                "    Duration: " + duration + "\n";
+    }
+
+
+    //GUI helper functions
 }

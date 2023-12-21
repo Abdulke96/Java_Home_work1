@@ -1,6 +1,10 @@
 package org.gui;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.constants.Constants;
+import org.example.IMDB;
+import org.example.Production;
 import org.example.User;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,9 +16,14 @@ import java.util.TimerTask;
 
 public class ApplicationFlowGUI extends JFrame {
     private final User<?> currentUser;
+    JPanel mainScreenPanel = new JPanel();
+    JPanel menuPanel = new JPanel();
+    JPanel changingPhotoPanel = new JPanel();
     private JLabel photoLabel;
     private JPanel photoPanels;
     private int currentPhotoIndex = 1;
+    @Getter @Setter
+    private boolean homePageFlag = true;
 
     public ApplicationFlowGUI(User<?> currentUser) {
         this.currentUser = currentUser;
@@ -41,6 +50,18 @@ public class ApplicationFlowGUI extends JFrame {
         searchField.setPreferredSize(new Dimension(200, 30));
         return searchField;
     }
+    private JMenu homePage(){
+        JMenu homePage = new JMenu("Home Page");
+        ImageIcon originalIcon = new ImageIcon(Constants.path +"home.png");
+        ImageIcon smallerIcon = new ImageIcon(getScaledImage(originalIcon.getImage(), 60, 60));
+        homePage.setIcon(smallerIcon);
+        homePage.addActionListener(e -> onHomepage());
+        return homePage;
+    }
+    private boolean onHomepage(){
+        setHomePageFlag(true);
+        return true;
+    }
     private JMenu displayUserAccount(String name){
         JMenu accountMenu = new JMenu(name);
         ImageIcon originalIcon = new ImageIcon(Constants.path +"account.png");
@@ -65,15 +86,17 @@ public class ApplicationFlowGUI extends JFrame {
         return srcImg.getScaledInstance(width, height, Image.SCALE_SMOOTH);
     }
     private void createMenu() {
-        JPanel panel = new JPanel();
+
         JMenuBar menuBar = new JMenuBar();
        JTextField searchField = createSearchField();
-        panel.add(searchField);
+       JMenu homePage = homePage();
+        menuPanel.add(searchField);
 
 
         JMenu actionsMenu = createActionsMenu();
         // Add the actions menu to the menu bar
         menuBar.add(actionsMenu);
+        menuBar.add(homePage);
         menuBar.add(searchField);
         JMenu accountMenu = displayUserAccount(currentUser.getUsername().toString());
         menuBar.add(accountMenu);
@@ -102,13 +125,13 @@ public class ApplicationFlowGUI extends JFrame {
     private JLabel recommendationLabel(){
         JLabel recommendation = new JLabel("RECOMMENDATION");
         recommendation.setBackground(Color.ORANGE);
+        recommendation.setForeground(Color.RED);
         recommendation.setFont(new Font("Arial", Font.BOLD, 40));
         return recommendation;
     }
     private JPanel recommendUser(ImageIcon icon, String title, String description, String duration){
         JPanel recommend = new JPanel(new GridLayout(1,2));
         JPanel photo = new JPanel();
-
         icon = new ImageIcon(getScaledImage(icon.getImage(), 400, 400));
         photo.add(new JLabel(icon));
 
@@ -125,7 +148,6 @@ public class ApplicationFlowGUI extends JFrame {
         descriptionLabel.setLineWrap(true);
         detail.add(descriptionLabel);
 
-
         recommend.add(photo);
         recommend.add(detail);
 
@@ -134,11 +156,11 @@ public class ApplicationFlowGUI extends JFrame {
     }
 
     private void createPhotoDisplayAndButtons() {
+
         photoLabel = new JLabel();
         photoPanels = new JPanel(new GridLayout(6,1));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         photoPanels.setBounds(screenSize.width, screenSize.height,screenSize.width, screenSize.height );
-
 
         JLabel recommendation = recommendationLabel();
         photoPanels.add(recommendation);
@@ -163,35 +185,34 @@ public class ApplicationFlowGUI extends JFrame {
         JButton leftButton = new JButton("<");
         JButton rightButton = new JButton(">");
 
-        Dimension imageSize = new Dimension(400, 400);
+        Dimension imageSize = new Dimension(screenSize.width, screenSize.height);
         photoLabel.setPreferredSize(imageSize);
-
+        changingPhotoPanel.add(photoLabel);
         leftButton.addActionListener(e -> showPreviousPhoto());
         rightButton.addActionListener(e -> showNextPhoto());
 
-        JPanel photoAndButtonsPanel = new JPanel();
-        photoAndButtonsPanel.setLayout(new BorderLayout());
 
+        mainScreenPanel.setLayout(new BorderLayout());
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonsPanel.add(leftButton);
         buttonsPanel.add(rightButton);
-        photoAndButtonsPanel.add(photoLabel, BorderLayout.CENTER);
-        photoAndButtonsPanel.add(buttonsPanel, BorderLayout.SOUTH);
-        photoAndButtonsPanel.add(photoPanels, BorderLayout.LINE_END);
+        mainScreenPanel.add(changingPhotoPanel, BorderLayout.CENTER);
+        mainScreenPanel.add(buttonsPanel, BorderLayout.SOUTH);
+        mainScreenPanel.add(photoPanels, BorderLayout.LINE_END);
 
 
-        add(photoAndButtonsPanel);
+        add(mainScreenPanel);
     }
 
 
     private void schedulePhotoChange() {
-        Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                showNextPhoto();
-            }
-        }, 5000, 5000);
+            Timer timer = new Timer(true);
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    showNextPhoto();
+                }
+            }, 5000, 5000);
     }
 
     private void loadPhoto() {
@@ -251,25 +272,53 @@ public class ApplicationFlowGUI extends JFrame {
                 solveRequests();
                 break;
             case 11:
+
+                break;
+            case 12:
+                break;
+            case 13:
                 logout();
                 break;
+            case 14:
+                exit();
+                break;
+
             default:
                 System.out.println("Action not implemented yet");
         }
     }
-
+    public void removePhotoPanels(){
+        getContentPane().remove(changingPhotoPanel);
+        revalidate();
+        repaint();
+    }
     public void viewProductionDetails() {
+        removePhotoPanels();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
         setTitle("Your Production details");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getDimension(screenSize);
+      List<Production> productions = IMDB.getInstance().getProductions();
+      StringBuilder productionsString = new StringBuilder();
+      for (Production production: productions){
+          productionsString.append(production.guiDisplay());
+      }
+        JTextArea textArea = new JTextArea();
+        textArea.setEditable(false); // Make JTextArea non-editable
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 34)); // Set font for monospaced appearance
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setText(productionsString.toString());
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        add(scrollPane, BorderLayout.CENTER);
+        setLocationRelativeTo(null);
+        setVisible(true);
+
+
     }
 
     public void viewActorDetails() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
         setTitle("Your Actor details");
         setForeground(Color.black);
         setBackground(Color.gray);
@@ -296,67 +345,62 @@ public class ApplicationFlowGUI extends JFrame {
 
     public void viewNotifications() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
         setTitle("Your Notifications");
         getDimension(screenSize);
     }
 
     public void search() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
+
         setTitle("Search for actors/movies/series");
         getDimension(screenSize);
     }
 
     public void addDeleteFavorites() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
         setTitle("Add/Delete actors/movies/series to/from favorites");
         getDimension(screenSize);
     }
 
     public void addDeleteUser() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
+
         setTitle("Add/Delete user");
         getDimension(screenSize);
     }
 
     public void addDeleteProductionSystem() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
         setTitle("Add/Delete actor/movie/series/ from system");
         getDimension(screenSize);
     }
 
     public void updateMovieDetails() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
         getDimension(screenSize);
     }
 
     public void updateActorDetails() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
+
         getDimension(screenSize);
     }
 
     public void solveRequests() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
+
         getDimension(screenSize);
     }
 
     public void logout() {
-        System.out.println("Regular user logged out.");
+       getContentPane().remove(mainScreenPanel);
+       getContentPane().remove(menuPanel);
+       getContentPane().add(photoPanels, BorderLayout.CENTER);
+       revalidate();
+       repaint();
+    }
+    public void exit(){
+        System.exit(0);
     }
 
 }

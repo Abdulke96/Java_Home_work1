@@ -63,62 +63,21 @@ public class Constants {
     static int[] admincode = {1,2,3,4,5,6,9,10,11,12,13,14};
     static int[] contributorcode = {1,2,3,4,5,7,9,10,11,12,13,14};
     static int[] regularcode = {1,2,3,4,5,7,8,13,14};
-    static List<String > adminActions = Arrays.asList(
-            "1) View productions details",
-            "2) View actors details", // for all
-            "3) View notifications", // for all
-            "4) Search for actors/movies/series", // for all
-            "5) Add/Delete actors/movies/series to/from favorites",
-            "6) Add/Delete user",
-            "9) Add/Delete actor/movie/series/ from system",
-            "10) Update movie details", // for admin and contributor
-            "11) Update actor details", // for admin and contributor
-            "12) Solve requests",// for admin and contributor
-            "13) Logout",
-            "14) Exit"// for all
-    );
-    static List<String > contributorActions = Arrays.asList(
-            "1) View productions details",
-            "2) View actors details", // for all
-            "3) View notifications", // for all
-            "4) Search for actors/movies/series", // for all
-            "5) Add/Delete actors/movies/series to/from favorites",
-            "7)Create/Delete a request", // for regular and contributor
-            "9) Add/Delete actor/movie/series/ from system", // for admin and contributor
-            "10) Update movie details", // for admin and contributor
-            "11) Update actor details", // for admin and contributor
-            "12) Solve requests",// for admin and contributor
-            "13) Logout",
-            "14) Exit"
-
-    );
-
-    static List <String> regularActions = Arrays.asList(
-            "1) View productions details",
-            "2) View actors details", // for all
-            "3) View notifications", // for all
-            "4) Search for actors/movies/series", // for all
-            "5) Add/Delete actors/movies/series to/from favorites",
-            "7)Create/Delete a request",
-            "8) Add/Delete a review for a product.",
-            "13) Logout",
-            "14) Exit"
-    );
-   public static int[]  displayOption(User user){
+   public static int[]  displayOption(User<?> user){
        if(user instanceof Admin){
-           for(String action: adminActions){
+           for(String action:OutPutConstants.adminActions){
                System.out.println(action);
            }
            return admincode;
        }
        else if(user instanceof Contributor){
-           for(String action: contributorActions){
+           for(String action:OutPutConstants.contributorActions){
                System.out.println(action);
            }
               return contributorcode;
        }
        else{
-           for(String action: regularActions){
+           for(String action:OutPutConstants.regularActions){
                System.out.println(action);
            }
            return regularcode;
@@ -133,21 +92,20 @@ public class Constants {
         }
         return false;
     }
-    public static List<String> displayOptionsGuide(User user){
+    public static List<String> displayOptionsGuide(User<?> user){
         if(user instanceof Admin){
-            return adminActions;
+            return OutPutConstants.adminActions;
         }
         else if(user instanceof Contributor){
-            return contributorActions;
+            return OutPutConstants.contributorActions;
         }
         else{
-            return regularActions;
+            return OutPutConstants.regularActions;
         }
     }
 
     public static List<String> userInfo(User<?> user){
        List<String> userInfo = new ArrayList<>();
-
           userInfo.add("name: "+user.getName());
           userInfo.add("Email: "+user.getEmail());
           userInfo.add("User Name: "+user.getUsername());
@@ -174,11 +132,9 @@ public class Constants {
             userInfo.add("          " + s);
         }
         userInfo.add("Actors Contribution: ");
-
         for(String s: user.getActorsContribution()){
             userInfo.add("          " + s);
         }
-
         userInfo.add("Favorite Actors: ");
         for(String s: user.getFavoriteActors()){
             userInfo.add("          " + s);

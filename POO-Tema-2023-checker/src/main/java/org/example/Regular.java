@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.List;
 
-public class Regular<T> extends User implements RequestsManager, ExperienceStrategy , Observer{
+public class Regular<T> extends User implements RequestsManager , Observer{
 
     public Regular() {
 
@@ -10,7 +10,6 @@ public class Regular<T> extends User implements RequestsManager, ExperienceStrat
     public Regular(String fullName) {
         super(fullName);
     }
-
 
     public void createRequest(RequestTypes requestType, String description) {
         Request request = new Request(requestType, description, (String) getUsername());
@@ -40,22 +39,18 @@ public class Regular<T> extends User implements RequestsManager, ExperienceStrat
 
     @Override
     public void createRequest(Request r) {
-        
+        RequestsHolder.addRequest(r);
     }
 
     @Override
     public void removeRequest(Request r) {
+        RequestsHolder.removeRequest(r);
 
-    }
-
-    @Override
-    public int calculateExperience() {
-        return 0;
     }
 
     @Override
     public void update(String notification) {
-
+        System.out.println(notification);
 
     }
 
