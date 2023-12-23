@@ -52,6 +52,7 @@ public class IMDB  extends JFrame {
         System.out.println(this.users.get(0).getEmail());
         System.out.println(this.users.get(0).getPassword());
         System.out.println(this.users.get(0).getNotifications());
+        System.out.println(this.users.get(0).getFavorites().toString());
        int mode = ReadInput.chooseUserMode();
       switch (mode) {
             case 1 -> runCli();
@@ -112,13 +113,20 @@ public class IMDB  extends JFrame {
   public void authenticateUser() {
         System.out.println("Welcome back! Enter your credentials!");
         while (true) {
-            System.out.print("email: ");
-            //String username = ReadInput.readLine();
-            String username = "emily.wilson@example.com";
-            System.out.print("password: ");
-           // String password = ReadInput.readLine();
-            String password = "P@ssw0rd!23";
-
+            // read input from console
+//            System.out.print("email: ");
+//            String username = ReadInput.readLine();
+//            System.out.print("password: ");
+//            String password = ReadInput.readLine();
+            //Contributor account
+//            String username = "emily.wilson@example.com";
+//            String password = "P@ssw0rd!23";
+            // Admin account
+           String username = "bossuAlMare@ymail.com";
+             String password = "test";
+            // Regular account
+//            String username = "susan.smith@example.com";
+//            String password = "R8F!b&e9m3U6";
             try {
                this.currentUser = authenticate(username, password);
                 if (this.currentUser != null) {

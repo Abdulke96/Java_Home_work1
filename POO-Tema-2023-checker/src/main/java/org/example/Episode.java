@@ -1,23 +1,16 @@
 package org.example;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Episode extends Production {
-    private final String episodeName;
-    private final String duration;
+    private String episodeName;
+    private  String duration;
     public Episode() {
         super();
-        this.episodeName = null;
-        this.duration = null;
+        this.episodeName = "null";
+        this.duration = "null";
     }
-
     @Override
     public void displayInfo() {
         System.out.println("    Episode Name: "+episodeName);
@@ -27,9 +20,7 @@ public class Episode extends Production {
     @Override
     public String guiDisplay() {
         return "    Episode Name: "+episodeName + "\n" +
-                "    Duration: " + duration + "\n";
+                "   Duration: " + duration + "\n";
     }
 
-
-    //GUI helper functions
 }

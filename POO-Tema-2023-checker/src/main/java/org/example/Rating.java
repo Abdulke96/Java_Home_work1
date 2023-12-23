@@ -1,8 +1,6 @@
 package org.example;
 
 import lombok.Data;
-import lombok.Getter;
-
 @Data
 public class Rating implements Subject {
 
@@ -11,9 +9,9 @@ public class Rating implements Subject {
     private final String comment;
 
     public Rating() {
-        this.username = null;
+        this.username = "null";
         this.rating = 0;
-        this.comment = null;
+        this.comment = "null";
     }
     public Rating(String username, int rating, String comment) {
         this.username = username;

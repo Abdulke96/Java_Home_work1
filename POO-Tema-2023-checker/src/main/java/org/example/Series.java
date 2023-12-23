@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,15 +11,16 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Series extends Production {
-    private final int releaseYear;
-    private final int numSeasons;
-    private final Map<String, List<Episode>> seasons;
+
+    private  int releaseYear;
+    private  int numSeasons;
+    private  Map<String, List<Episode>> seasons;
 
     public Series() {
         super();
         this.releaseYear = 0;
         this.numSeasons = 0;
-        this.seasons = null;
+        this.seasons = new HashMap<>();
     }
     public Series(String title, String type, List<String> directors, List<String> actors, List<Genre> genres,
                   List<Rating> ratings, int releaseYear, int numSeasons,

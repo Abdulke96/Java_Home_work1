@@ -2,8 +2,6 @@ package org.constants;
 
 import org.example.*;
 
-import java.util.Scanner;
-
 public  class  ApplicationFlow {
     public static void appFlow() {
         User<?> currentUser = IMDB.getInstance().getCurrentUser();

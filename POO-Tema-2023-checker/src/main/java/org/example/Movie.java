@@ -7,11 +7,11 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Movie extends Production {
-    private final String duration;
-    private final int releaseYear;
+    private String duration;
+    private int releaseYear;
     public Movie() {
         super();
-        this.duration = null;
+        this.duration = "null";
         this.releaseYear = 0;
     }
     public Movie(String title,String type, List<String> directors, List<String> actors, List<Genre> genres,

@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -19,14 +20,14 @@ public abstract class Production implements Comparable<Production> {
     protected double averageRating;
     private String  plot;
     public Production(){
-        this.title = null;
-        this.directors = null;
-        this.actors = null;
-        this.genres = null;
-        this.ratings = null;
+        this.title = "null";
+        this.directors = new ArrayList<>();
+        this.actors = new ArrayList<>();
+        this.genres = new ArrayList<>();
+        this.ratings =  new ArrayList<>();
         this.averageRating = 0;
-        this.plot = null;
-        this.type = null;
+        this.plot = "null";
+        this.type = "null";
     }
     public Production(String title, String type, List<String> directors, List<String> actors, List<Genre> genres,
                       List<Rating> ratings) {
@@ -36,12 +37,12 @@ public abstract class Production implements Comparable<Production> {
         this.genres = genres;
         this.ratings = ratings;
         this.calculateAverageRating();
-        this.plot =  null;
+        this.plot =  "null";
         this.type = type;
 
     }
 
-    private void calculateAverageRating() {
+    public double calculateAverageRating() {
         if (ratings != null && !ratings.isEmpty()) {
             double sum = 0;
             for (Rating rating : ratings) {
@@ -51,6 +52,7 @@ public abstract class Production implements Comparable<Production> {
         } else {
             this.averageRating = 0;
         }
+        return this.averageRating;
     }
 
     public abstract void displayInfo();
@@ -82,6 +84,9 @@ public abstract class Production implements Comparable<Production> {
         }
     }
     public void displayGenres(){
+        if (genres == null) {
+            return;
+        }
         for(Genre genre: genres){
             System.out.println("    "+genre);
         }

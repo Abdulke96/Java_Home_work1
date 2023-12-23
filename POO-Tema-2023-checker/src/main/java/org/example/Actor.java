@@ -2,18 +2,19 @@ package org.example;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.*;
 
 @Data
 public class Actor implements Comparable<Actor> {
-    private final String name;
-    private final List<Map.Entry<String, String>> performances;
-    private final String biography;
+    private String name;
+    private  List<Map.Entry<String, String>> performances;
+    private  String biography;
     public Actor() {
-        this.name = null;
-        this.performances = null;
+        this.name = "null";
+        this.performances = new ArrayList<>();
         this.biography = null;
     }
     public Actor(String name, List<Map.Entry<String, String>> performances, String biography) {

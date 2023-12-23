@@ -1,5 +1,8 @@
 package org.constants;
 
+import org.example.Rating;
+
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class ReadInput {
@@ -27,5 +30,30 @@ public class ReadInput {
     public static String readLine() {
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
+    }
+    public static String readLine(String message) {
+        System.out.println(message);
+        return readLine();
+    }
+
+    public static LocalDateTime readDate() {
+        System.out.println("enter year");
+        int year = readInteger(0,2024);
+        System.out.println("enter month");
+        int month = readInteger(0,12);
+        System.out.println("enter day");
+        int day = readInteger(0,31);
+        return LocalDateTime.of(year,month,day,0,0);
+
+    }
+
+    public static Rating readRating() {
+        System.out.println("enter username");
+        String username = readLine();
+        System.out.println("enter rating");
+        int rating = readInteger(0,10);
+        System.out.println("enter comment");
+        String comment = readLine();
+        return new Rating(username,rating,comment);
     }
 }

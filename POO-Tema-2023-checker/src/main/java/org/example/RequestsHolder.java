@@ -16,6 +16,7 @@ public class RequestsHolder {
     private static List<Request> requests = new ArrayList<>();
 
     private RequestsHolder() {
+
     }
 
     public static void addRequest(Request request) {

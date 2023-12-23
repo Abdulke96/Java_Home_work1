@@ -16,7 +16,7 @@ public class Contributor extends Staff implements RequestsManager , Observer {//
 
 
     public void deleteRequest(Request request) {
-//        RequestsHolder.removeRequest(request);
+       RequestsHolder.removeRequest(request);
     }
 
     public void logout() {

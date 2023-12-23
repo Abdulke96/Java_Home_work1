@@ -1,27 +1,31 @@
 package org.example;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
 public class Request implements Subject{
-    private final RequestTypes type;
-    private final LocalDateTime createdDate;
-    private final String description;
-    private final String username;
+    @Getter @Setter
+    private RequestTypes type;
+    private LocalDateTime createdDate;
+    private String description;
+    private String username;
     private String to;
     private String actorName;
     private String movieTitle;
 
     public Request() {
-        this.type = null;
+        this.type = RequestTypes.OTHERS;
         this.createdDate = LocalDateTime.now();
-        this.description = null;
-        this.username = null;
-        this.to = null;
-        this.actorName = null;
-        this.movieTitle = null;
+        this.description = "null";
+        this.username = "null";
+        this.to = "null";
+        this.actorName = "null";
+        this.movieTitle = "null";
 
     }
     public Request(RequestTypes type, String description, String username) {

@@ -7,7 +7,6 @@ import org.example.User;
 import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Constants {
@@ -27,8 +26,8 @@ public class Constants {
     public static final String requests = findFile(requestsPath1, requestsPath2);
     public static final String path1 = "POO-Tema-2023-checker/src/main/resources/assets/";
     public static final String path2 = "src/test/resources/testResources/assets/";
-    public static final String path = findpath(path1, path2);
-    public static String findpath(String path1, String path2){
+    public static final String path = findPath(path1, path2);
+    public static String findPath(String path1, String path2){
         try{
             File file = new File(path1 +"imdb1.png");
             if(file.exists()){
@@ -60,27 +59,27 @@ public class Constants {
             return path2;
         }
     }
-    static int[] admincode = {1,2,3,4,5,6,9,10,11,12,13,14};
-    static int[] contributorcode = {1,2,3,4,5,7,9,10,11,12,13,14};
-    static int[] regularcode = {1,2,3,4,5,7,8,13,14};
+    static int[] adminActions = {1,2,3,4,5,6,9,10,11,12,13,14};
+    static int[] contributorActions = {1,2,3,4,5,7,9,10,11,12,13,14};
+    static int[] regularActions = {1,2,3,4,5,7,8,13,14};
    public static int[]  displayOption(User<?> user){
        if(user instanceof Admin){
            for(String action:OutPutConstants.adminActions){
                System.out.println(action);
            }
-           return admincode;
+           return adminActions;
        }
        else if(user instanceof Contributor){
            for(String action:OutPutConstants.contributorActions){
                System.out.println(action);
            }
-              return contributorcode;
+              return contributorActions;
        }
        else{
            for(String action:OutPutConstants.regularActions){
                System.out.println(action);
            }
-           return regularcode;
+           return regularActions;
        }
    }
 
