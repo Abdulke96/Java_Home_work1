@@ -122,11 +122,11 @@ public class IMDB  extends JFrame {
 //            String username = "emily.wilson@example.com";
 //            String password = "P@ssw0rd!23";
             // Admin account
-           String username = "bossuAlMare@ymail.com";
-             String password = "test";
+//           String username = "bossuAlMare@ymail.com";
+//             String password = "test";
             // Regular account
-//            String username = "susan.smith@example.com";
-//            String password = "R8F!b&e9m3U6";
+            String username = "susan.smith@example.com";
+            String password = "R8F!b&e9m3U6";
             try {
                this.currentUser = authenticate(username, password);
                 if (this.currentUser != null) {
@@ -185,7 +185,11 @@ public class IMDB  extends JFrame {
     //GUI utility methods
     public void authenticateGUIUser() {
         //to be removed
-        this.currentUser = this.users.get(0);
+        this.currentUser = this.users.get(0); // contributor
+        //this.currentUser = this.users.get(1); // regular
+       // this.currentUser = this.users.get(7); // admin user
+
+
         new ApplicationFlowGUI(currentUser);
 // to me removed
      JFrame frame = new JFrame("Login Form");

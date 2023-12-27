@@ -17,6 +17,7 @@ public class Admin<T> extends Staff  implements Observer{
 
 
 
+
     }
 
     public void removeProduction(Production production) {

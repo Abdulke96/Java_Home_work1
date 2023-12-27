@@ -40,11 +40,12 @@ public abstract class Staff<T extends Comparable<T>> extends User<T> implements 
         IMDB.getInstance().getActors().removeIf(actor -> actor.getName().equals(name));
 
     }
-    public void updateProduction(Production p){
-        if (p instanceof Movie){
-            if ( FunctionsFactory.updateMovieProduction(p,this)) return;
-        }else if (p instanceof Series){
-            if ( FunctionsFactory.updateSeriesProduction(p,this)) return;
+
+    public void updateProduction(Production p) {
+        if (p instanceof Movie) {
+            if (FunctionsFactory.updateMovieProduction(p, this)) return;
+        } else if (p instanceof Series) {
+            if (FunctionsFactory.updateSeriesProduction(p, this)) return;
 
         }
 

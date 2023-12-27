@@ -1,13 +1,11 @@
 package org.example;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+
 import java.util.List;
 
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.junit.validator.PublicClassValidator;
 
 @Data
 public abstract class Production implements Comparable<Production> {

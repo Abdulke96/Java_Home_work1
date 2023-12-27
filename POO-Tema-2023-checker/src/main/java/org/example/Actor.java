@@ -22,6 +22,9 @@ public class Actor implements Comparable<Actor> {
         this.performances = performances;
         this.biography = biography;
     }
+    public int getNumberOfPerformances(){
+        return performances.size();
+    }
 
     @Override
     public int compareTo(@NotNull Actor o) {
@@ -41,7 +44,7 @@ public class Actor implements Comparable<Actor> {
             System.out.println("Biography: " + getBiography());
     }
     //GUI helper functions
-public String guiActorString(){
+public String guiDisplay(){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Actor: ").append(getName()).append("\n");
         stringBuilder.append("Performances: ").append("\n");
