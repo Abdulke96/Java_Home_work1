@@ -4,9 +4,9 @@ import lombok.Data;
 @Data
 public class Rating implements Subject {
 
-    private final String username;
-    private final int rating;
-    private final String comment;
+    private  String username;
+    private  int rating;
+    private  String comment;
 
     public Rating() {
         this.username = "null";
@@ -49,5 +49,6 @@ public class Rating implements Subject {
     public void notifyObservers(String notification) {
 
     }
+
 }
 

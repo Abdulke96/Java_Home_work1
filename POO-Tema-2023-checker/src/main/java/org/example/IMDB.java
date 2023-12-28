@@ -185,9 +185,9 @@ public class IMDB  extends JFrame {
     //GUI utility methods
     public void authenticateGUIUser() {
         //to be removed
-        this.currentUser = this.users.get(0); // contributor
+        //this.currentUser = this.users.get(0); // contributor
         //this.currentUser = this.users.get(1); // regular
-       // this.currentUser = this.users.get(7); // admin user
+       this.currentUser = this.users.get(7); // admin user
 
 
         new ApplicationFlowGUI(currentUser);

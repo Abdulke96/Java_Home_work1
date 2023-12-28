@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import lombok.Setter;
 import org.example.Actor;
 
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +47,8 @@ public class ActorDeserializer extends StdDeserializer<Actor> {
     }
 
     private static class SimpleEntry<K, V> implements Map.Entry<K, V> {
-        private final K key;
+        @Setter
+        private K key;
         private V value;
 
         public SimpleEntry(K key, V value) {
@@ -69,9 +72,13 @@ public class ActorDeserializer extends StdDeserializer<Actor> {
             this.value = value;
             return old;
         }
+
+        public void setKey(K key) {
+            this.key = key;
+        }
+
         public String toString() {
-            return "\ntitle: "+ key + "\ntype: " + value + "\n";
+            return "\ntitle: " + key + "\ntype: " + value + "\n";
         }
     }
 }
-
