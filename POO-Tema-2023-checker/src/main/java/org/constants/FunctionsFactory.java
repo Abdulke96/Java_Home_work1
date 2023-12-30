@@ -648,4 +648,31 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
             System.out.println("\n======================================\n");
         }
     }
+    public static String generateRandomPassword(){
+        // the password will be 8 characters long and will contain at least one digit, one lowercase letter, one uppercase letter and one special character
+        StringBuilder password = new StringBuilder();
+        String specialCharacters = "!@#$%^&*()_+";
+        String lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
+        String uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        Random random = new Random();
+        int randomIndex;
+        randomIndex = random.nextInt(10);
+        password.append(randomIndex);
+
+        randomIndex = random.nextInt(26);
+        password.append(lowercaseLetters.charAt(randomIndex));
+
+        randomIndex = random.nextInt(26);
+        password.append(uppercaseLetters.charAt(randomIndex));
+        randomIndex = random.nextInt(10);
+        password.append(specialCharacters.charAt(randomIndex));
+
+        for (int i = 0; i < 4; i++) {
+            randomIndex = random.nextInt(26);
+            password.append(lowercaseLetters.charAt(randomIndex));
+        }
+
+        return password.toString();
+    }
 }

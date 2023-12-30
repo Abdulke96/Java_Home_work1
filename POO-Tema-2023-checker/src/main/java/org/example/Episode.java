@@ -11,6 +11,11 @@ public class Episode extends Production {
         this.episodeName = "null";
         this.duration = "null";
     }
+    public Episode(String episodeName, String duration) {
+        super();
+        this.episodeName = episodeName;
+        this.duration = duration;
+    }
     @Override
     public void displayInfo() {
         System.out.println("    Episode Name: "+episodeName);

@@ -128,4 +128,15 @@ public abstract class Production implements Comparable<Production> {
     }
 
 
+    public void addDirector(String director) {
+        directors.add(director);
+    }
+
+    public void addActor(String actor) {
+        actors.add(actor);
+    }
+
+    public void addGenre(Genre genre) {
+        genres.add(genre);
+    }
 }

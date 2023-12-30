@@ -30,6 +30,24 @@ public class Series extends Production {
         this.numSeasons = numSeasons;
         this.seasons = seasons;
     }
+    // function  which replaces the key of a season
+    public void setKey(String key, String newKey){
+        for (Map.Entry<String, List<Episode>> entry : seasons.entrySet()) {
+            if(entry.getKey().equals(key)){
+                seasons.put(newKey, entry.getValue());
+                seasons.remove(key);
+            }
+        }
+    }
+    // function which replaces the value of a season
+    public void setValue(String key, List<Episode> newValue){
+        for (Map.Entry<String, List<Episode>> entry : seasons.entrySet()) {
+            if(entry.getKey().equals(key)){
+                seasons.put(key, newValue);
+            }
+        }
+    }
+
 
     @Override
     public void displayInfo() {

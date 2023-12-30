@@ -81,7 +81,6 @@ public class IMDB  extends JFrame {
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
             File usersFile = new File (Constants.account);
             User<?>[] loadedUsers = objectMapper.readValue(usersFile, User[].class);
-           // this.users = List.of(loadedUsers);
             this.users = new ArrayList<>(Arrays.asList(loadedUsers));
 
             SimpleModule module = new SimpleModule();
@@ -89,20 +88,17 @@ public class IMDB  extends JFrame {
             objectMapper.registerModule(module);
             File actorsFile = new File(Constants.actors);
             Actor[] loadedActors = objectMapper.readValue(actorsFile, Actor[].class);
-            // this.actors = List.of(loadedActors);
             this.actors = new ArrayList<>(Arrays.asList(loadedActors));
 
 
             File requestsFile = new File(Constants.requests);
             Request[] loadedRequests = objectMapper.readValue(requestsFile, Request[].class);
-           // this.requests = List.of(loadedRequests);
             this.requests = new ArrayList<>(Arrays.asList(loadedRequests));
             SimpleModule production = new SimpleModule();
             production.addDeserializer(Production.class, new ProductionDeserializer());
             objectMapper.registerModule(production);
             File productionsFile = new File(Constants.production);
             Production[] loadedProductions = objectMapper.readValue(productionsFile, Production[].class);
-            //this.productions = List.of(loadedProductions);
             this.productions = new ArrayList<>(Arrays.asList(loadedProductions));
 
         } catch (IOException e) {
