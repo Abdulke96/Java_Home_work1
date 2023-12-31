@@ -2,6 +2,7 @@ package org.example;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
   and the changes made to it are visible throughout the application.*/
 @Data
 public class RequestsHolder {
-    @Getter
+@Getter @Setter
     private static List<Request> requests = new ArrayList<>();
 
     private RequestsHolder() {

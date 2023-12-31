@@ -1,4 +1,5 @@
 package org.example;
+import org.constants.RequestStatus;
 import org.example.*;
 public class Admin<T> extends Staff  implements Observer{
     public Admin() {
@@ -10,6 +11,27 @@ public class Admin<T> extends Staff  implements Observer{
     }
 
     public void resolveRequests() {
+        for (Request request : RequestsHolder.getRequests()) {
+            if (request.getStatus().equals(RequestStatus.Pending)) {
+                request.setStatus(RequestStatus.Resolved);
+
+            }
+            for (User<?> user :IMDB.getInstance().getUsers()) {
+                if (user.getUsername().equals(request.getUsername())) {
+                    user.setExperience(user.getExperience()+1);
+                }
+            }
+
+        }
+
+    }
+    public void rejectRequests() {
+        for (Request request : RequestsHolder.getRequests()) {
+            if (request.getStatus().equals(RequestStatus.Pending)) {
+                request.setStatus(RequestStatus.Rejected);
+
+            }
+        }
 
     }
 

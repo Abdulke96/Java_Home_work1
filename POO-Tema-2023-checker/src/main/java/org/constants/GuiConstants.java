@@ -5,11 +5,14 @@ import org.example.Genre;
 
 import javax.swing.*;
 import java.awt.*;
+import java.security.PublicKey;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-public class GuiConstants {
+public class GuiConstants extends JFrame {
     public static List<String> contributor = List.of("home ", "View productions details", "View actors details", "View notifications", "Search for actors/movies/series", "Add/Delete actors/movies/series to/from favorites", "Create/DeleteRequest", "Add/Delete actor/movie/series/ from system", "Update productions details", "Update actor details", "Solve requests", "Logout", "Exit");
     public static  List<String> admin = List.of("home ", "View productions details", "View actors details", "View notifications", "Search for actors/movies/series", "Add/Delete actors/movies/series to/from favorites", "Add/Delete user", "Add/Delete actor/movie/series/ from system", "Update productions details", "Update actor details", "Solve requests", "Logout", "Exit");
     public static  List<String> regular = List.of("home ", "View productions details", "View actors details", "View notifications", "Search for actors/movies/series", "Add/Delete actors/movies/series to/from favorites","Create/DeleteRequest", "Add / Delete Review", "Logout", "Exit");
@@ -31,9 +34,9 @@ public class GuiConstants {
        };
     }
 
-    public static boolean isFullName(String name) {
-        return name.matches("^[a-zA-Z\\s]*$");
-    }
+//   // public static boolean isFullName(String name) {
+//        return name.matches("^[a-zA-Z\\s]*$");
+//    }
     public static String showInputDialog(String instruction, String preFilledValue, int width, int height) {
 
         JTextArea inputArea = new JTextArea(preFilledValue);
@@ -132,5 +135,47 @@ public class GuiConstants {
                 null,
                 null);
         return (result == JOptionPane.OK_OPTION) ? Integer.parseInt((String) Objects.requireNonNull(comboBox.getSelectedItem())) : -1;
+    }
+public static Integer[] getDayList() {
+        Integer[] days = new Integer[31];
+        for (int i = 0; i < 31; i++) {
+            days[i] = i + 1;
+        }
+        return days;
+    }
+  public static Integer[] getYearList() {
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        Integer[] years = new Integer[100];
+        for (int i = 0; i < 100; i++) {
+            years[i] = currentYear - i;
+        }
+        return years;
+    }
+    public static Integer[] getAgeList(){
+        Integer[] ages = new Integer[120];
+        for (int i = 0; i<120; i++){
+            ages[i] = i+1;
+        }
+        return ages;
+    }
+
+public static JComboBox<Integer> createComboBox(Integer[] items) {
+        return new JComboBox<>(items);
+    }
+    public static int selectRealeaseYear(String message) {
+        Integer[] years = getYearList();
+        JComboBox<Integer> comboBox = createComboBox(years);
+
+        int result = JOptionPane.showOptionDialog(
+                null,
+                comboBox,
+                message,
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                null);
+        return (result == JOptionPane.OK_OPTION) ? (int) comboBox.getSelectedItem() : -1;
+
     }
 }

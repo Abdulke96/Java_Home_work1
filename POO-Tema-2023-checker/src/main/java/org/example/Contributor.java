@@ -1,4 +1,6 @@
 package org.example;
+import org.constants.RequestStatus;
+
 import java.util.List;
 
 public class Contributor extends Staff implements RequestsManager , Observer {// Constructor
@@ -12,6 +14,7 @@ public class Contributor extends Staff implements RequestsManager , Observer {//
     }
     public void createRequest(RequestTypes requestType, String description) {
 
+
     }
 
 
@@ -24,7 +27,27 @@ public class Contributor extends Staff implements RequestsManager , Observer {//
     }
 
     public void resolveRequests() {
-        System.out.println("Contributor resolving requests.");
+        for (Request request : RequestsHolder.getRequests()) {
+            if (request.getStatus().equals(RequestStatus.Pending) && request.getTo().equals("CONTRIBUTOR/ADMIN")) {
+                request.setStatus(RequestStatus.Resolved);
+                for (User<?> user :IMDB.getInstance().getUsers()) {
+                    if (user.getUsername().equals(request.getUsername())) {
+                        user.setExperience(user.getExperience()+1);
+                    }
+                }
+
+            }
+
+
+        }
+    }
+    public void rejectRequests() {
+        for (Request request : RequestsHolder.getRequests()) {
+            if (request.getStatus().equals(RequestStatus.Pending) && request.getTo().equals("CONTRIBUTOR/ADMIN")) {
+                request.setStatus(RequestStatus.Rejected);
+
+            }
+        }
     }
 
     public void addProduction(Production production) {

@@ -1,6 +1,5 @@
 package org.gui;
 
-import javassist.expr.NewArray;
 import org.constants.Constants;
 import org.constants.FunctionsFactory;
 import org.constants.GuiConstants;
@@ -10,38 +9,41 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
 
 public class ApplicationFlowGUI extends JFrame {
-    private final User<?> currentUser;
+    private User<?> currentUser; // to track the current user
+
+    // lists of users, actors, productions, requests
     List<Actor> actors = IMDB.getInstance().getActors();
     List<Production> productions = IMDB.getInstance().getProductions();
     List<User<?>> users = IMDB.getInstance().getUsers();
     List<Request> requests = IMDB.getInstance().getRequests();
+
     private JLabel photoLabel; // fancy photo display
     private int currentPhotoIndex = 1; // to track the current photo index
     private JPanel currentPanel; //to track the current panel
-    JPanel mainScreenPanel = new JPanel(new GridLayout(1, 2));
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    JPanel deleteUserPanel =  new JPanel(new FlowLayout());
-    JPanel deleteFromFavoritePanel = new JPanel(new FlowLayout());
-    JPanel deleteProductionOrActorPanel = new JPanel(new FlowLayout());
+    JPanel mainScreenPanel = new JPanel(new GridLayout(1, 2)); // the main screen panel for the home menu
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // to get full screen size of the device
+    JComboBox<String> deleteActorOrProductionComboBox; // combo box for the delete actor/production
+    JComboBox<String> addaActorOrProductionComboBox;// combo box for the add  actor/production
 
-    JPanel deleteReviewPanel = new JPanel(new FlowLayout());
-    //combo box for the delete user panel
-    JComboBox<String> deleteProductionComboBox;
-    JComboBox<String> addProductionComboBox;
-    //TODO add more info for AddUser for the admin
-    //TODO  resolve the requests
-    //TODO  logout
     public ApplicationFlowGUI(User<?> currentUser) {
+        /*
+          The constructor of the ApplicationFlowGUI class.
+          It has one parameter:
+          @param currentUser: User<?>
+         * It initializes the fields and calls the initializeUI method.
+         */
         this.currentUser = currentUser;
         initializeUI();
     }
 
     private void initializeUI() {
+
         configureFrame();
         createMenu();
         createPhotoDisplayAndButtons();
@@ -49,14 +51,96 @@ public class ApplicationFlowGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
+    public ApplicationFlowGUI(){
+        /*
+             The constructor for the login screen.
+         */
+         configureFrame();
+         setVisible(true);
+        JPanel loginPanel = new JPanel(new GridLayout(3, 1));
+        JPanel topPanel = new JPanel();
 
+        JLabel welcomeLabel = ImdbLabel("WELCOME TO IMDB");
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 80));
+        topPanel.add(welcomeLabel);
+        loginPanel.add(topPanel);
+        JLabel userLabel = ImdbLabel("Email: ");
+        JLabel passwordLabel = ImdbLabel("Password:");
+        JCheckBox showPassword = new  JCheckBox("Show Password");
+        JButton loginButton = ImdbButton("Login", 40);
+        JButton resetButton = ImdbButton("Reset", 40);
+
+        JTextField userTextField =  new JTextField(20);
+        userTextField.setFont(new Font("Arial", Font. BOLD, 40));
+        JPasswordField passwordField = new JPasswordField(20);
+        passwordField.setFont(new Font("Arial", Font.BOLD, 40));
+        loginButton.addActionListener(e -> {
+            String userText;
+            String pwdText;
+            userText = userTextField.getText();
+            pwdText = new String(passwordField.getPassword());
+            try {
+                this.currentUser = authenticate(userText, pwdText);
+                if (this.currentUser != null) {
+                     setVisible(false);
+                    new ApplicationFlowGUI(currentUser);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Authentication failed. Retry.");
+                }
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(null, "Error during authentication: " + exception.getMessage());
+            }
+        });
+        resetButton.addActionListener(e -> {
+            //reset the text fields
+            userTextField.setText("");
+            passwordField.setText("");
+        });
+        showPassword.addActionListener(e -> {
+            //show the password if the checkbox is selected
+            if (showPassword.isSelected()) {
+                passwordField.setEchoChar((char) 0);
+            } else {
+                passwordField.setEchoChar('*');
+            }
+        });
+        JPanel middlePanel = new JPanel();
+        middlePanel.setLayout(new BoxLayout(middlePanel,BoxLayout.Y_AXIS));
+        middlePanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+         middlePanel.add(ImdbInputPanelFlow(userLabel, userTextField));
+         middlePanel.add(ImdbInputPanelFlow(passwordLabel, passwordField));
+         middlePanel.add(showPassword);
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(loginButton);
+         buttonPanel.add(resetButton);
+         middlePanel.add(buttonPanel);
+         loginPanel.add(middlePanel);
+         JPanel bottomPanel = new JPanel();
+         // display IMDB icon on the login screen
+         JLabel iconLabel = new JLabel(GuiConstants.getIcon("imdbicon.png", 300, 300));
+            bottomPanel.add(iconLabel);
+         loginPanel.add(bottomPanel);
+        setCurrentPanel(loginPanel);
+    }
+
+    /**
+     * The configureFrame method is used to configure the frame.
+     * it sets the title, size and default close operation.
+     */
     private void configureFrame() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setTitle("IMDB APP");
         setSize(screenSize.width, screenSize.height);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * The createMenu method is used to create the menu bar.
+     * It has no parameters.
+     * It creates the menu bar and adds the menus to it.
+     * It also adds the action listeners to the menu items.
+     * It sets the menu bar to the frame.
+     */
     private void createMenu() {
         JPanel menuPanel = new JPanel();
         JMenuBar menuBar = new JMenuBar();
@@ -92,6 +176,10 @@ public class ApplicationFlowGUI extends JFrame {
         setJMenuBar(menuBar);
     }
 
+    /**
+     * The createActionsMenu method is used to create the actions' menu.
+     * it calls the showMenu method to create the actions' menu.
+     */
     private JMenu createActionsMenu() {
         JMenu actionsMenu = new JMenu();
         actionsMenu.addSeparator();
@@ -101,6 +189,10 @@ public class ApplicationFlowGUI extends JFrame {
         List<String> actions = List.of("");
         return showMenu(actionsMenu, actions);
     }
+    /**
+     * The homeMenu method is used to create the home menu.
+     * it calls the showMenu method to create the home menu.
+     */
     private JMenu homeMenu() {
         JMenu homeMenu = new JMenu("Home");
         homeMenu.addSeparator();
@@ -111,9 +203,12 @@ public class ApplicationFlowGUI extends JFrame {
         return showMenu(homeMenu, actions);
     }
 
+    /**
+     * The getActions method is used to get the actions for the current user.
+     * It returns a list of strings containing the actions for the current user.
+     */
     @NotNull
     private List<String> getActions() {
-
         List<String> actions = new ArrayList<>();
         if (currentUser instanceof Admin) {
             actions = GuiConstants.admin;
@@ -125,13 +220,23 @@ public class ApplicationFlowGUI extends JFrame {
         return actions;
     }
 
+    /**
+     * The displayUserAccount method is used to display the user account.
+     * It has one parameter:
+     */
     private JMenu displayUserAccount(String name) {
         JMenu accountMenu = new JMenu(name);
         accountMenu.setIcon(GuiConstants.getIcon("account.png", 60, 60));
         List<String> info = Constants.userInfo(currentUser);
-
         return showAccountMenu(accountMenu, info);
     }
+    /**
+     * The showAccountMenu method is used to display the user account.
+     * It has two parameters:
+     * @param accountMenu: JMenu
+     * @param info: List<String>
+     * It returns the account menu.
+     */
     private JMenu showAccountMenu( JMenu accountMenu, List<String> info){
         for (String s : info) {
             JMenuItem action = new JMenuItem(s);
@@ -142,6 +247,13 @@ public class ApplicationFlowGUI extends JFrame {
         return accountMenu;
 
     }
+    /**
+     * The showMenu method is used to create  a menu checking the user type.
+     * It has two parameters:
+     * @param accountMenu: JMenu
+     * @param info: List<String>
+     * It returns the menu.
+     */
     private JMenu showMenu(JMenu accountMenu, List<String> info) {
         for (int i = 0; i < info.size(); i++) {
             JMenuItem action = new JMenuItem(info.get(i));
@@ -162,6 +274,13 @@ public class ApplicationFlowGUI extends JFrame {
         return accountMenu;
     }
 
+    /**
+     * The  createPhotoDisplayAndButtons method is used to create the photo display and the buttons.
+     *  it calls the loadPhoto method to load the photo.
+     * it is responsible for decorating the main screen panel.
+     *
+     */
+
     private void createPhotoDisplayAndButtons() {
         JPanel changingPhotoPanel = new JPanel();
         JPanel scrollPanel = new JPanel();
@@ -175,7 +294,6 @@ public class ApplicationFlowGUI extends JFrame {
         photoPanels.add(recommendation, BorderLayout.NORTH);
         photoPanels.setLayout(new BoxLayout(photoPanels, BoxLayout.Y_AXIS));
         scrollPanel.setLayout(new BoxLayout(scrollPanel, BoxLayout.Y_AXIS));
-        //sorting option for the productions
         JComboBox<String> sortOptions = new JComboBox<>(new String[]{"Sort by rating", "Sort by name", "sort by average rating" });
         sortOptions.setFont(new Font("Arial", Font.BOLD, 40));
         sortOptions.addActionListener(e -> {
@@ -215,6 +333,13 @@ public class ApplicationFlowGUI extends JFrame {
         setCurrentPanel(mainScreenPanel);
     }
 
+    /**
+     * the sortProduct method is used to sort the productions.
+     * it has two parameters:
+     *  @param scrollPanel: JPanel
+     *  @param sortOptions: JComboBox<String>
+     *
+     */
     private void sortProduct(JPanel scrollPanel, JComboBox<String> sortOptions) {
         if (sortOptions.getSelectedIndex() == 0) {
             productions.sort((o1, o2) -> Double.compare(o2.getAverageRating(), o1.getAverageRating()));
@@ -225,7 +350,12 @@ public class ApplicationFlowGUI extends JFrame {
         }
         scrollPanel.removeAll();
     }
-
+/**
+     * the sorterFunction method is used to sort the productions.
+     * it has one parameter:
+     *  @param scrollPanel: JPanel
+     *
+     */
     private void sorterFunction(JPanel scrollPanel) {
         for (Production production : productions) {
                 String duration = "";
@@ -243,6 +373,17 @@ public class ApplicationFlowGUI extends JFrame {
 
         }
     }
+
+    /**
+     * The recommendUser method is used to recommend a user a production.
+     * It has four parameters:
+     * @param icon: ImageIcon
+     *  @param title: String
+     * @param description: String
+     * @param duration: String
+     * It returns a panel containing the recommended production.
+     * @return JPanel
+     */
 
     private JPanel recommendUser(ImageIcon icon, String title, String description, String duration) {
         JPanel recommend = new JPanel(new BorderLayout());
@@ -285,6 +426,7 @@ public class ApplicationFlowGUI extends JFrame {
     }
 
     private void schedulePhotoChange() {
+        // Schedule photo change every 5 seconds
         Timer timer = new Timer(true);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -295,6 +437,7 @@ public class ApplicationFlowGUI extends JFrame {
     }
 
     private void loadPhoto() {
+        // load  another photo from the resources  assets folder
         if (photoLabel.getWidth() > 0 && photoLabel.getHeight() > 0) {
             String photoPath = Constants.path + "imdb" + currentPhotoIndex + ".png";
             ImageIcon icon = new ImageIcon(photoPath);
@@ -305,13 +448,20 @@ public class ApplicationFlowGUI extends JFrame {
     }
 
     private JLabel recommendationLabel() {
-        JLabel recommendation = ImdbLabel("RECOMMENDATION",40);
+        // create a label for the recommendation
+        JLabel recommendation = ImdbLabel("RECOMMENDATION");
         recommendation.setBackground(Color.ORANGE);
         recommendation.setForeground(Color.RED);
         return recommendation;
     }
 
 
+    /**
+     * The setCurrentPanel method is used to set the current panel.
+     * It has one parameter:
+     * @param panel: JPanel
+     *it removes the current panel and adds a received panel.
+     */
     private void setCurrentPanel(JPanel panel) {
         if (currentPanel != null) {
             getContentPane().removeAll();
@@ -323,15 +473,23 @@ public class ApplicationFlowGUI extends JFrame {
     }
 
     private void showNextPhoto() {
+        // show the next photo by incrementing the current photo index
         currentPhotoIndex = (currentPhotoIndex % 10) + 1;
         loadPhoto();
     }
 
     private void showPreviousPhoto() {
+        // show the previous photo by decrementing the current photo index
         currentPhotoIndex = (currentPhotoIndex - 2 + 10) % 10 + 1;
         loadPhoto();
     }
 
+    /**
+     * the contributionAction method is used to keep track of the contributor actions.
+     * it has one parameter:
+     *  @param action: int
+     *
+     */
     private void contributorAction(int action) {
         switch (action) {
             case 0 -> home();
@@ -341,7 +499,7 @@ public class ApplicationFlowGUI extends JFrame {
             case 4 -> search();
             case 5 -> addDeleteFavorites();
             case 6 ->createDeleteRequest();
-            case 7 -> addDeleteProductionSystem();
+            case 7 -> addDeleteProductionOrActorFromSystem();
             case 8 -> updateMovieDetails();
             case 9 -> updateActorDetails();
             case 10 -> solveRequests();
@@ -349,6 +507,12 @@ public class ApplicationFlowGUI extends JFrame {
             case 12 -> exit();
         }
     }
+    /**
+     * the adminAction method is used to keep track of the admin actions.
+     * it has one parameter:
+     *  @param action: int
+     *
+     */
     private void adminAction(int action) {
         switch (action) {
             case 0 -> home();
@@ -358,7 +522,7 @@ public class ApplicationFlowGUI extends JFrame {
             case 4 -> search();
             case 5 -> addDeleteFavorites();
             case 6 -> addDeleteUser();
-            case 7 -> addDeleteProductionSystem();
+            case 7 -> addDeleteProductionOrActorFromSystem();
             case 8 -> updateMovieDetails();
             case 9 -> updateActorDetails();
             case 10 -> solveRequests();
@@ -366,6 +530,13 @@ public class ApplicationFlowGUI extends JFrame {
             case 12 -> exit();
         }
     }
+    /**
+     * regularAction method is used to keep track of the regular actions.
+     * it has one parameter:
+     *  @param action: int
+
+     */
+
     private void regularAction(int action) {
         switch (action) {
             case 0 -> home();
@@ -380,6 +551,14 @@ public class ApplicationFlowGUI extends JFrame {
             case 9 -> exit();
         }
     }
+
+    /**
+     *  imdbTextArea method is used to create a text area.
+     * it has three parameters:
+     * @param detailsPanel: JPanel
+     *                    @param title: String
+     *                                @param details: String
+     */
     private void imdbTextArea(JPanel detailsPanel, String title, String details) {
         JTextArea textArea = new JTextArea();
         textArea.setMargin(new Insets(40, 100, 40, 40));
@@ -388,13 +567,19 @@ public class ApplicationFlowGUI extends JFrame {
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         textArea.setText(details);
-
+        JLabel titleLabel = ImdbLabel(title);
         JScrollPane scrollPane = new JScrollPane(textArea);
+         scrollPane.add(titleLabel);
         detailsPanel.removeAll();
         detailsPanel.add(scrollPane, BorderLayout.CENTER);
         detailsPanel.revalidate();
         detailsPanel.repaint();
     }
+
+    /**
+     *viewProductionDetails method is used to view the production details.
+     *
+     */
 
     public void viewProductionDetails() {
         JPanel productionPanel = new JPanel(new GridLayout(1, 2));
@@ -414,9 +599,7 @@ public class ApplicationFlowGUI extends JFrame {
                 JButton button = ImdbButton(production.getTitle(),40);
                 listPanel.add(button);
 
-                button.addActionListener(e1 -> {
-                    imdbTextArea(detailsPanel, production.getTitle(), production.guiDisplay());
-                });
+                button.addActionListener(e1 -> imdbTextArea(detailsPanel, production.getTitle(), production.guiDisplay()));
 
                 listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
             }
@@ -438,9 +621,7 @@ public class ApplicationFlowGUI extends JFrame {
             listPanel.add(button);
             listPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-            button.addActionListener(e -> {
-                imdbTextArea(detailsPanel, production.getTitle(), production.guiDisplay());
-            });
+            button.addActionListener(e -> imdbTextArea(detailsPanel, production.getTitle(), production.guiDisplay()));
         }
 
 
@@ -449,6 +630,10 @@ public class ApplicationFlowGUI extends JFrame {
         productionPanel.add(detailsPanel);
         setCurrentPanel(productionPanel);
     }
+    /**
+     *  viewActorDetails method is used to view the actor details.
+     *
+     */
 
 
     public void viewActorDetails() {
@@ -475,9 +660,7 @@ public class ApplicationFlowGUI extends JFrame {
                 JButton button = ImdbButton(actor.getName(), 40);
                 listPanel.add(button);
 
-                button.addActionListener(e1 -> {
-                    imdbTextArea(detailsPanel, actor.getName(), actor.guiDisplay());
-                });
+                button.addActionListener(e1 -> imdbTextArea(detailsPanel, actor.getName(), actor.guiDisplay()));
 
                 listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
             }
@@ -496,9 +679,7 @@ public class ApplicationFlowGUI extends JFrame {
             listPanel.add(button);
             listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-            button.addActionListener(e -> {
-                imdbTextArea(detailsPanel, actor.getName(), actor.guiDisplay());
-            });
+            button.addActionListener(e -> imdbTextArea(detailsPanel, actor.getName(), actor.guiDisplay()));
         }
 
         JScrollPane scrollPane = new JScrollPane(listPanel);
@@ -506,6 +687,10 @@ public class ApplicationFlowGUI extends JFrame {
         actorPanel.add(detailsPanel);
         setCurrentPanel(actorPanel);
     }
+
+    /**
+     * viewNotifications method is used to view the notifications.
+     */
 
 
     public void viewNotifications() {
@@ -528,13 +713,17 @@ public class ApplicationFlowGUI extends JFrame {
                 notificationsString.append(notification).append("\n");
             }
         }
-        JTextArea notificationsArea = new JTextArea(notificationsString.toString());
+        JTextArea notificationsArea = new JTextArea(GuiConstants.breakString(notificationsString.toString(),120));
         notificationsArea.setEditable(false);
         notificationsArea.setFont(new Font("Arial", Font.BOLD, 40));
         notificationsPanel.add(notificationsArea, BorderLayout.CENTER);
         setCurrentPanel(notificationsPanel);
 
     }
+
+    /**
+     * search method is used to search for a production or an actor.
+     */
 
     public void search() {
         JPanel searchPanel = new JPanel(new FlowLayout());
@@ -559,7 +748,9 @@ public class ApplicationFlowGUI extends JFrame {
         setCurrentPanel(panel);
     }
 
+
     private void searchItem(String search, JPanel searchPanel) {
+        // helper method for the search method
 
         List<String> searchResults = new ArrayList<>();
         if (search.isEmpty()) {
@@ -586,19 +777,25 @@ public class ApplicationFlowGUI extends JFrame {
             imdbTextArea(searchPanel, "Search results", String.join("\n", searchResults));
         }
     }
+
+    /**
+     * addDeleteFavorites method is used to add or delete a production or an actor from the favorites.
+     */
     public void addDeleteFavorites() {
+
 
         JPanel favoritesPanel = new JPanel(new GridLayout(1, 2));
         JPanel addToFavoritePanel = new JPanel(new FlowLayout());
+        JPanel deleteFromFavoritePanel = new JPanel(new FlowLayout());
 
         addToFavoritePanel.setLayout(new BoxLayout(addToFavoritePanel, BoxLayout.Y_AXIS));
         deleteFromFavoritePanel.setLayout(new BoxLayout(deleteFromFavoritePanel, BoxLayout.Y_AXIS));
-        JLabel addToFavoriteLabel = ImdbLabel("ADD TO FAVORITES",40);
+        JLabel addToFavoriteLabel = ImdbLabel("ADD TO FAVORITES");
         addToFavoriteLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         addToFavoritePanel.add(addToFavoriteLabel);
 
         deleteFromFavorite(deleteFromFavoritePanel);
-        addToFavorite(addToFavoritePanel);
+        addToFavorite(addToFavoritePanel, deleteFromFavoritePanel);
 
         favoritesPanel.add(new JScrollPane(deleteFromFavoritePanel));
         favoritesPanel.add(new JScrollPane(addToFavoritePanel));
@@ -606,8 +803,9 @@ public class ApplicationFlowGUI extends JFrame {
         setCurrentPanel(favoritesPanel);
     }
 
-    private void addToFavorite(JPanel addToFavoritePanel) {
-        JLabel addToFavoriteLabel = ImdbLabel("Productions",40);
+    private void addToFavorite(JPanel addToFavoritePanel, JPanel deleteFromFavoritePanel) {
+        // helper method for the addDeleteFavorites method to add to favorites
+        JLabel addToFavoriteLabel = ImdbLabel("Productions");
         addToFavoriteLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         addToFavoritePanel.add(addToFavoriteLabel);
        for (Production production : productions) {
@@ -631,7 +829,7 @@ public class ApplicationFlowGUI extends JFrame {
 
             });
         }
-        JLabel addToFavoriteLabel2 = ImdbLabel("Actors",40);
+        JLabel addToFavoriteLabel2 = ImdbLabel("Actors");
         addToFavoriteLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
         addToFavoritePanel.add(addToFavoriteLabel2);
 
@@ -659,10 +857,11 @@ public class ApplicationFlowGUI extends JFrame {
     }
 
     private void deleteFromFavorite(JPanel deleteFromFavoritePanel) {
-        JLabel deleteFromFavoriteLabel = ImdbLabel("DELETE FROM FAVORITES",40);
+        // helper method for the addDeleteFavorites method to delete from favorites
+        JLabel deleteFromFavoriteLabel = ImdbLabel("DELETE FROM FAVORITES");
         deleteFromFavoriteLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         deleteFromFavoritePanel.add(deleteFromFavoriteLabel);
-        JLabel deleteFromFavoriteLabel2 = ImdbLabel("Favorite Productions",40);
+        JLabel deleteFromFavoriteLabel2 = ImdbLabel("Favorite Productions");
         deleteFromFavoriteLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
         deleteFromFavoritePanel.add(deleteFromFavoriteLabel2);
         for (String production : currentUser.getFavoriteProductions()) {
@@ -680,7 +879,7 @@ public class ApplicationFlowGUI extends JFrame {
                 dialogBox(message);
             });
         }
-        JLabel deleteFromFavoriteLabel3 = ImdbLabel("Favorite Actors",40);
+        JLabel deleteFromFavoriteLabel3 = ImdbLabel("Favorite Actors");
         deleteFromFavoriteLabel3.setAlignmentX(Component.CENTER_ALIGNMENT);
         deleteFromFavoritePanel.add(deleteFromFavoriteLabel3);
 
@@ -701,6 +900,10 @@ public class ApplicationFlowGUI extends JFrame {
             });
         }
     }
+
+    /**
+     * createDeleteRequest method is used to create or delete a request.
+     */
     private void createDeleteRequest() {
         JPanel createDeleteRequestPanel = new JPanel(new GridLayout(1, 2));
         JPanel deleteRequestPanel = new JPanel();
@@ -708,7 +911,7 @@ public class ApplicationFlowGUI extends JFrame {
 
         JPanel addRequestPanel = new JPanel();
         addRequestPanel.setLayout(new BoxLayout(addRequestPanel,BoxLayout.Y_AXIS ));
-         JLabel addRequestLabel = ImdbLabel("ADD REQUEST",40);
+         JLabel addRequestLabel = ImdbLabel("ADD REQUEST");
             addRequestLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             addRequestPanel.add(addRequestLabel);
         JTextArea descriptionArea = new JTextArea();
@@ -720,9 +923,9 @@ public class ApplicationFlowGUI extends JFrame {
         JComboBox<String> requestTypeComboBox = new JComboBox<>(new String[]{"DELETE_ACCOUNT", "ACTOR_ISSUE", "MOVIE_ISSUE", "OTHERS"});
         requestTypeComboBox.setFont(new Font("Arial", Font.BOLD, 40));
          JTextField toField = ImdbTextField(20,40);
-         JLabel descriptionLabel = ImdbLabel("Description: ",40);
-         JLabel toLabel = ImdbLabel("Request To:  ",40);
-         JLabel requestLabel = ImdbLabel("Request Type:              ",40);
+         JLabel descriptionLabel = ImdbLabel("Description: ");
+         JLabel toLabel = ImdbLabel("Request To:  ");
+         JLabel requestLabel = ImdbLabel("Request Type:              ");
 
          JPanel descriptionPanel =ImdbLabelScrollablePanel(descriptionLabel,new JScrollPane(descriptionArea));
          addRequestPanel.add(descriptionPanel);
@@ -783,12 +986,13 @@ public class ApplicationFlowGUI extends JFrame {
     }
 
     private void deleteRequestMethod(JPanel deleteRequestPanel) {
-        JLabel deleteRequestLabel = ImdbLabel("DELETE REQUEST",40);
+        // helper method for the createDeleteRequest method to delete a request
+        JLabel deleteRequestLabel = ImdbLabel("DELETE REQUEST");
         deleteRequestLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         deleteRequestPanel.add(deleteRequestLabel);
         for (Request request : requests) {
             if (request.getUsername().equals(currentUser.getUsername())){
-                JLabel RequestTypeLabel = ImdbLabel("Request Type: "+request.getType(),40);
+                JLabel RequestTypeLabel = ImdbLabel("Request Type: "+request.getType());
                 JButton button = new JButton(GuiConstants.getIcon("delete.png",40,50));
                 JPanel requestTypePanel = ImdbButtonLabelPanel(RequestTypeLabel,button);
 
@@ -820,22 +1024,25 @@ public class ApplicationFlowGUI extends JFrame {
         }
     }
 
-
+    /**
+     * AddDeleteReview method is used to add or delete a review.
+     */
     private void AddDeleteReview() {
         setTitle("Add/Delete a review for a product.");
         JPanel addDeleteReviewPanel = new JPanel(new GridLayout(1, 2));
         JPanel addReviewPanel = new JPanel(new FlowLayout());
         addReviewPanel.setLayout(new BoxLayout(addReviewPanel, BoxLayout.Y_AXIS));
-        JLabel addReviewLabel = ImdbLabel("ADD REVIEW",40);
+        JLabel addReviewLabel = ImdbLabel("ADD REVIEW");
         addReviewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         addReviewPanel.add(addReviewLabel);
+        JPanel deleteReviewPanel = new JPanel(new FlowLayout());
 
         deleteReviewPanel.setLayout(new BoxLayout(deleteReviewPanel, BoxLayout.Y_AXIS));
-        JLabel deleteReviewLabel = ImdbLabel("DELETE REVIEW",40);
+        JLabel deleteReviewLabel = ImdbLabel("DELETE REVIEW");
         deleteReviewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         deleteReviewPanel.add(deleteReviewLabel);
         deleteReview(deleteReviewPanel);
-        addReview(addReviewPanel);
+        addReview(addReviewPanel, deleteReviewPanel);
 
         addDeleteReviewPanel.add(new JScrollPane(addReviewPanel));
         addDeleteReviewPanel.add(new JScrollPane(deleteReviewPanel));
@@ -844,9 +1051,9 @@ public class ApplicationFlowGUI extends JFrame {
         setCurrentPanel(addDeleteReviewPanel);
 
     }
-    private void addReview(JPanel addReviewPanel) {
-        // display productions and actors  and then add review to selcted item
-        JLabel addReviewLabel = ImdbLabel("Productions",40);
+    private void addReview(JPanel addReviewPanel, JPanel deleteReviewPanel) {
+        // helper method for the AddDeleteReview method to add a review to a production
+        JLabel addReviewLabel = ImdbLabel("Productions");
         addReviewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         addReviewPanel.add(addReviewLabel);
         for (Production production : productions){
@@ -864,9 +1071,8 @@ public class ApplicationFlowGUI extends JFrame {
 
                 JComboBox<String> ratingComboBox = new JComboBox<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
                 ratingComboBox.setFont(new Font("Arial", Font.BOLD, 40));
-                JLabel titleLabel = ImdbLabel("Username: ",40);
-                JLabel descriptionLabel = ImdbLabel("Comment: ",40);
-                JLabel ratingLabel = ImdbLabel("Score: ",40);
+                JLabel descriptionLabel = ImdbLabel("Comment: ");
+                JLabel ratingLabel = ImdbLabel("Score: ");
 
                 JPanel commentPanelPanel =ImdbLabelScrollablePanel(descriptionLabel,new JScrollPane(commentArea));
                 JPanel ratingPanel = ImdbComboPanel(ratingLabel,ratingComboBox);
@@ -914,7 +1120,8 @@ public class ApplicationFlowGUI extends JFrame {
 
 
     private void deleteReview(JPanel deleteReviewPanel) {
-        JLabel deleteReviewLabel = ImdbLabel("Productions",40);
+        // helper method for the AddDeleteReview method to delete a review from a production
+        JLabel deleteReviewLabel = ImdbLabel("Productions");
         deleteReviewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         deleteReviewPanel.add(deleteReviewLabel);
         for (Production production : productions){
@@ -927,7 +1134,7 @@ public class ApplicationFlowGUI extends JFrame {
                     reviewPanel.add(Box.createRigidArea(new Dimension(0, 20)));
                     JButton detailsButton = new JButton(GuiConstants.getIcon("detail.png",40,50 ));
                     JButton button = new JButton(GuiConstants.getIcon("delete.png",40,50));
-                    JLabel productionLabel = ImdbLabel(production.getTitle(),40);
+                    JLabel productionLabel = ImdbLabel(production.getTitle());
 
                     reviewPanel.add(productionLabel);
                     reviewPanel.add(button);
@@ -958,23 +1165,26 @@ public class ApplicationFlowGUI extends JFrame {
 
     }
 
-
+    /**
+     * addDeleteUser method is used to add or delete a user.
+     */
     public void addDeleteUser() {
         setTitle("Add/Delete user");
         getDimension(screenSize);
-        JPanel addDeleteUserPanel = new JPanel(new GridLayout(1, 2));
         JPanel addUserPanel =  new JPanel(new FlowLayout());
         addUserPanel.setLayout(new BoxLayout(addUserPanel, BoxLayout.Y_AXIS));
-        JLabel addUserLabel = ImdbLabel("ADD USER",40);
+        JLabel addUserLabel = ImdbLabel("ADD USER");
         addUserLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         addUserPanel.add(addUserLabel);
+        JPanel deleteUserPanel = new JPanel( new FlowLayout());
+        JPanel addDeleteUserPanel = new JPanel(new GridLayout(1, 2));
 
        deleteUserPanel.setLayout(new BoxLayout(deleteUserPanel, BoxLayout.Y_AXIS));
-       JLabel deleteUserLabel = ImdbLabel("DELETE USER",40);
+       JLabel deleteUserLabel = ImdbLabel("DELETE USER");
        deleteUserLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
        deleteUserPanel.add(deleteUserLabel);
-       deleteUser(deleteUserPanel);
-       addUser(addUserPanel);
+       deleteUser(deleteUserPanel, addDeleteUserPanel);
+       addUser(addUserPanel, addDeleteUserPanel, deleteUserPanel);
 
        addDeleteUserPanel.add(new JScrollPane(deleteUserPanel));
        addDeleteUserPanel.add(new JScrollPane(addUserPanel));
@@ -982,47 +1192,75 @@ public class ApplicationFlowGUI extends JFrame {
         setCurrentPanel(addDeleteUserPanel);
     }
 
-    private void addUser(JPanel addUserPanel) {
+    private void addUser(JPanel addUserPanel, JPanel addDeleteUserPanel, JPanel deleteUserPanel) {
+        // helper method for the addDeleteUser method to add a user
         JTextField FirstNameField = ImdbTextField(20,20);
         JTextField lastNameField = ImdbTextField(20,20);
         JTextField emailField = ImdbTextField(20,20);
         JComboBox<String> userTypeComboBox = new JComboBox<>(new String[]{"Admin", "Contributor", "Regular"});
         userTypeComboBox.setFont(new Font("Arial", Font.BOLD, 40));
         JButton button = ImdbButton("ADD USER",20);
-        JLabel nameLabel = ImdbLabel("First Name: ",40);
-        JLabel usernameLabel = ImdbLabel("Last Name: ",40);
-        JLabel emailLabel = ImdbLabel("Email: ",40);
-        JLabel userTypeLabel = ImdbLabel("User Type: ",40);
+        JLabel nameLabel = ImdbLabel("First Name: ");
+        JLabel usernameLabel = ImdbLabel("Last Name: ");
+        JLabel emailLabel = ImdbLabel("Email: ");
+        JLabel userTypeLabel = ImdbLabel("User Type: ");
         JPanel namePanel = ImdbInputPanel(nameLabel,FirstNameField);
         JPanel usernamePanel = ImdbInputPanel(usernameLabel,lastNameField);
         JPanel emailPanel = ImdbInputPanel(emailLabel,emailField);
         JPanel userTypePanel = ImdbComboPanel(userTypeLabel,userTypeComboBox);
-        // extra info for the user
+
+
         //age
-        JLabel userAgeLabel = ImdbLabel("Age: ",40);
-        JTextField userAgeField = ImdbTextField(20,20);
-        JPanel userAgePanel = ImdbInputPanel(userAgeLabel,userAgeField);
+        JLabel userAgeLabel = ImdbLabel("Age: ");
+        //  JTextField userAgeField = ImdbTextField(20,20);
+        JComboBox<Integer> userAgeComboBox = new JComboBox<>(GuiConstants.getAgeList());
+        JPanel userAgePanel = ImdbComboPanel(userAgeLabel,userAgeComboBox);
         //gender
-        JLabel userGenderLabel = ImdbLabel("Gender: ",40);
+        JLabel userGenderLabel = ImdbLabel("Gender: ");
         JComboBox<String> userGender = new JComboBox<>(new String[]{"male", "female", "neutral"});
         userGender.setFont(new Font("Arial", Font.BOLD, 40));
         JPanel userGenderPanel = ImdbComboPanel(userGenderLabel,userGender);
         //country
-        JLabel userCountryLabel = ImdbLabel("Country: ",40);
+        JLabel userCountryLabel = ImdbLabel("Country: ");
         JTextField userCountryField = ImdbTextField(20,20);
         JPanel userCountryPanel = ImdbInputPanel(userCountryLabel,userCountryField);
+        // birthday
+        JPanel userBirthdayPanel = new JPanel();
+        JLabel userBirthdayLabel = ImdbLabel("Birthday: ");
+        userBirthdayPanel.add(userBirthdayLabel);
+        JPanel birthDayPanel = new JPanel(new FlowLayout());
+        JLabel yearLabel = ImdbLabel("Year: ");
+        JLabel monthLabel = ImdbLabel("Month: ");
+        JLabel dayLabel = ImdbLabel("Day: ");
+        JComboBox<Integer> yearComboBox = GuiConstants.createComboBox(GuiConstants.getYearList());
+        JComboBox<String> monthComboBox = new JComboBox<>(new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September",
+                "October", "November", "December"});
+        JComboBox<Integer> dayComboBox = GuiConstants.createComboBox(GuiConstants.getDayList());
+        birthDayPanel.add(yearLabel);
+        birthDayPanel.add(yearComboBox);
+        birthDayPanel.add(monthLabel);
+        birthDayPanel.add(monthComboBox);
+        birthDayPanel.add(dayLabel);
+        birthDayPanel.add(dayComboBox);
+        userBirthdayPanel.add(birthDayPanel);
 
-
-
-        //
         button.addActionListener(e -> {
             String firstname = FirstNameField.getText();
             String lastname = lastNameField.getText();
             String name = firstname + " " + lastname;
             String email = emailField.getText();
+            int age = userAgeComboBox.getSelectedIndex()+1;
+            //birthday
+
+                int year = (int) yearComboBox.getSelectedItem();
+                int month = monthComboBox.getSelectedIndex() + 1;
+                int day = (int) dayComboBox.getSelectedItem();
+            LocalDateTime    birthday = LocalDateTime.of(year, month, day, 0, 0);
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            int i = currentYear - year;
             int choice = userTypeComboBox.getSelectedIndex();
             AccountType accountType = null;
-            String username = "";
+            String username;
             switch (choice){
                 case 0->accountType=AccountType.Admin;
                 case 1->accountType=AccountType.Contributor;
@@ -1033,10 +1271,13 @@ public class ApplicationFlowGUI extends JFrame {
                 // check if the email is valid
             }else if( !email.matches("^(.+)@(.+)$")){
                 dialogBox("invalid email address");
+            }else if(i+1 < age || i-1 > age){
+                dialogBox("your age may not be correct ");
             }else{
                 username = FunctionsFactory.generateUniqueUsername(name);
                 Admin<?> admin = new Admin<>();
                 User<?> newUser = admin.addUser(name, accountType);
+                newUser.setName(name);
                 newUser.setEmail(email);
                 newUser.setUsername(username);
                 IMDB.getInstance().getUsers().add(newUser);
@@ -1048,27 +1289,28 @@ public class ApplicationFlowGUI extends JFrame {
                         "Your password is: " + password + "\n\n" +
                         "Best regards,\n" +
                         "IMDB Team";
-                dialogBox(message);
-
-                if(!userAgeField.getText().isEmpty()){
-                    newUser.setAge(Integer.parseInt(userAgeField.getText()));
-                }
+                dialogBox(message );
+                newUser.setAge(age);
                 if(!userCountryField.getText().isEmpty()){
                     newUser.setCountry(userCountryField.getText());
                 }
                 if(!Objects.requireNonNull(userGender.getSelectedItem()).toString().isEmpty()){
                     newUser.setGender(userGender.getSelectedItem().toString());
                 }
+                    newUser.setBirthDate(birthday);
+
                 // renew the user list
                 addUserPanel.removeAll();
-                addUser(addUserPanel);
-                deleteUser(deleteUserPanel);
+                addUser(addUserPanel, addDeleteUserPanel, deleteUserPanel);
+                deleteUserPanel.removeAll();
+                deleteUser(deleteUserPanel, addDeleteUserPanel);
                 addUserPanel.revalidate();
                 addUserPanel.repaint();
+                deleteUserPanel.revalidate();
+                deleteUserPanel.repaint();
 
             }
             //add extra info for the user
-
 
 
         });
@@ -1080,6 +1322,8 @@ public class ApplicationFlowGUI extends JFrame {
         addUserPanel.add(userAgePanel);
         addUserPanel.add(userGenderPanel);
         addUserPanel.add(userCountryPanel);
+        addUserPanel.add(userBirthdayPanel);
+
 
         //
         addUserPanel.add(button);
@@ -1088,13 +1332,26 @@ public class ApplicationFlowGUI extends JFrame {
 
     }
 
-    private void deleteUser(JPanel deleteUserPanel) {
+    private void deleteUser(JPanel deleteUserPanel, JPanel addDeleteUserPanel) {
+        // helper method for the addDeleteUser method to delete a user
         for (User<?> user : users) {
-            JLabel nameLabel = ImdbLabel(user.getUsername()+"  ",40);
-            JButton button = ImdbButton("delete", 40);
-            deleteUserPanel.add(ImdbButtonLabelPanel(nameLabel, button));
+            JButton nameButton = ImdbButton(user.getName(),40);
+            JButton button = new JButton(GuiConstants.getIcon("delete.png",40,50));
+            JPanel namePanel = new JPanel();
+            namePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+            namePanel.add(nameButton);
+            namePanel.add(button);
+            deleteUserPanel.add(namePanel);
             deleteUserPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-
+            nameButton.addActionListener(e -> {
+                // display user info
+                List<String> info = Constants.userInfo(user);
+                StringBuilder message = new StringBuilder();
+                for (String s : info) {
+                    message.append(s).append("\n");
+                }
+               imdbTextAreaWithBack(addDeleteUserPanel, user.getUsername(), message.toString());
+            });
             button.addActionListener(e -> {
                 users.remove(user);
                 //delete rating by the user
@@ -1105,7 +1362,7 @@ public class ApplicationFlowGUI extends JFrame {
                 requests.removeIf(request -> request.getUsername().equals(user.getUsername()));
                 // renew the user list
                  deleteUserPanel.removeAll();
-                deleteUser(deleteUserPanel);
+                deleteUser(deleteUserPanel, addDeleteUserPanel);
                 deleteUserPanel.revalidate();
                 deleteUserPanel.repaint();
 
@@ -1118,18 +1375,22 @@ public class ApplicationFlowGUI extends JFrame {
           }
     }
 
-    public void addDeleteProductionSystem() {
+    /**
+     * addDeleteProductionSystem method is used to add or delete a production or an actor from the system.
+     */
+    public void addDeleteProductionOrActorFromSystem() {
         setTitle("Add/Delete actor/movie/series/ from system");
         getDimension(screenSize);
+        JPanel deleteProductionOrActorPanel = new JPanel(new FlowLayout());
         JPanel addDeleteProductionPanel = new JPanel(new GridLayout(1, 2));
         JPanel addProductionPanel =  new JPanel(new FlowLayout());
      addProductionPanel.setLayout(new BoxLayout(addProductionPanel, BoxLayout.Y_AXIS));
     deleteProductionOrActorPanel.setLayout(new BoxLayout(deleteProductionOrActorPanel, BoxLayout.Y_AXIS));
-    JLabel addProductionLabel = ImdbLabel("ADD PRODUCTION",40);
+    JLabel addProductionLabel = ImdbLabel("ADD PRODUCTION");
     addProductionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     addProductionPanel.add(addProductionLabel);
 
-    JLabel deleteProductionLabel = ImdbLabel("DELETE PRODUCTION",40);
+    JLabel deleteProductionLabel = ImdbLabel("DELETE PRODUCTION");
     deleteProductionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     deleteProductionOrActorPanel.add(deleteProductionLabel);
         deleteProductionOrActor(deleteProductionOrActorPanel);
@@ -1141,18 +1402,19 @@ public class ApplicationFlowGUI extends JFrame {
         setCurrentPanel(addDeleteProductionPanel);
     }
 private  void addProductionOrActor(JPanel addProductionPanel){
-    addProductionComboBox = new JComboBox<>(new String[]{"Actor", "Production"});
-    addProductionComboBox.setFont(new Font("Arial", Font.BOLD, 20));
-    addProductionPanel.add(addProductionComboBox);
-    addProductionComboBox.addActionListener(e -> {
-        addProductionPanel.add(addProductionComboBox);
-        if (addProductionComboBox.getSelectedIndex() == 0) {
+        // helper method for the addDeleteProductionOrActorFromSystem method to add a production or an actor
+    addaActorOrProductionComboBox = new JComboBox<>(new String[]{"Actor", "Production"});
+    addaActorOrProductionComboBox.setFont(new Font("Arial", Font.BOLD, 20));
+    addProductionPanel.add(addaActorOrProductionComboBox);
+    addaActorOrProductionComboBox.addActionListener(e -> {
+        addProductionPanel.add(addaActorOrProductionComboBox);
+        if (addaActorOrProductionComboBox.getSelectedIndex() == 0) {
             addProductionPanel.removeAll();
             addProductionOrActor(addProductionPanel);
             addActor(addProductionPanel);
             addProductionPanel.revalidate();
             addProductionPanel.repaint();
-        } else if (addProductionComboBox.getSelectedIndex() == 1){
+        } else if (addaActorOrProductionComboBox.getSelectedIndex() == 1){
             addProductionPanel.removeAll();
             addProductionOrActor(addProductionPanel);
             addProduction(addProductionPanel);
@@ -1163,24 +1425,25 @@ private  void addProductionOrActor(JPanel addProductionPanel){
 }
 
     private void addProduction(JPanel addProductionPanel) {
-        JLabel titleLabel = ImdbLabel("Title: ",40);
+        // helper method for addProductionOrActor method to add a production
+        JLabel titleLabel = ImdbLabel("Title: ");
        JTextField titleField = ImdbTextField(20,20);
 
-        JLabel typeLabel = ImdbLabel("Type: ",40);
+        JLabel typeLabel = ImdbLabel("Type: ");
        JComboBox<String> typeComboBox = new JComboBox<>(new String[]{"Movie", "Series"});
          typeComboBox.setFont(new Font("Arial", Font.BOLD, 20));
-         JLabel plotLabel = ImdbLabel("Plot: ",40);
+         JLabel plotLabel = ImdbLabel("Plot: ");
         JTextArea plotArea= new JTextArea();
         plotArea.setFont(new Font("Arial", Font.BOLD, 40));
         plotArea.setPreferredSize(new Dimension(600, 400));
         JScrollPane plotScrollPane = new JScrollPane(plotArea);
-        JLabel releaseYearLabel = ImdbLabel("Release Year: ",40);
-        JTextField releaseYearField = ImdbTextField(20,20);
+        JLabel releaseYearLabel = ImdbLabel("Release Year: ");
+       JComboBox<Integer> releaseYearField = GuiConstants.createComboBox(GuiConstants.getYearList());
 
         JPanel titlePanel = ImdbInputPanel(titleLabel,titleField);
         JPanel typePanel = ImdbComboPanel(typeLabel,typeComboBox);
         JPanel plotPanel = ImdbLabelScrollablePanel(plotLabel,plotScrollPane);
-        JPanel releaseYearPanel = ImdbInputPanel(releaseYearLabel,releaseYearField);
+        JPanel releaseYearPanel = ImdbComboPanel(releaseYearLabel,releaseYearField);
         addProductionPanel.add(titlePanel);
         addProductionPanel.add(typePanel);
         addProductionPanel.add(plotPanel);
@@ -1190,7 +1453,6 @@ private  void addProductionOrActor(JPanel addProductionPanel){
         createButton.addActionListener(e -> {
             String title = titleField.getText();
             String plot = plotArea.getText();
-            String releaseYear = releaseYearField.getText();
             if(title.isEmpty()){
                 dialogBox("title is empty");
             }else {
@@ -1202,6 +1464,11 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 }
                 assert production != null;
                 production.setTitle(title);
+                if(production instanceof Movie){
+                    ((Movie) production).setReleaseYear(Integer.parseInt(Objects.requireNonNull(releaseYearField.getSelectedItem()).toString()));
+                }else {
+                    ((Series) production).setReleaseYear(Integer.parseInt(Objects.requireNonNull(releaseYearField.getSelectedItem()).toString()));
+                }
                 production.setType(Objects.requireNonNull(typeComboBox.getSelectedItem()).toString());
                 production.setPlot(plot);
                 productions.add(production);
@@ -1213,7 +1480,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 dialogBox(message);
                 // renew the user list
                 addProductionPanel.removeAll();
-                addProductionPanel.add(addProductionComboBox);
+                addProductionPanel.add(addaActorOrProductionComboBox);
                 addProduction(addProductionPanel);
                 addProductionPanel.revalidate();
                 addProductionPanel.repaint();
@@ -1225,18 +1492,19 @@ private  void addProductionOrActor(JPanel addProductionPanel){
 
 
     private void addActor(JPanel addProductionPanel) {
+        // helper method for addProductionOrActor method to add an actor
         JTextField nameField = ImdbTextField(20,20);
-        JLabel nameLabel = ImdbLabel("Name: ",40);
+        JLabel nameLabel = ImdbLabel("Name: ");
         JPanel namePanel = ImdbInputPanel(nameLabel,nameField);
         addProductionPanel.add(namePanel);
-        JLabel biographyLabel = ImdbLabel("Biography: ",40);
+        JLabel biographyLabel = ImdbLabel("Biography: ");
         JTextArea biographyArea= new JTextArea();
         biographyArea.setFont(new Font("Arial", Font.BOLD, 40));
         biographyArea.setPreferredSize(new Dimension(600, 400));
 
         JScrollPane biographyScrollPane = new JScrollPane(biographyArea);
         JPanel biographyPanel = ImdbLabelScrollablePanel(biographyLabel,biographyScrollPane);
-        JLabel performanceLabel = ImdbLabel("Number of Performances: ",40);
+        JLabel performanceLabel = ImdbLabel("Number of Performances: ");
         JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
         spinner.setFont(new Font("Arial", Font.BOLD, 40));
         JPanel spinnerPanel = new JPanel(new FlowLayout());
@@ -1254,10 +1522,10 @@ private  void addProductionOrActor(JPanel addProductionPanel){
             for (int i = 0; i < numberOfPerformances; i++) {
                 JPanel flowPanel = new JPanel(new FlowLayout());
                 JTextField titleField = ImdbTextField(20,20);
-                JLabel titleLabel = ImdbLabel(" Title: ",40);
+                JLabel titleLabel = ImdbLabel(" Title: ");
                 JPanel titlePanel = ImdbInputPanelFlow(titleLabel,titleField);
                 flowPanel.add(titlePanel);
-                JLabel typeLabel = ImdbLabel(" Type: ",40);
+                JLabel typeLabel = ImdbLabel(" Type: ");
                 JComboBox<String> typeComboBox = new JComboBox<>(new String[]{"Movie", "Series"});
                 typeComboBox.setFont(new Font("Arial", Font.BOLD, 40));
                 JPanel typePanel = ImdbComboPanel(typeLabel,typeComboBox);
@@ -1296,7 +1564,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 dialogBox(message);
                 // renew the user list
                 addProductionPanel.removeAll();
-                addProductionPanel.add(addProductionComboBox);
+                addProductionPanel.add(addaActorOrProductionComboBox);
                 addActor(addProductionPanel);
 
                 addProductionPanel.revalidate();
@@ -1313,19 +1581,20 @@ private  void addProductionOrActor(JPanel addProductionPanel){
     }
 
     private void deleteProductionOrActor( JPanel deleteProduction){
-        deleteProductionComboBox = new JComboBox<>(new String[]{"Actor", "Production"});
-         deleteProductionComboBox.setPreferredSize(new Dimension(200, 50));
-        deleteProductionComboBox.setFont(new Font("Arial", Font.BOLD, 40));
-        deleteProduction.add(deleteProductionComboBox);
-        deleteProductionComboBox.addActionListener(e -> {
-            deleteProduction.add(deleteProductionComboBox);
-            if (deleteProductionComboBox.getSelectedIndex() == 0) {
+        // helper method for the addDeleteProductionOrActorFromSystem method to delete a production or an actor
+        deleteActorOrProductionComboBox = new JComboBox<>(new String[]{"Actor", "Production"});
+         deleteActorOrProductionComboBox.setPreferredSize(new Dimension(200, 50));
+        deleteActorOrProductionComboBox.setFont(new Font("Arial", Font.BOLD, 40));
+        deleteProduction.add(deleteActorOrProductionComboBox);
+        deleteActorOrProductionComboBox.addActionListener(e -> {
+            deleteProduction.add(deleteActorOrProductionComboBox);
+            if (deleteActorOrProductionComboBox.getSelectedIndex() == 0) {
                 deleteProduction.removeAll();
                 deleteProductionOrActor(deleteProduction);
                 deleteActor(deleteProduction);
                 deleteProduction.revalidate();
                 deleteProduction.repaint();
-            } else if (deleteProductionComboBox.getSelectedIndex() == 1){
+            } else if (deleteActorOrProductionComboBox.getSelectedIndex() == 1){
                 deleteProduction.removeAll();
                 deleteProductionOrActor(deleteProduction);
                 deleteProduction(deleteProduction);
@@ -1338,9 +1607,10 @@ private  void addProductionOrActor(JPanel addProductionPanel){
     }
 
     private void deleteProduction(JPanel deleteProduction) {
+        // helper method for deleteProductionOrActor method to delete a production
         for (Production production : productions) {
-            JLabel nameLabel = ImdbLabel(production.getTitle()+"  ",40);
-            JButton button = ImdbButton("delete", 40);
+            JLabel nameLabel = ImdbLabel(production.getTitle()+"  ");
+            JButton button = new JButton(GuiConstants.getIcon("delete.png",40,50));
             deleteProduction.add(ImdbButtonLabelPanel(nameLabel, button));
             deleteProduction.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -1352,7 +1622,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 }
                 // renew the user list
                 deleteProduction.removeAll();
-                deleteProduction.add(deleteProductionComboBox);
+                deleteProduction.add(deleteActorOrProductionComboBox);
                 deleteProduction(deleteProduction);
                 deleteProduction.revalidate();
                 deleteProduction.repaint();
@@ -1367,9 +1637,10 @@ private  void addProductionOrActor(JPanel addProductionPanel){
     }
 
     private void deleteActor(JPanel deleteProduction) {
+        // helper method for deleteProductionOrActor method to delete an actor
         for (Actor actor : actors) {
-            JLabel nameLabel = ImdbLabel(actor.getName()+"  ",40);
-            JButton button = ImdbButton("delete", 40);
+            JLabel nameLabel = ImdbLabel(actor.getName()+"  ");
+            JButton button = new JButton(GuiConstants.getIcon("delete.png",40,50));
             deleteProduction.add(ImdbButtonLabelPanel(nameLabel, button));
             deleteProduction.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -1381,7 +1652,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 }
                 // renew the user list
                 deleteProduction.removeAll();
-                deleteProduction.add(deleteProductionComboBox);
+                deleteProduction.add(deleteActorOrProductionComboBox);
                 deleteActor(deleteProduction);
                 deleteProduction.revalidate();
                 deleteProduction.repaint();
@@ -1394,6 +1665,10 @@ private  void addProductionOrActor(JPanel addProductionPanel){
             });
         }
     }
+
+    /**
+     * updateMovieDetails method is used to update the details of a movie or a series.
+     */
 
 
     public void updateMovieDetails() {
@@ -1420,6 +1695,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                     editPanel = editSeriesDetails(production);
 
                 }
+                assert editPanel != null;
                 editPanel.add(Box.createRigidArea(new Dimension(0, 20)));
                 detailsPanel.removeAll();
                 detailsPanel.add(editPanel);
@@ -1439,6 +1715,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
     }
 
    private JPanel editMovieDetails(Production production){
+        // helper method for the updateMovieDetails method to update the details of a movie
         JPanel panel = new JPanel(new BorderLayout());
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -1471,7 +1748,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
             panel.revalidate();
             panel.repaint();
         });
-        JLabel durationLabel = ImdbLabel("Duration:",40);
+        JLabel durationLabel = ImdbLabel("Duration:");
         JPanel durationPanel = ImdbButtonLabelPanel(durationLabel,durationButton);
         // make the entries start at the beginning of the line
         durationPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -1487,6 +1764,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
 
 
     private JPanel editSeriesDetails(Production production){
+        // helper method for the updateMovieDetails method to update the details of a series
         JPanel panel = new JPanel(new BorderLayout());
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -1517,7 +1795,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
             panel.revalidate();
             panel.repaint();
         });
-        JLabel seasonsLabel = ImdbLabel("Number of seasons:",40);
+        JLabel seasonsLabel = ImdbLabel("Number of seasons:");
         JPanel seasonsPanel = ImdbButtonLabelPanel(seasonsLabel,seasonsButton);
         // make the entries start at the beginning of the line
         seasonsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -1536,7 +1814,6 @@ private  void addProductionOrActor(JPanel addProductionPanel){
             seasonPanel.add(Box.createRigidArea(new Dimension(0, 20)));
             JButton seasonButton = ImdbButton(entry.getKey(),40);
             seasonButton.addActionListener(e->{
-                String oldsSeason = entry.getKey();
                 String season = GuiConstants.showInputDialog("Enter new season", entry.getKey(), 300, 200);
                 if(season == null) return; // User canceled the input
                 ((Series)production).setKey(entry.getKey(),season);
@@ -1596,7 +1873,12 @@ private  void addProductionOrActor(JPanel addProductionPanel){
 
         return panel;
   }
+
+    /**
+     * updateActorDetails method is used to update the details of an actor.
+     */
     public void updateActorDetails() {
+
         getDimension(screenSize);
         JPanel updateActorPanel = new JPanel(new GridLayout(1, 2));
         JPanel listPanel = new JPanel(new BorderLayout());
@@ -1612,7 +1894,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
             listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
             button.addActionListener(e -> {
-               JPanel editPanel = editDetails(actor);
+               JPanel editPanel = editActorDetails(actor);
                 editPanel.add(Box.createRigidArea(new Dimension(0, 20)));
                 detailsPanel.removeAll();
                 detailsPanel.add(editPanel);
@@ -1629,7 +1911,9 @@ private  void addProductionOrActor(JPanel addProductionPanel){
         setCurrentPanel(updateActorPanel);
 
     }
-    private JPanel editDetails(Actor actor ){
+    private JPanel editActorDetails(Actor actor ){
+        // helper method for the updateActorDetails method to update the details of an actor
+
         JPanel panel = new JPanel(new BorderLayout());
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -1640,17 +1924,17 @@ private  void addProductionOrActor(JPanel addProductionPanel){
             if(name == null) return; // User canceled the input
             actor.setName(name);
             panel.removeAll();
-            panel.add(editDetails(actor));
+            panel.add(editActorDetails(actor));
             panel.revalidate();
             panel.repaint();
 
         });
-        JPanel namePanel = ImdbButtonLabelPanel(ImdbLabel("Name:",40),nameButton);
+        JPanel namePanel = ImdbButtonLabelPanel(ImdbLabel("Name:"),nameButton);
         namePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
         panel.add(namePanel);
         JPanel addPerformancePanel = new JPanel();
         addPerformancePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
-        JLabel nameLabel = ImdbLabel("Performance:",40);
+        JLabel nameLabel = ImdbLabel("Performance:");
         JButton addPerformanceButton = new JButton(GuiConstants.getIcon("add.png", 40,50));
 addPerformanceButton.addActionListener(e->{
             String title = GuiConstants.showInputDialog("Enter new title", "", 300, 200);
@@ -1666,7 +1950,7 @@ addPerformanceButton.addActionListener(e->{
               }
             actor.addPerformance(title,type);
             panel.removeAll();
-            panel.add(editDetails(actor));
+            panel.add(editActorDetails(actor));
             panel.revalidate();
             panel.repaint();
         });
@@ -1686,7 +1970,7 @@ addPerformanceButton.addActionListener(e->{
                 if(title == null) return; // User canceled the input
                 actor.setKey(actor.getPerformances().get(finalI).getKey(),title);
                 panel.removeAll();
-                panel.add(editDetails(actor));
+                panel.add(editActorDetails(actor));
                 panel.revalidate();
                 panel.repaint();
             });
@@ -1696,12 +1980,12 @@ addPerformanceButton.addActionListener(e->{
                 if(type == null) return; // User canceled the input
                 actor.setValue(actor.getPerformances().get(finalI).getKey(),type);
                 panel.removeAll();
-                panel.add(editDetails(actor));
+                panel.add(editActorDetails(actor));
                 panel.revalidate();
                 panel.repaint();
             });
-            JPanel titlePanel = ImdbButtonLabelPanel(ImdbLabel("Title:",40),titleButton);
-            JPanel typePanel = ImdbButtonLabelPanel(ImdbLabel("Type:",40),typeButton);
+            JPanel titlePanel = ImdbButtonLabelPanel(ImdbLabel("Title:"),titleButton);
+            JPanel typePanel = ImdbButtonLabelPanel(ImdbLabel("Type:"),typeButton);
             titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
             typePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
             performancePanel.add(titlePanel);
@@ -1718,11 +2002,11 @@ addPerformanceButton.addActionListener(e->{
             if(biography == null) return; // User canceled the input
             actor.setBiography(biography);
             panel.removeAll();
-            panel.add(editDetails(actor));
+            panel.add(editActorDetails(actor));
             panel.revalidate();
             panel.repaint();
         });
-        JLabel biographyLabel = ImdbLabel("Biography:",40);
+        JLabel biographyLabel = ImdbLabel("Biography:");
         JPanel biographyPanel = ImdbButtonLabelPanel(biographyLabel,biographyButton);
         biographyPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
 
@@ -1734,35 +2018,40 @@ addPerformanceButton.addActionListener(e->{
         panel.add(biographyArea);
 
         return panel;
-
-
-
     }
+    /**
+     * solveRequests method is used to solve the requests of the users.
+     */
 
     public void solveRequests() {
         getDimension(screenSize);
-        setCurrentPanel(mainScreenPanel);
-    }
+        JPanel solveRequests =  new JPanel();
 
+
+
+    }
+    /**
+     * logout method is used to logout from the system and go back to the login screen.
+     */
    public void logout() {
             getDimension(screenSize);
-       Auth auth = new Auth();
-       setVisible(false);
-       auth.setVisible(true);
+            setVisible(false);
+           new ApplicationFlowGUI();
+
         }
+        /**
+         * exit method is used to exit from the system.
+         */
     public void exit(){
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setTitle("Your Actor details");
-        setForeground(Color.black);
-        setBackground(Color.gray);
-        setSize(screenSize.width, screenSize.height);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setCurrentPanel(mainScreenPanel);
+        System.exit(0);
     }
+
    private void home(){
+        // go back to the home screen
          setCurrentPanel(mainScreenPanel);
    }
     private void getDimension(Dimension screenSize) {
+        // get the dimension of the screen
         setBackground(Color.gray);
         setForeground(Color.black);
         setSize(screenSize.width, screenSize.height);
@@ -1781,6 +2070,7 @@ addPerformanceButton.addActionListener(e->{
 
     //PRODUCTION EDIT FUNCTIONS
     private void editProductionReleaseYear(Production production, JPanel panel) {
+        // helper method for editMovieDetails and editSeriesDetails methods to edit the release year of a production
 
         JButton releaseDateButton = ImdbButton("",40);
           if (production instanceof Series){
@@ -1789,19 +2079,9 @@ addPerformanceButton.addActionListener(e->{
               releaseDateButton = ImdbButton(String.valueOf(((Movie) production).getReleaseYear()),40);
           }
         releaseDateButton.addActionListener(e->{
-            String releaseDate = GuiConstants.showInputDialog("Enter new release date", String.valueOf(((Movie) production).getReleaseYear()), 300, 200);
-            if(releaseDate == null) return; // User canceled the input
-            int releaseYear;
-            try {
-                releaseYear = Integer.parseInt(releaseDate);
-                if(releaseYear<1900 || releaseYear>2021){
-                    dialogBox("release year should be between 1900 and 2021");
-                    return;
-                }
-            } catch (NumberFormatException numberFormatException) {
-                dialogBox("release year should be a number");
-                return;
-            }
+            int releaseYear = GuiConstants.selectRealeaseYear("choose release year");
+
+
             if (production instanceof Series){
                 ((Series) production).setReleaseYear(releaseYear);
             } else if (production instanceof Movie){
@@ -1812,7 +2092,7 @@ addPerformanceButton.addActionListener(e->{
             panel.revalidate();
             panel.repaint();
         });
-        JLabel releaseDateLabel = ImdbLabel("Release Date:",40);
+        JLabel releaseDateLabel = ImdbLabel("Release Date:");
         JPanel releaseDatePanel = ImdbButtonLabelPanel(releaseDateLabel,releaseDateButton);
         // make the entries start at the beginning of the line
         releaseDatePanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -1820,6 +2100,7 @@ addPerformanceButton.addActionListener(e->{
     }
 
     private void editProductionPlot(Production production, JPanel panel) {
+        // helper method for editMovieDetails and editSeriesDetails methods to edit the plot of a production
         JButton plotButton = new JButton(GuiConstants.getIcon("edit.png", 60,60));
         plotButton.addActionListener(e->{
             String plot = GuiConstants.showInputDialog("Enter new plot", production.getPlot(), 600, 400);
@@ -1830,7 +2111,7 @@ addPerformanceButton.addActionListener(e->{
             panel.revalidate();
             panel.repaint();
         });
-        JLabel plotLabel = ImdbLabel("Plot:",40);
+        JLabel plotLabel = ImdbLabel("Plot:");
         JPanel plotPanel = ImdbButtonLabelPanel(plotLabel,plotButton);
         // make the entries start at the beginning of the line
         plotPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -1843,12 +2124,11 @@ addPerformanceButton.addActionListener(e->{
     }
 
     private void editProductionRatings(Production production, JPanel panel) {
+        // helper method for editMovieDetails and editSeriesDetails methods to edit the ratings of a production
         int size;
-        JLabel ratingsLabel = ImdbLabel("Ratings:",40);
+        JLabel ratingsLabel = ImdbLabel("Ratings:");
         JButton addRatingButton = new JButton(GuiConstants.getIcon("add.png", 60,60));
         addRatingButton.addActionListener(e->{
-           // String username = GuiConstants.showInputDialog("Enter new username", "", 300, 200);
-            //if(username == null) return; // User canceled the input
             String username = currentUser.getUsername();
             int rating = GuiConstants.selectRating("choose rating you want to add");
             if(rating < 1) return; // User canceled the input
@@ -1881,7 +2161,7 @@ addPerformanceButton.addActionListener(e->{
             ratingPanel.setLayout(new BoxLayout(ratingPanel, BoxLayout.Y_AXIS));
             // make the entries start at the beginning of the line
             ratingPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-            JLabel usernameLabel = ImdbLabel("Username: ",40);
+            JLabel usernameLabel = ImdbLabel("Username: ");
             JButton  usernameButton = ImdbButton(production.getRatings().get(i).getUsername(),40);
             int finalI = i;
             usernameButton.addActionListener(e->{
@@ -1906,7 +2186,7 @@ addPerformanceButton.addActionListener(e->{
                 panel.revalidate();
                 panel.repaint();
             });
-            JLabel ratingLabel = ImdbLabel("Rating: ",40);
+            JLabel ratingLabel = ImdbLabel("Rating: ");
             ratingPanel.add(ImdbButtonLabelPanel(ratingLabel,ratingButton));
             ratingsPanel.add(ratingPanel);
             JButton  commentButton = ImdbButton(production.getRatings().get(i).getComment(),40);
@@ -1919,7 +2199,7 @@ addPerformanceButton.addActionListener(e->{
                 panel.revalidate();
                 panel.repaint();
             });
-            JLabel commentLabel = ImdbLabel("Comment: ",40);
+            JLabel commentLabel = ImdbLabel("Comment: ");
             ratingPanel.add(ImdbButtonLabelPanel(commentLabel,commentButton));
             ratingsPanel.add(ratingPanel);
             mainRatingPanel.add(ratingsPanel);
@@ -1929,8 +2209,9 @@ addPerformanceButton.addActionListener(e->{
     }
 
     private void editProductionGenres(Production production, JPanel panel) {
+        // helper method for editMovieDetails and editSeriesDetails methods to edit the genres of a production
         int size;
-        JLabel genresLabel = ImdbLabel("Genres:",40);
+        JLabel genresLabel = ImdbLabel("Genres:");
         JButton addGenreButton = new JButton(GuiConstants.getIcon("add.png", 60,60));
         addGenreButton.addActionListener(e->{
             Genre genre = GuiConstants.selectGenre("choose genre you want to add");
@@ -1980,8 +2261,9 @@ addPerformanceButton.addActionListener(e->{
     }
 
     private void editProductionActors(Production production, JPanel panel) {
+        // helper method for editMovieDetails and editSeriesDetails methods to edit the actors of a production
         int size;
-        JLabel actorsLabel = ImdbLabel("Actors:",40);
+        JLabel actorsLabel = ImdbLabel("Actors:");
         JPanel actorsPanel = new JPanel(new BorderLayout());
         actorsPanel.setLayout(new BoxLayout(actorsPanel, BoxLayout.Y_AXIS));
         JButton addActorButton = new JButton(GuiConstants.getIcon("add.png", 60,60));
@@ -2035,7 +2317,8 @@ addPerformanceButton.addActionListener(e->{
     }
 
     private void editProductionDirectors(Production production, JPanel panel) {
-        JLabel directorsLabel = ImdbLabel("Directors:",40);
+        // helper method for editMovieDetails and editSeriesDetails methods to edit the directors of a production
+        JLabel directorsLabel = ImdbLabel("Directors:");
         JButton addDirectorButton = new JButton(GuiConstants.getIcon("add.png", 60,60));
         addDirectorButton.addActionListener(e->{
             String director = GuiConstants.showInputDialog("Enter new director", "", 300, 200);
@@ -2082,6 +2365,7 @@ addPerformanceButton.addActionListener(e->{
     }
 
     private void editProductionType(Production production, JPanel panel) {
+        // helper method for editMovieDetails and editSeriesDetails methods to edit the type of a production
         JButton typeButton = ImdbButton(production.getType(),40);
         typeButton.addActionListener(e->{
             String type = GuiConstants.chooseType("Choose type" ,"Movie", "Series");
@@ -2093,7 +2377,7 @@ addPerformanceButton.addActionListener(e->{
             panel.repaint();
 
         });
-        JLabel typeLabel = ImdbLabel("Type:",40);
+        JLabel typeLabel = ImdbLabel("Type:");
         JPanel typePanel = ImdbButtonLabelPanel(typeLabel,typeButton);
         // make the entries start at the beginning of the line
         typePanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -2101,6 +2385,7 @@ addPerformanceButton.addActionListener(e->{
         panel.add(typePanel);
     }
     private void editTitle(Production production, JPanel panel) {
+        // helper method for editMovieDetails and editSeriesDetails methods to edit the title of a production
         JButton titleButton = ImdbButton(production.getTitle(),40);
         titleButton.addActionListener(e->{
             String title = GuiConstants.showInputDialog("Enter new title", production.getTitle(), 300, 200);
@@ -2112,18 +2397,21 @@ addPerformanceButton.addActionListener(e->{
             panel.repaint();
 
         });
-        JLabel titleLabel = ImdbLabel("Title:",40);
+        JLabel titleLabel = ImdbLabel("Title:");
         JPanel titlePanel = ImdbButtonLabelPanel(titleLabel,titleButton);
         titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
 
         titlePanel.add(Box.createRigidArea(new Dimension(0, 20)));
         panel.add(titlePanel);
     }
+    //END OF PRODUCTION EDIT FUNCTIONS
 
     private void dialogBox(String message) {
+        // mini dialog box to show messages
         JOptionPane.showMessageDialog(null, message);
     }
     private void dialogArea(String message) {
+        // a bigger dialog box to show messages
         JTextArea textArea = new JTextArea(message);
         textArea.setEditable(false);
         textArea.setFont(new Font("Arial", Font.PLAIN, 24));
@@ -2131,36 +2419,40 @@ addPerformanceButton.addActionListener(e->{
         scrollPane.setPreferredSize(new Dimension(1000, 800));
         JOptionPane.showMessageDialog(null, scrollPane, "Message", JOptionPane.INFORMATION_MESSAGE);
     }
-    // SOME helper fanctions
     private JTextField ImdbTextField(int column, int size) {
+        // custom text field
         JTextField textField = new JTextField(column);
         textField.setFont(new Font("Arial", Font.BOLD, size));
         return textField;
     }
-
     private JButton ImdbButton(String text, int size) {
+        // custom button
         JButton  button = new  JButton (text);
         button.setFont(new Font("Arial", Font.BOLD, size));
         return button;
     }
-    private JLabel ImdbLabel(String text, int size){
+    private JLabel ImdbLabel(String text){
+        // custom label
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.BOLD, size));
+        label.setFont(new Font("Arial", Font.BOLD, 40));
         return label;
     }
     private JPanel ImdbInputPanel(JLabel label, JTextField textField){
+        // custom panel with a label and a text field
         JPanel inputPanel = new JPanel();
         inputPanel.add(label);
         inputPanel.add(textField);
         return inputPanel;
     }
     private JPanel ImdbComboPanel(JLabel label, JComboBox<?> comboBox){
+        // custom combo box
         JPanel comboPanel = new JPanel();
         comboPanel.add(label);
         comboPanel.add(comboBox);
         return comboPanel;
     }
     private JPanel ImdbButtonLabelPanel(JLabel label, JButton button){
+        // custom panel with a button and a label
         JPanel buttonLabelPanel = new JPanel();
         buttonLabelPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
         buttonLabelPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -2168,20 +2460,55 @@ addPerformanceButton.addActionListener(e->{
         buttonLabelPanel.add(button);
         return buttonLabelPanel;
     }
-
-    // edit Production  functions
     private JPanel ImdbInputPanelFlow(JLabel label, JTextField textField){
+        // custom panel with a label and a text field with flow layout
         JPanel inputPanel = new JPanel(new FlowLayout());
         inputPanel.add(label);
         inputPanel.add(textField);
         return inputPanel;
     }
     private JPanel ImdbLabelScrollablePanel(JLabel label, JScrollPane scrollPane){
+        // custom panel with a label and a scroll pane
         JPanel inputPanel = new JPanel(new FlowLayout());
         inputPanel.add(label);
         inputPanel.add(scrollPane);
         return inputPanel;
     }
 
+    private void imdbTextAreaWithBack(JPanel previousPanel , String title, String details) {
+        // custom panel with a text area and a back button
+        JPanel textAreaPanel = new JPanel(new BorderLayout());
+        JTextArea textArea = new JTextArea();
+        textArea.setMargin(new Insets(40, 100, 40, 40));
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 34));
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setText(details);
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.add(ImdbLabel(title), BorderLayout.CENTER);
+        JButton backButton = new JButton(GuiConstants.getIcon("left_arrow.png", 60, 60));
+        backButton.addActionListener(e -> setCurrentPanel(previousPanel));
+        titlePanel.add(backButton, BorderLayout.WEST);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        textAreaPanel .add(titlePanel, BorderLayout.NORTH);
+        textAreaPanel .add(scrollPane, BorderLayout.CENTER);
+        textAreaPanel .revalidate();
+        textAreaPanel.repaint();
+        setCurrentPanel(textAreaPanel);
+    }
+    private User<?> authenticate(String email, String password) {
+        // authenticate the user by checking the email and password
+        for (User<?> user : users) {
+            if (user.getEmail().equals(email)) {
+                if (user.getPassword().equals(password)) {
+                    return user;
+                } else {
+                    break;
+                }
+            }
+        }
 
+        return null;
+    }
 }

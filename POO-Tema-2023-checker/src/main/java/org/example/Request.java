@@ -3,13 +3,13 @@ package org.example;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.constants.RequestStatus;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
 public class Request implements Subject{
-    @Getter @Setter
     private RequestTypes type;
     private LocalDateTime createdDate;
     private String description;
@@ -17,6 +17,9 @@ public class Request implements Subject{
     private String to;
     private String actorName;
     private String movieTitle;
+    // additional fields
+    @Getter @Setter
+    RequestStatus status;
 
     public Request() {
         this.type = RequestTypes.OTHERS;
@@ -26,6 +29,8 @@ public class Request implements Subject{
         this.to = "null";
         this.actorName = "null";
         this.movieTitle = "null";
+        this.status = RequestStatus.Pending;
+
 
     }
     public Request(RequestTypes type, String description, String username) {
@@ -34,13 +39,15 @@ public class Request implements Subject{
         this.description = description;
         this.username = username;
         this.to = determineResolvingUser();
+        this.actorName = "null";
+        this.movieTitle = "null";
+        this.status = RequestStatus.Pending;
     }
 
     private String determineResolvingUser() {
         return switch (type) {
             case DELETE_ACCOUNT, OTHERS -> "ADMIN";
             case ACTOR_ISSUE, MOVIE_ISSUE -> "CONTRIBUTOR/ADMIN";
-            default -> null;
         };
     }
 
@@ -71,4 +78,7 @@ public class Request implements Subject{
     public void notifyObservers(String notification) {
 
     }
+
+
+
 }

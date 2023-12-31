@@ -113,6 +113,7 @@ public abstract class User<T extends Comparable<T>> implements Observer{
         this.favoriteProductions = new ArrayList<>();
     }
     public User(String fullName) {
+
         this.username = generateUniqueUsername(fullName);
         this.experience = "null";
         this.favorites = new TreeSet<>();

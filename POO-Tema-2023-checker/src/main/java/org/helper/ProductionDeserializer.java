@@ -20,7 +20,7 @@ public class ProductionDeserializer extends StdDeserializer<Production> {
     }
 
     @Override
-    public Production deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public Production deserialize(JsonParser jp, DeserializationContext text) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
 
         // Extract type information

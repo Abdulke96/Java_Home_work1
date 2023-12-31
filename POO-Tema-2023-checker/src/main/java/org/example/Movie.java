@@ -14,8 +14,8 @@ public class Movie extends Production {
         this.duration = "null";
         this.releaseYear = 0;
     }
-    public Movie(String title,String type, List<String> directors, List<String> actors, List<Genre> genres,
-                 List<Rating> ratings, String description, String duration, int releaseYear) {
+    public Movie(String title, String type, List<String> directors, List<String> actors, List<Genre> genres,
+                 List<Rating> ratings, String duration, int releaseYear) {
         super(title,type, directors, actors, genres, ratings);
         this.duration = duration;
         this.releaseYear = releaseYear;

@@ -1,6 +1,8 @@
 package org.example;
 
 public interface ExperienceStrategy {
-    public int calculateExperience();
+    public int calculateExperience(
+
+    );
 
 }

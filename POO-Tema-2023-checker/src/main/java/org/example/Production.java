@@ -17,6 +17,7 @@ public abstract class Production implements Comparable<Production> {
     protected List<Rating> ratings;
     protected double averageRating;
     private String  plot;
+    private String addedBy;
     public Production(){
         this.title = "null";
         this.directors = new ArrayList<>();
@@ -26,6 +27,7 @@ public abstract class Production implements Comparable<Production> {
         this.averageRating = 0;
         this.plot = "null";
         this.type = "null";
+        this.addedBy = "ADMIN/CONTRIBUTOR";
     }
     public Production(String title, String type, List<String> directors, List<String> actors, List<Genre> genres,
                       List<Rating> ratings) {
@@ -37,10 +39,11 @@ public abstract class Production implements Comparable<Production> {
         this.calculateAverageRating();
         this.plot =  "null";
         this.type = type;
+        this.addedBy = "ADMIN/CONTRIBUTOR";
 
     }
 
-    public double calculateAverageRating() {
+    public void calculateAverageRating() {
         if (ratings != null && !ratings.isEmpty()) {
             double sum = 0;
             for (Rating rating : ratings) {
@@ -50,7 +53,6 @@ public abstract class Production implements Comparable<Production> {
         } else {
             this.averageRating = 0;
         }
-        return this.averageRating;
     }
 
     public abstract void displayInfo();

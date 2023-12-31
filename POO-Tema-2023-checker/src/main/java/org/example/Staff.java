@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.constants.FunctionsFactory;
 import org.constants.OperationFactory;
-import org.helper.ContributionsHandler;
+//import org.helper.ContributionsHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.TreeSet;
 public abstract class Staff<T extends Comparable<T>> extends User<T> implements StaffInterface {
 
     private List<Request> assignedRequests;
-    @JsonDeserialize(using = ContributionsHandler.class)
+    //@JsonDeserialize(using = ContributionsHandler.class)
     public SortedSet<T> contributions;
     public Staff(String fullName) {
         super(fullName);

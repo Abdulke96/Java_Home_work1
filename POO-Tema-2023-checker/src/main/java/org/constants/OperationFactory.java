@@ -1,8 +1,6 @@
 package org.constants;
 
 import org.example.*;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 public class OperationFactory {
     static List<Actor> actors = IMDB.getInstance().getActors();
@@ -128,11 +126,10 @@ public class OperationFactory {
         for (User<?> user : users) {
             if (user.getName().equals(name)) {
                 users.remove(user);
-                //delete rating by the user
                    for (Production production : productions) {
                        production.getRatings().removeIf(rating -> rating.getUsername().equals(user.getUsername()));
                    }
-                //delete requests by the user
+
                 requests.removeIf(request -> request.getUsername().equals(user.getUsername()));
 
                 System.out.println("User removed from the system");

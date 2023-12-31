@@ -47,7 +47,7 @@ public class ActorDeserializer extends StdDeserializer<Actor> {
     }
 
     private static class SimpleEntry<K, V> implements Map.Entry<K, V> {
-        @Setter
+
         private K key;
         private V value;
 

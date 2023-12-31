@@ -38,6 +38,7 @@ public class Rating implements Subject {
     public void addObserver(Observer observer) {
 
 
+
     }
 
     @Override

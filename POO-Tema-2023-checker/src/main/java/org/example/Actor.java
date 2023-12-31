@@ -14,15 +14,18 @@ public class Actor implements Comparable<Actor> {
     @Setter(AccessLevel.PUBLIC)
     private  List<Map.Entry<String, String>> performances;
     private  String biography;
+    private String addedBy;
     public Actor() {
         this.name = "null";
         this.performances = new ArrayList<>();
         this.biography = null;
+        this.addedBy = "ADMIN/CONTRIBUTOR";
     }
     public Actor(String name, List<Map.Entry<String, String>> performances, String biography) {
         this.name = name;
         this.performances = performances;
         this.biography = biography;
+        this.addedBy = "ADMIN/CONTRIBUTOR";
     }
     public int getNumberOfPerformances(){
         return performances.size();

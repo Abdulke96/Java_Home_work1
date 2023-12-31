@@ -27,32 +27,65 @@ import java.util.List;
 
 import lombok.*;
 @EqualsAndHashCode(callSuper = true)
+/**
+ * The IMDB class is the main class of the application.
+ * It contains the main method and the run method.
+ * The run method is used to run the application.
+ * The main method is used to run the run method.
+ * The IMDB class is a singleton class.
+ * The IMDB class has the following fields:
+ * - instance: IMDB
+ * - users: List<User<?>>
+ * - actors: List<Actor>
+ * - requests: List<Request>
+ * - productions: List<Production>
+ * - currentUser: User<?>
+ * The IMDB class has the following methods:
+ * - getInstance(): IMDB
+ * - run(): void
+ * - runCli(): void
+ * - runGui(): void
+ * - loadDataFromJsonFiles(): void
+ * - authenticateUser(): void
+ * - startApplicationFlow(): void
+ * - authenticate(String email, String password): User<?>
+ * - authenticateGUIUser(): void
+ * The IMDB class has the following static class:
+ * - LocalDateTimeDeserializer: JsonDeserializer<LocalDateTime>
+ */
 @Data
 public class IMDB  extends JFrame {
+
     private static IMDB instance = null;
     private List<User<?>> users;
     private List<Actor> actors;
     private List<Request> requests;
     private List<Production> productions;
     private User<?> currentUser;
+
     private IMDB(List<User<?>> users, List<Actor> actors, List<Request> requests, List<Production> productions) {
        this.users = (users != null) ? users : new ArrayList<>();
        this.actors = (actors != null) ? actors : new ArrayList<>();
        this.requests = (requests != null) ? requests : new ArrayList<>();
        this.productions = (productions != null) ? productions : new ArrayList<>();
     }
+
+    /**
+     * This method is used to get the instance of the IMDB class.
+     * @return IMDB
+     */
     public static synchronized IMDB getInstance() {
         if (instance == null) {
             instance = new IMDB(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
         return instance;
     }
+
+    /**
+     * This method is used to run the application.
+     */
     public void run() {
         loadDataFromJsonFiles();
-        System.out.println(this.users.get(0).getEmail());
-        System.out.println(this.users.get(0).getPassword());
-        System.out.println(this.users.get(0).getNotifications());
-        System.out.println(this.users.get(0).getFavorites().toString());
        int mode = ReadInput.chooseUserMode();
       switch (mode) {
             case 1 -> runCli();
@@ -60,6 +93,9 @@ public class IMDB  extends JFrame {
             case 3 -> System.exit(0);
         }
     }
+    /**
+     * This method is used to run the command line interface.
+     */
 
     public void runCli() {
         loadDataFromJsonFiles();
@@ -72,6 +108,9 @@ public class IMDB  extends JFrame {
     public void runGui() {
         authenticateGUIUser();
     }
+    /**
+     * This method is used to load data from JSON files.
+     */
     private void loadDataFromJsonFiles()  {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -106,6 +145,9 @@ public class IMDB  extends JFrame {
         }
     }
 
+    /**
+     * This method is used to authenticate a user.
+     */
   public void authenticateUser() {
         System.out.println("Welcome back! Enter your credentials!");
         while (true) {
@@ -118,11 +160,11 @@ public class IMDB  extends JFrame {
 //            String username = "emily.wilson@example.com";
 //            String password = "P@ssw0rd!23";
             // Admin account
-//           String username = "bossuAlMare@ymail.com";
-//             String password = "test";
+           String username = "bossuAlMare@ymail.com";
+             String password = "test";
             // Regular account
-            String username = "susan.smith@example.com";
-            String password = "R8F!b&e9m3U6";
+//            String username = "susan.smith@example.com";
+//            String password = "R8F!b&e9m3U6";
             try {
                this.currentUser = authenticate(username, password);
                 if (this.currentUser != null) {
@@ -137,6 +179,9 @@ public class IMDB  extends JFrame {
         }
     }
 
+    /**
+     * This method is used to start the application flow.
+     */
     private void startApplicationFlow() {
         if (currentUser!=null) {
             ApplicationFlow.appFlow();
@@ -145,6 +190,12 @@ public class IMDB  extends JFrame {
         }
     }
 
+    /**
+     * This method is used to authenticate a user.
+     * @param email String
+     * @param password String
+     * @return User<?>
+     */
     private User<?> authenticate(String email, String password) {
         for (User<?> user : users) {
             if (user.getEmail().equals(email)) {
@@ -158,12 +209,22 @@ public class IMDB  extends JFrame {
 
         return null;
     }
+
+    /**
+     * This method is used to run the main method.
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         IMDB imdb = IMDB.getInstance();
         imdb.run();
 
 
     }
+
+    /**
+     * This static class is used to deserialize a LocalDateTime object.
+     */
     public static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
         @Override
         public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
@@ -178,91 +239,11 @@ public class IMDB  extends JFrame {
             }
         }
     }
-    //GUI utility methods
+    /**
+     * This method is used to authenticate a user.
+     */
     public void authenticateGUIUser() {
-        //to be removed
-        //this.currentUser = this.users.get(0); // contributor
-        //this.currentUser = this.users.get(1); // regular
-       this.currentUser = this.users.get(7); // admin user
-
-
-        new ApplicationFlowGUI(currentUser);
-// to me removed
-     JFrame frame = new JFrame("Login Form");
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setMinimumSize(new Dimension(300, 200));
-        frame.setSize(screenSize.width, screenSize.height);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(true);
-        frame.setLocation(screenSize.width/2, screenSize.height/2);
-        frame.setLayout(null);
-
-        JLabel welcomeLabel = new JLabel("Welcome to IMDB");
-        welcomeLabel.setBounds(screenSize.width/2 ,screenSize.height/2, screenSize.width/2, screenSize.height/2);
-        JLabel userLabel = new JLabel("Email");
-        userLabel.setBounds(screenSize.width/2-100, screenSize.height/2-100, 100, 30);
-        JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setBounds(screenSize.width/2-100, screenSize.height/2-50, 100, 30);
-        JTextField userTextField = new JTextField();
-        userTextField.setBounds(screenSize.width/2, screenSize.height/2-100, 150, 30);
-        JPasswordField passwordField = new JPasswordField();
-        passwordField.setBounds(screenSize.width/2, screenSize.height/2-50, 150, 30);
-        JCheckBox showPassword = new JCheckBox("Show Password");
-        showPassword.setBounds(screenSize.width/2, screenSize.height/2-20, 150, 30);
-        JButton loginButton = new JButton("Login");
-        loginButton.setBounds(screenSize.width/2-100, screenSize.height/2, 100, 30);
-        JButton resetButton = new JButton("Reset");
-        resetButton.setBounds(screenSize.width/2, screenSize.height/2, 100, 30);
-
-        Container container = frame.getContentPane();
-        addToContainer(welcomeLabel, userLabel, passwordLabel, userTextField, passwordField, showPassword, loginButton, resetButton, container);
-
-        loginButton.addActionListener(e -> {
-            String userText;
-            userText = userTextField.getText();
-            String pwdText = new String(passwordField.getPassword());
-            try {
-                this.currentUser = authenticate(userText, pwdText);
-                if (this.currentUser != null) {
-                   // JOptionPane.showMessageDialog(null, "Authentication successful. Welcome, " + currentUser.getUsername() + "!");
-                    frame.dispose();
-                   new ApplicationFlowGUI(currentUser);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Authentication failed. Retry.");
-                }
-            } catch (Exception exception) {
-                JOptionPane.showMessageDialog(null, "Error during authentication: " + exception.getMessage());
-            }
-        });
-
-        resetButton.addActionListener(e -> {
-            userTextField.setText("");
-            passwordField.setText("");
-        });
-
-        showPassword.addActionListener(e -> {
-            if (showPassword.isSelected()) {
-                passwordField.setEchoChar((char) 0);
-            } else {
-                passwordField.setEchoChar('*');
-            }
-        });
-
-
-        frame.setVisible(true);
-
-
-    }
-
-    public static void addToContainer(JLabel welcomeLabel, JLabel userLabel, JLabel passwordLabel, JTextField userTextField, JPasswordField passwordField, JCheckBox showPassword, JButton loginButton, JButton resetButton, Container container) {
-        container.add(welcomeLabel);
-        container.add(userLabel);
-        container.add(passwordLabel);
-        container.add(userTextField);
-        container.add(passwordField);
-        container.add(showPassword);
-        container.add(loginButton);
-        container.add(resetButton);
+        new ApplicationFlowGUI();
     }
 
 
