@@ -2,6 +2,7 @@ package org.example;
 
 import java.util.List;
 import lombok.*;
+import org.constants.WriteOutput;
 import org.jetbrains.annotations.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
@@ -23,20 +24,20 @@ public class Movie extends Production {
 
     @Override
     public void displayInfo() {
-        System.out.println("Title: " + title);
-        System.out.println("Type: "+ getType());
-        System.out.println("Directors: ");
+        WriteOutput.printGreen("Title: " + title);
+        WriteOutput.printGreen("Type: "+ getType());
+        WriteOutput.printBlue("Directors: ");
         displayDirectors();
-        System.out.println("Actors: ");
+        WriteOutput.printBlue("Actors: ");
         displayActor();
-        System.out.println("Genres: ");
+        WriteOutput.printBlue("Genres: ");
         displayGenres();
-        System.out.println("Ratings: ");
+        WriteOutput.printBlue("Ratings: ");
         displayRatings();
-        System.out.println("Plot: " + getPlot() );
-        System.out.println("Average Rating: " + averageRating);
-        System.out.println("Duration: " + duration + " minutes");
-        System.out.println("Release Year: " + releaseYear);
+        WriteOutput.printGreen("Plot: " + getPlot());
+        WriteOutput.printGreen("Average Rating: " + averageRating);
+        WriteOutput.printGreen("Duration: " + duration + " minutes");
+        WriteOutput.printGreen("Release Year: " + releaseYear);
 
     }
 

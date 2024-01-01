@@ -17,7 +17,7 @@ public class FunctionsFactory {
         while (choice != max) {
             choice = ReadInput.readInteger(1, max);
             userDetailsOperations.add(choice);
-            System.out.println("your choice is  " + options.get(choice));
+            WriteOutput.printGreen("your choice is  " + options.get(choice));
 
         }
         return userDetailsOperations;
@@ -35,7 +35,7 @@ public class FunctionsFactory {
                             newUser.setEmail(email);
                             break;
                         } else {
-                            System.out.println("Invalid email should contain @ and .");
+                            WriteOutput.printRed("Invalid email should contain @ and .");
                         }
                     }
 
@@ -47,13 +47,13 @@ public class FunctionsFactory {
                             newUser.setPassword(password);
                             break;
                         } else {
-                            System.out.println("password must be at least 4 characters");
+                            WriteOutput.printRed("password must be at least 4 characters");
                         }
                     }
 
                     break;
                 case 3:
-                    System.out.println("Enter the age:");
+                    WriteOutput.printBlue("Enter the age:");
                     newUser.setAge(ReadInput.readInteger(0, 100));
                     break;
                 case 4:
@@ -62,7 +62,7 @@ public class FunctionsFactory {
                     newUser.setGender(OutPutConstants.genderConstants.get(genderChoice));
                     break;
                 case 5:
-                    System.out.println("Enter the birth date:");
+                    WriteOutput.printBlue("Enter the birth date:");
                     LocalDateTime birthDate = ReadInput.readDate();
                     newUser.setBirthDate(birthDate);
                     break;
@@ -74,7 +74,7 @@ public class FunctionsFactory {
 
                     break;
                 default:
-                    System.out.println("Invalid choice");
+                    WriteOutput.printRed("Invalid choice");
                     break;
             }
         }
@@ -85,13 +85,13 @@ public class FunctionsFactory {
         for (Integer operation : operations) {
             switch (operation) {
                 case 1:
-                    System.out.println("Enter the experience:");
+                    WriteOutput.printBlue("Enter the experience:");
                     int experience = ReadInput.readInteger(0, 100);
                     newUser.setExperience(String.valueOf(experience));
                     break;
                 case 2:
                     List<String> productionsContribution = new ArrayList<>();
-                    System.out.println("Enter the number of productionsContribution:");
+                    WriteOutput.printBlue("Enter the number of productionsContribution:");
                     int numberProductionsContribution = ReadInput.readInteger(1, 100);
                    for (int i = 1; i <= numberProductionsContribution; i++) {
                         productionsContribution.add(ReadInput.readLine("Enter the productionsContribution:"));
@@ -102,7 +102,7 @@ public class FunctionsFactory {
                     break;
                 case 3:
                     List<String> actorsContribution = new ArrayList<>();
-                    System.out.println("Enter the number of actorsContribution:");
+                    WriteOutput.printBlue("Enter the number of actorsContribution:");
                     int numberOfActorsContribution = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfActorsContribution; i++) {
                         actorsContribution.add(ReadInput.readLine("Enter the actorsContribution:"));
@@ -112,7 +112,7 @@ public class FunctionsFactory {
                     break;
                 case 4:
                     List<String> favoriteProductions = new ArrayList<>();
-                    System.out.println("Enter the number of favoriteProductions:");
+                    WriteOutput.printBlue("Enter the number of favoriteProductions:");
                     int numberOfFavoriteProductions = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfFavoriteProductions; i++) {
                         favoriteProductions.add(ReadInput.readLine("Enter the favoriteProductions:"));
@@ -121,7 +121,7 @@ public class FunctionsFactory {
                     break;
                 case 5:
                     List<String> favoriteActors = new ArrayList<>();
-                    System.out.println("Enter the number of favoriteActors:");
+                    WriteOutput.printBlue("Enter the number of favoriteActors:");
                     int numberOfFavoriteActors = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfFavoriteActors; i++) {
                         favoriteActors.add(ReadInput.readLine("Enter the favoriteActors:"));
@@ -129,7 +129,7 @@ public class FunctionsFactory {
                     newUser.setFavoriteActors(favoriteActors);
                     break;
                 case 6:
-                    System.out.println("notifications");
+                    WriteOutput.printBlue("notifications");
                     String notification = ReadInput.readLine();
                     newUser.setEmail(notification);
                     break;
@@ -137,7 +137,7 @@ public class FunctionsFactory {
 
                     break;
                 default:
-                    System.out.println("Invalid choice");
+                    WriteOutput.printRed("Invalid choice");
                     break;
             }
         }
@@ -159,8 +159,8 @@ public class FunctionsFactory {
                     actor.setBiography(biography);
                     break;
                 case 3:
-                    System.out.println("add performances");
-                    System.out.println("enter the number of performances");
+                    WriteOutput.printBlue("add performances");
+                    WriteOutput.printBlue("enter the number of performances");
                     int numberOfPerformances = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfPerformances; i++) {
                         String title = ReadInput.readLine("enter the title of the performance");
@@ -185,7 +185,7 @@ public class FunctionsFactory {
                     }
                     break;
                 default:
-                    System.out.println("invalid choice enter number between 1 and 4");
+                    WriteOutput.printRed("invalid choice enter number between 1 and 4");
                     break;
             }
         }
@@ -218,7 +218,7 @@ public class FunctionsFactory {
                     break;
                 case 2:
                     List<String> directors = new ArrayList<>();
-                    System.out.println("enter number of directors");
+                    WriteOutput.printBlue("enter number of directors");
                     int numberOfDirectors = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfDirectors; i++) {
                         directors.add(ReadInput.readLine("enter the directors of the movie you want to add"));
@@ -227,7 +227,7 @@ public class FunctionsFactory {
                     break;
                 case 3:
                     List<String> actors = new ArrayList<>();
-                    System.out.println("enter number of actors");
+                    WriteOutput.printBlue("enter number of actors");
                     int numberOfActors = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfActors; i++) {
                         actors.add(ReadInput.readLine("enter the actors of the movie you want to add"));
@@ -239,7 +239,7 @@ public class FunctionsFactory {
                     System.out.println("enter number of ratings you want to add");
                     int numberOfRatings = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfRatings; i++){
-                        System.out.println("enter rating number "+i+" of the movie you want to add");
+                        WriteOutput.printBlue("enter rating number "+i+" of the movie you want to add");
                         ratings.add(ReadInput.readRating());
                     }
                     movie.setRatings(ratings);
@@ -248,10 +248,10 @@ public class FunctionsFactory {
                     List<Genre> genres = new ArrayList<>();
                      int i = 1;
                     for (Genre genre: Genre.values()) {
-                        System.out.println((i++)+")"+genre);
+                        WriteOutput.printBlue((i++)+")"+genre);
                     }
-                    System.out.println("enter the genres of the movie you want to add ");
-                    System.out.println("enter the number of genres");
+                    WriteOutput.printBlue("enter the genres of the movie you want to add ");
+                    WriteOutput.printBlue("enter the number of genres");
                     int numberOfGenres = ReadInput.readInteger(1, 100);
                     for (int j = 1; j <= numberOfGenres; j++) {
                         int genreChoice = ReadInput.readInteger(1, 23);
@@ -265,12 +265,12 @@ public class FunctionsFactory {
                     movie.setPlot(plot);
                     break;
                 case 7:
-                    System.out.println("enter the duration of the movie you want to add");
+                    WriteOutput.printBlue("enter the duration of the movie you want to add");
                     int duration = ReadInput.readInteger(0, 1000);
                     movie.setDuration(duration + " minutes");
                     break;
                 case 8:
-                    System.out.println("enter the release year of the movie you want to add");
+                    WriteOutput.printBlue("enter the release year of the movie you want to add");
                     movie.setReleaseYear(ReadInput.readInteger(1000, 2024));
                     break;
                 case 9:
@@ -279,7 +279,7 @@ public class FunctionsFactory {
                     }
                     break;
                 default:
-                    System.out.println("invalid choice enter number between 1 and 11");
+                    WriteOutput.printRed("invalid choice enter number between 1 and 11");
                     break;
             }
         }
@@ -297,7 +297,7 @@ public class FunctionsFactory {
                     break;
                 case 2:
                     List<String> directors = new ArrayList<>();
-                    System.out.println("enter number of directors");
+                    WriteOutput.printBlue("enter number of directors");
                     int numberOfDirectors = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfDirectors; i++) {
                         directors.add(ReadInput.readLine("enter the directors of the series you want to add"));
@@ -306,7 +306,7 @@ public class FunctionsFactory {
                     break;
                 case 3:
                     List<String> actors = new ArrayList<>();
-                    System.out.println("enter number of actors");
+                    WriteOutput.printBlue("enter number of actors");
                     int numberOfActors = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfActors; i++) {
                         actors.add(ReadInput.readLine("enter the actors of the series you want to add"));
@@ -315,10 +315,10 @@ public class FunctionsFactory {
                     break;
                 case 4:
                     List<Rating> ratings = new ArrayList<>();
-                    System.out.println("enter number of ratings you want to add");
+                    WriteOutput.printBlue("enter number of ratings you want to add");
                     int numberOfRatings = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfRatings; i++){
-                        System.out.println("enter rating number "+i+" of the series you want to add");
+                        WriteOutput.printBlue("enter rating number "+i+" of the series you want to add");
                         ratings.add(ReadInput.readRating());
                     }
                      series.setRatings(ratings);
@@ -327,10 +327,10 @@ public class FunctionsFactory {
                     List<Genre> genres = new ArrayList<>();
                     int i = 1;
                     for (Genre genre: Genre.values()) {
-                        System.out.println((i++)+")"+genre);
+                        WriteOutput.printGreen((i++)+")"+genre);
                     }
-                    System.out.println("enter the genres of the movie you want to add ");
-                    System.out.println("enter the number of genres");
+                    WriteOutput.printBlue("enter the genres of the movie you want to add ");
+                    WriteOutput.printBlue("enter the number of genres");
                     int numberOfGenres = ReadInput.readInteger(1, 100);
                     for (int j = 1; j <= numberOfGenres; j++) {
                         int genreChoice = ReadInput.readInteger(1, 23);
@@ -343,11 +343,11 @@ public class FunctionsFactory {
                     series.setPlot(plot);
                     break;
                 case 7:
-                    System.out.println("enter the release year of the series you want to add");
+                    WriteOutput.printBlue("enter the release year of the series you want to add");
                     series.setReleaseYear(ReadInput.readInteger(1000, 2024));
                     break;
                 case 8:
-                    System.out.println("enter the number of seasons of the series you want to add");
+                    WriteOutput.printBlue("enter the number of seasons of the series you want to add");
                     series.setNumSeasons(ReadInput.readInteger(1, 100));
                     createAndAddSeason(series);
                     break;
@@ -357,7 +357,7 @@ public class FunctionsFactory {
                     }
                     break;
                 default:
-                    System.out.println("invalid choice enter number between 1 and 11");
+                    WriteOutput.printRed("invalid choice enter number between 1 and 11");
                     break;
             }
         }
@@ -382,11 +382,11 @@ public class FunctionsFactory {
     public static List<Episode> createAndAddEpisode() {
        Episode episode = new Episode();
        List<Episode> episodes = new ArrayList<>();
-        System.out.println("enter the number of episodes ");
+        WriteOutput.printBlue("enter the number of episodes ");
         int numberOfEpisodes = ReadInput.readInteger(1, 100);
         for (int j = 1; j <= numberOfEpisodes; j++) {
            String title = ReadInput.readLine("enter the title of the episode you want to add");
-           System.out.println("enter the duration of the episode you want to add");
+            WriteOutput.printBlue("enter the duration of the episode you want to add");
            int duration = ReadInput.readInteger(0, 1000);
            episode.setDuration(duration + " minutes");
            episode.setEpisodeName(title);
@@ -399,7 +399,7 @@ public class FunctionsFactory {
         Map<String, List<Episode>> seasons = new HashMap<>();
         int seasonNumber = series.getNumSeasons();
         for (int i = 1; i <= seasonNumber; i++) {
-            System.out.println("enter the episodes of season " + i);
+            WriteOutput.printBlue("enter the episodes of season " + i);
             String seasonName = "season " + i + ":";
             List<Episode> episodes = createAndAddEpisode();
             seasons.put(seasonName, episodes);
@@ -407,41 +407,41 @@ public class FunctionsFactory {
         series.setSeasons(seasons);
     }
   public static boolean updateMovieProduction(Production production, User<?> currentUser) {
-        System.out.println("You are ready to update Series:");
+      WriteOutput.printRed("You are ready to update Series:");
         List<Integer> update = FunctionsFactory.storeUserDetails(7,OutPutConstants.updateMovieDetails);
         for (Integer integer : update) {
             switch (integer){
                 case 1:
-                    System.out.println("Enter the new title:");
+                    WriteOutput.printBlue("Enter the new title:");
                     String title = ReadInput.readLine();
                     production.setTitle(title);
                     break;
                 case 2:
-                    System.out.println("Enter the new type:");
+                    WriteOutput.printBlue("Enter the new type:");
                     String type = ReadInput.readLine();
                     production.setType(type);
                     break;
                 case 3:
-                    System.out.println("Enter the old directors:");
+                    WriteOutput.printBlue("Enter the old directors:");
                     String oldDirector = ReadInput.readLine();
-                    System.out.println("Enter the new directors:");
+                    WriteOutput.printBlue("Enter the new directors:");
                     String director = ReadInput.readLine();
                     production.getDirectors().remove(oldDirector);
                     production.getDirectors().add(director);
                     break;
                 case 4:
-                    System.out.println("Enter the old actors:");
+                    WriteOutput.printBlue("Enter the old actors:");
                     String oldActor = ReadInput.readLine();
-                    System.out.println("Enter the new actors:");
+                    WriteOutput.printBlue("Enter the new actors:");
                     String actor = ReadInput.readLine();
                     production.getActors().remove(oldActor);
                     production.getActors().add(actor);
 
                     break;
                 case 5:
-                    System.out.println("Enter the old genres:");
+                    WriteOutput.printBlue("Enter the old genres:");
                     String oldGenre = ReadInput.readLine();
-                    System.out.println("Enter the new genres:");
+                    WriteOutput.printBlue("Enter the new genres:");
                     String genre = ReadInput.readLine();
                     //check if the old genre is in the Genre enum
                     for (Genre value : Genre.values()) {
@@ -455,21 +455,21 @@ public class FunctionsFactory {
 
                     break;
                 case 6:
-                    System.out.println("Enter old rating:");
+                    WriteOutput.printBlue("Enter old rating:");
                     int oldRating = ReadInput.readInteger(1,10);
-                    System.out.println("Enter new rating:");
+                    WriteOutput.printBlue("Enter new rating:");
                     int rating = ReadInput.readInteger(1,10);
-                    System.out.println("Enter the review you want to update:");
+                    WriteOutput.printBlue("Enter the review you want to update:");
                     String review = ReadInput.readLine();
                     if (editRating(production, currentUser, oldRating, rating, review)) return true;
                     break;
                 case 7:
-                    System.out.println("Enter the new plot:");
+                    WriteOutput.printBlue("Enter the new plot:");
                     String plot = ReadInput.readLine();
                     production.setPlot(plot);
                     break;
                 default:
-                    System.out.println("Invalid choice");
+                    WriteOutput.printRed("Invalid choice");
                     break;
             }
         }
@@ -477,41 +477,41 @@ public class FunctionsFactory {
     }
 
     public static boolean updateSeriesProduction(Production production, User<?> currentUser) {
-        System.out.println("You are ready to update Series:");
+        WriteOutput.printRed("You are ready to update Series:");
         List<Integer> update = FunctionsFactory.storeUserDetails(7,OutPutConstants.updateSeriesDetails);
         for (Integer integer : update) {
             switch (integer) {
                 case 1:
-                    System.out.println("Enter the new title:");
+                    WriteOutput.printBlue("Enter the new title:");
                     String title = ReadInput.readLine();
                     production.setTitle(title);
                     break;
                 case 2:
-                    System.out.println("Enter the new type:");
+                    WriteOutput.printBlue("Enter the new type:");
                     String type = ReadInput.readLine();
                     production.setType(type);
                     break;
                 case 3:
-                    System.out.println("Enter the old directors:");
+                    WriteOutput.printBlue("Enter the old directors:");
                     String oldDirector = ReadInput.readLine();
-                    System.out.println("Enter the new directors:");
+                    WriteOutput.printBlue("Enter the new directors:");
                     String director = ReadInput.readLine();
                     production.getDirectors().remove(oldDirector);
                     production.getDirectors().add(director);
                     break;
                 case 4:
-                    System.out.println("Enter the old actors:");
+                    WriteOutput.printBlue("Enter the old actors:");
                     String oldActor = ReadInput.readLine();
-                    System.out.println("Enter the new actors:");
+                    WriteOutput.printBlue("Enter the new actors:");
                     String actor = ReadInput.readLine();
                     production.getActors().remove(oldActor);
                     production.getActors().add(actor);
 
                     break;
                 case 5:
-                    System.out.println("Enter the old genres:");
+                    WriteOutput.printBlue("Enter the old genres:");
                     String oldGenre = ReadInput.readLine();
-                    System.out.println("Enter the new genres:");
+                    WriteOutput.printBlue("Enter the new genres:");
                     String genre = ReadInput.readLine();
                     for (Genre value : Genre.values()) {
                         if (value.name().equals(oldGenre)) {
@@ -521,16 +521,16 @@ public class FunctionsFactory {
                         }
                     }
                 case 6:
-                    System.out.println("Enter old rating:");
+                    WriteOutput.printBlue("Enter old rating:");
                     int oldRating = ReadInput.readInteger(1, 10);
-                    System.out.println("Enter new rating:");
+                    WriteOutput.printBlue("Enter new rating:");
                     int rating = ReadInput.readInteger(1, 10);
-                    System.out.println("Enter the review you want to update:");
+                    WriteOutput.printBlue("Enter the review you want to update:");
                     String review = ReadInput.readLine();
                     if (editRating(production, currentUser, oldRating, rating, review)) return true;
                     break;
                 case 7:
-                    System.out.println("Enter the new plot:");
+                    WriteOutput.printBlue("Enter the new plot:");
                     String plot = ReadInput.readLine();
                     production.setPlot(plot);
                     break;
@@ -551,24 +551,24 @@ public class FunctionsFactory {
     }
 
     public static void updateActor(Actor actor, User<?> currentUser) {
-        System.out.println("You are ready to update Actor:");
+        WriteOutput.printRed("You are ready to update Actor:");
         List<Integer> update = FunctionsFactory.storeUserDetails(4,OutPutConstants.updateActorDetails);
         for (Integer integer : update) {
             switch (integer) {
                 case 1:
-                    System.out.println("Enter the new name:");
+                    WriteOutput.printBlue("Enter the new name:");
                     String name = ReadInput.readLine();
                     actor.setName(name);
                     break;
                 case 2:
-                    System.out.println("Enter the new biography:");
+                    WriteOutput.printBlue("Enter the new biography:");
                     String biography = ReadInput.readLine();
                     actor.setBiography(biography);
                     break;
                 case 3:
-                    System.out.println("Enter the old performances:");
+                    WriteOutput.printBlue("Enter the old performances:");
                     String oldPerformance = ReadInput.readLine();
-                    System.out.println("Enter the new performances:");
+                    WriteOutput.printBlue("Enter the new performances:");
                     String performance = ReadInput.readLine();
                     for (Map.Entry<String, String> entry : actor.getPerformances()) {
                         if (entry.getKey().equals(oldPerformance)) {
@@ -578,14 +578,14 @@ public class FunctionsFactory {
                     }
                     break;
                 default:
-                    System.out.println("Invalid choice");
+                    WriteOutput.printRed("Invalid choice");
                     break;
             }
         }
     }
 public static void requestCreatorMoreover(List<Request> requests, int choice) {
         if (choice == 1){
-            System.out.println("Enter the description of the request:");
+            WriteOutput.printBlue("Enter the description of the request:");
             String description = ReadInput.readLine();
             WriteOutput.write(OutPutConstants.requestTypeConstant);
             int requestType = ReadInput.readInteger(1,4);
@@ -611,7 +611,7 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
                     to = ReadInput.readLine("Enter the name of the admin you want to send the request to:");
                     break;
                 default:
-                    System.out.println("Invalid choice");
+                    WriteOutput.printRed("Invalid choice");
                     break;
             }
             assert request != null;
@@ -621,7 +621,7 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
             }else {
                 regular.createRequest(request);
             }
-            System.out.println("Request created");
+            WriteOutput.printGreen("Request created");
         } else {
             String currentDescription = ReadInput.readLine("Enter the name of the request you want to delete:");
             for (Request request : requests) {
@@ -631,11 +631,11 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
                     }else{
                         regular.removeRequest(request);
                     }
-                    System.out.println("Request deleted");
+                    WriteOutput.printRed("Request deleted");
                     return;
                 }
             }
-            System.out.println("Request not found");
+            WriteOutput.printRed("Request not found");
         }
     }
 
@@ -665,25 +665,25 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
     }
     @NotNull
     public static String readFullName() {
-        System.out.println("Enter the name of the user you want to add/delete:");
+        WriteOutput.printBlue("Enter the name of the user you want to add/delete:");
         String name = ReadInput.readLine();
         if(!name.contains(" ")){
             while (!name.contains(" ")){
-                System.out.println("Invalid name, please enter the full name:");
+                WriteOutput.printRed("Invalid name, please enter the full name:");
                 name = ReadInput.readLine();
             }
         }
         return name;
     }
     static void displayUsersName(List<User<?>> users) {
-        System.out.println("do you wanna see users details 1 yes 2 no");
+        WriteOutput.printBlue("do you wanna see users details 1 yes 2 no");
         int choice = ReadInput.readInteger(1,2);
         if (choice == 1){
-            System.out.println("\n======================================\n");
+          WriteOutput.makeBreak();
             for (User<?> user : users) {
                 System.out.println(user.getName());
             }
-            System.out.println("\n======================================\n");
+            WriteOutput.makeBreak();
         }
     }
     public static String generateRandomPassword(){
@@ -712,5 +712,19 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
         }
 
         return password.toString();
+    }
+
+    public static void displayRequests(List<Request> requests) {
+
+        WriteOutput.printBlue("do you wanna see requests details 1 yes 2 no");
+        int choice = ReadInput.readInteger(1,2);
+        if (choice == 1){
+            WriteOutput.makeBreak();
+            for (Request request : requests) {
+                WriteOutput.makeBreak();
+                request.displayInfo();
+            }
+          WriteOutput.makeBreak();
+        }
     }
 }

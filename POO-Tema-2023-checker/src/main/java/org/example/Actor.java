@@ -1,5 +1,6 @@
 package org.example;
 
+import org.constants.WriteOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap;
@@ -56,15 +57,15 @@ public class Actor implements Comparable<Actor> {
     }
 
     public void displayInfo(){
-        System.out.println("Actor: "+ getName());
-        System.out.println("Performances: ");
+        WriteOutput.printGreen("Actor: "+ getName());
+        WriteOutput.printBlue("Performances: ");
         if (performances!=null)
             for (Map.Entry<String, String> entry : performances) {
-            System.out.println("    Title: "+entry.getKey());
-            System.out.println("    Type:  "+entry.getValue());
+                WriteOutput.printGreen("    Title: "+entry.getKey());
+                WriteOutput.printGreen("    Type:  "+entry.getValue());
             }
         if(biography != null)
-            System.out.println("Biography: " + getBiography());
+            WriteOutput.printGreen("Biography: " + getBiography());
     }
     //GUI helper functions
 public String guiDisplay(){

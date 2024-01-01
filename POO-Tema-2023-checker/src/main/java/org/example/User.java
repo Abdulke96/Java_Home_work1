@@ -3,6 +3,8 @@ package org.example;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -52,7 +54,7 @@ public abstract class User<T extends Comparable<T>> implements Observer{
                 this.name = "null";
                 this.gender = "null";
                 this.age = 0;
-                this.birthDate = LocalDateTime.now();
+                this.birthDate = LocalDate.now().atStartOfDay();
                 this.country = "null";
 
             }

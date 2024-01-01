@@ -1,6 +1,8 @@
 package org.example;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.constants.WriteOutput;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Episode extends Production {
@@ -18,8 +20,8 @@ public class Episode extends Production {
     }
     @Override
     public void displayInfo() {
-        System.out.println("    Episode Name: "+episodeName);
-        System.out.println("    Duration: " + duration);
+        WriteOutput.printGreen("    Episode Name: "+episodeName);
+        WriteOutput.printGreen("    Duration: " + duration);
     }
 
     @Override

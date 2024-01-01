@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.constants.ApplicationFlow;
 import org.constants.ReadInput;
+import org.constants.WriteOutput;
 import org.gui.ApplicationFlowGUI;
 import org.helper.ActorDeserializer;
 import org.helper.ProductionDeserializer;
@@ -149,7 +150,10 @@ public class IMDB  extends JFrame {
      * This method is used to authenticate a user.
      */
   public void authenticateUser() {
-        System.out.println("Welcome back! Enter your credentials!");
+      WriteOutput.makeBreak()  ;
+      WriteOutput.printBlue("Welcome back! Enter your credentials!");
+      WriteOutput.makeBreak();
+      //print it in a red color and bold and increase the font size;
         while (true) {
             // read input from console
 //            System.out.print("email: ");
@@ -160,21 +164,21 @@ public class IMDB  extends JFrame {
 //            String username = "emily.wilson@example.com";
 //            String password = "P@ssw0rd!23";
             // Admin account
-           String username = "bossuAlMare@ymail.com";
-             String password = "test";
+//           String username = "bossuAlMare@ymail.com";
+//             String password = "test";
             // Regular account
-//            String username = "susan.smith@example.com";
-//            String password = "R8F!b&e9m3U6";
+            String username = "susan.smith@example.com";
+            String password = "R8F!b&e9m3U6";
             try {
                this.currentUser = authenticate(username, password);
                 if (this.currentUser != null) {
-                    System.out.println("Authentication successful. Welcome, " + currentUser.getUsername() + "!");
+                    WriteOutput.printGreen("Authentication successful. Welcome, " + currentUser.getUsername() + "!");
                     break;
                 } else {
-                    System.out.println("Authentication failed. Retry.");
+                    WriteOutput.printRed("Authentication failed. Retry.");
                 }
             } catch (Exception e) {
-                System.out.println("Error during authentication: " + e.getMessage());
+                WriteOutput.printRed("Error during authentication: " + e.getMessage());
             }
         }
     }
@@ -186,7 +190,7 @@ public class IMDB  extends JFrame {
         if (currentUser!=null) {
             ApplicationFlow.appFlow();
         } else {
-            System.out.println("No user logged in.");
+            WriteOutput.printRed("No user logged in.");
         }
     }
 
@@ -212,10 +216,8 @@ public class IMDB  extends JFrame {
 
     /**
      * This method is used to run the main method.
-     * @param args
-     * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         IMDB imdb = IMDB.getInstance();
         imdb.run();
 

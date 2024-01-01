@@ -64,21 +64,29 @@ public class Constants {
     static int[] regularActions = {1,2,3,4,5,7,8,13,14};
    public static int[]  displayOption(User<?> user){
        if(user instanceof Admin){
+           WriteOutput.makeBreak();
            for(String action:OutPutConstants.adminActions){
-               System.out.println(action);
+              WriteOutput.printGreen(action);
            }
+           WriteOutput.makeBreak();
            return adminActions;
        }
        else if(user instanceof Contributor){
+           WriteOutput.makeBreak();
            for(String action:OutPutConstants.contributorActions){
-               System.out.println(action);
+               WriteOutput.printGreen(action);
            }
+           WriteOutput.makeBreak();
               return contributorActions;
        }
        else{
+           WriteOutput.makeBreak();
            for(String action:OutPutConstants.regularActions){
-               System.out.println(action);
+
+               WriteOutput.printGreen(action);
+
            }
+           WriteOutput.makeBreak();
            return regularActions;
        }
    }

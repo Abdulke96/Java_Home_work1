@@ -1,6 +1,7 @@
 package org.example;
 
 import lombok.Data;
+import org.constants.WriteOutput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +25,9 @@ public class Rating implements Subject {
         this.comment = comment;
     }
     public void displayInfo() {
-        System.out.println("    Username: " + username);
-        System.out.println("    Score: " + rating);
-        System.out.println("    Comments: " + comment);
+        WriteOutput.printGreen("    Username: " + username);
+        WriteOutput.printGreen("    Score: " + rating);
+        WriteOutput.printGreen("    Comments: " + comment);
     }
     //GUI helper functions
     public String guiRatingString(){

@@ -5,17 +5,18 @@ import org.example.*;
 public  class  ApplicationFlow {
     public static void appFlow() {
         User<?> currentUser = IMDB.getInstance().getCurrentUser();
-        System.out.println("Welcome back user " + currentUser.getEmail() + "!");
-        System.out.println("Username: " + currentUser.getUsername());
-        System.out.println("User experience: " + currentUser.getExperience());
+        WriteOutput.printGreen("Welcome back user " + currentUser.getEmail() + "!");
+        WriteOutput.printGreen("Username : "+currentUser.getUsername());
+        WriteOutput.printGreen("Email: "+currentUser.getEmail());
+        WriteOutput.printGreen("Experience: "+currentUser.getExperience());
      while (true){
-         System.out.println("Choose an Action:");
+         WriteOutput.printBlue("Choose an Action:");
          int[] code = Constants.displayOption(currentUser);
-         System.out.println("Enter your choice:");
+         WriteOutput.printBlue("Enter your choice:");
          int choice = ReadInput.readInteger(1,14);
          while ( !Constants.contains(code,choice)){
-             System.out.println("Invalid choice");
-             System.out.println("Enter your choice:");
+             WriteOutput.printRed("Invalid choice");
+             WriteOutput.printBlue("Enter your choice:");
              appFlow();
              return;
          }

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.jetbrains.annotations.NotNull;
+import org.constants.WriteOutput;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -30,7 +30,7 @@ public class Series extends Production {
         this.numSeasons = numSeasons;
         this.seasons = seasons;
     }
-    // function  which replaces the key of a season
+    // function which adds a season
     public void setKey(String key, String newKey){
         for (Map.Entry<String, List<Episode>> entry : seasons.entrySet()) {
             if(entry.getKey().equals(key)){
@@ -51,25 +51,26 @@ public class Series extends Production {
 
     @Override
     public void displayInfo() {
-        System.out.println("Title: " + title);
-        System.out.println("Type: "+ getType());
-        System.out.println("Directors:");
+
+        WriteOutput.printGreen("Title: " + title);
+        WriteOutput.printGreen("Type: "+ getType());
+        WriteOutput.printGreen("Directors:");
         displayDirectors();
-        System.out.println("Actors: ");
+        WriteOutput.printBlue("Actors: ");
         displayActor();
-        System.out.println("Genres: ");
+        WriteOutput.printBlue("Genres: ");
         displayGenres();
-        System.out.println("Ratings: ");
+        WriteOutput.printBlue("Ratings: ");
         displayRatings();
-        System.out.println("Plot: " +getPlot());
-        System.out.println("Average Rating: " + averageRating);
-        System.out.println("Release Year: " + releaseYear);
-        System.out.println("Number of Seasons: " + numSeasons);
-        System.out.println("Seasons: ");
+        WriteOutput.printGreen("Plot: " +getPlot());
+        WriteOutput.printGreen("Average Rating: " + averageRating);
+        WriteOutput.printGreen("Release Year: " + releaseYear);
+        WriteOutput.printGreen("Number of Seasons: " + numSeasons);
+        WriteOutput.printGreen("Seasons: ");
         for (Map.Entry<String, List<Episode>> entry : seasons.entrySet()) {
             String seasonName = entry.getKey();
             List<Episode> episodes = entry.getValue();
-            System.out.println(seasonName);
+            WriteOutput.printBlue(seasonName);
             for (Episode episode : episodes) {
                 episode.displayInfo();
 

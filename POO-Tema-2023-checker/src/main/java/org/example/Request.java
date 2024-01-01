@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.constants.RequestStatus;
+import org.constants.WriteOutput;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,7 +30,7 @@ public class Request implements Subject{
         this.createdDate = LocalDateTime.now();
         this.description = "null";
         this.username = "null";
-        this.to = "null";
+        this.to = "CONTRIBUTOR/ADMIN";
         this.actorName = "null";
         this.movieTitle = "null";
         this.status = RequestStatus.Pending;
@@ -60,11 +61,14 @@ public class Request implements Subject{
     }
 
     public void displayInfo() {
-        System.out.println("Request Type: " + type);
-        System.out.println("Creation Date: " + getFormattedCreationDate());
-        System.out.println("Description: " + description);
-        System.out.println("Requesting User: " + username);
-        System.out.println("Resolving User: " + to);
+        WriteOutput.printGreen("Request Type: " + type);
+        WriteOutput.printGreen("Status: " + status);
+        WriteOutput.printGreen("Creation Date: " + getFormattedCreationDate());
+        WriteOutput.printGreen("Description: " + description);
+        WriteOutput.printGreen("Requesting User: " + username);
+        WriteOutput.printGreen("Resolving User: " + to);
+        WriteOutput.printGreen("Actor Name: " + actorName);
+        WriteOutput.printGreen("Movie Title: " + movieTitle);
     }
 
     @Override

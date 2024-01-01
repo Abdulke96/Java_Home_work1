@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
-
+//TODO: admin and contributor  to be notified about their product and actor requests
+//
 public class ApplicationFlowGUI extends JFrame {
     private User<?> currentUser; // to track the current user
 
@@ -129,7 +130,7 @@ public class ApplicationFlowGUI extends JFrame {
 
     /**
      * The configureFrame method is used to configure the frame.
-     * it sets the title, size, and default close operation.
+     * It sets the title, size, and default close operation.
      */
     private void configureFrame() {
         setTitle("IMDB APP");
@@ -181,7 +182,7 @@ public class ApplicationFlowGUI extends JFrame {
 
     /**
      * The createActionsMenu method is used to create the actions' menu.
-     * it calls the showMenu method to create the actions' menu.
+     * It calls the showMenu method to create the actions' menu.
      */
     private JMenu createActionsMenu() {
         JMenu actionsMenu = new JMenu();
@@ -279,8 +280,8 @@ public class ApplicationFlowGUI extends JFrame {
 
     /**
      * The  createPhotoDisplayAndButtons method is used to create the photo display and the buttons.
-     *  it calls the loadPhoto method to load the photo.
-     * it is responsible for decorating the main screen panel.
+     *  It calls the loadPhoto method to load the photo.
+     * It is responsible for decorating the main screen panel.
      *
      */
 
@@ -1099,10 +1100,8 @@ public class ApplicationFlowGUI extends JFrame {
                                        "comment: "+checkRating.getComment()+"\n"+ "rating: "+checkRating.getRating()+"\n"+
                                        "to\n"+"comment: "+comment+"\n"+ "rating: "+rating;
 
-                               checkRating.setRating(rating);
+                                 checkRating.setRating(rating);
                                  checkRating.setComment(comment);
-
-
                                  dialogBox(message);
                                return;
                            }
@@ -2157,6 +2156,10 @@ addPerformanceButton.addActionListener(e->{
         resolveButton.addActionListener(e->{
             String notify = GuiConstants.showInputDialog("Enter notification", "", 300, 200);
             if(notify == null) return; // User canceled the input
+            if (!request.getStatus().equals(RequestStatus.Pending)){
+                dialogBox("the request status is not pending");
+                return;
+            }
             if (currentUser instanceof Admin) {
                 ((Admin) currentUser).resolveRequests(request);
             } else {
@@ -2189,6 +2192,10 @@ addPerformanceButton.addActionListener(e->{
         rejectButton.addActionListener(e->{
             String notify = GuiConstants.showInputDialog("Enter notification", "", 300, 200);
             if(notify == null) return; // User canceled the input
+            if (!request.getStatus().equals(RequestStatus.Pending)){
+                dialogBox("the request status is not pending");
+                return;
+            }
             if (currentUser instanceof Admin) {
                 ((Admin) currentUser).rejectRequests(request);
             } else {

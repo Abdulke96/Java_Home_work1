@@ -2,9 +2,14 @@ package org.constants;
 
 import java.util.Arrays;
 import java.util.List;
-
+/**
+ * This class is used to store the output messages
+ *
+ */
 public class OutPutConstants {
-
+    /**
+     * This list is used to store the messages for admin user so that they can be printed to the console
+     */
  public   static List<String > adminActions = Arrays.asList(
             "1) View productions details",
             "2) View actors details",
@@ -19,6 +24,9 @@ public class OutPutConstants {
             "13) Logout",
             "14) Exit"
     );
+    /**
+     * This list is used to store the messages for contributor user
+     */
   public  static List<String > contributorActions = Arrays.asList(
             "1) View productions details",
             "2) View actors details", // for all
@@ -34,7 +42,9 @@ public class OutPutConstants {
             "14) Exit"
 
     );
-
+/**
+     * This list is used to store the messages for regular user
+     */
   public  static List <String> regularActions = Arrays.asList(
             "1) View productions details",
             "2) View actors details", // for all
@@ -46,6 +56,9 @@ public class OutPutConstants {
             "13) Logout",
             "14) Exit"
     );
+    /**
+     * This list is used to store the messages for user mode as our App is both CLI and GUI
+     */
     public static List<String> userModeConstants = Arrays.asList(
             "Please choose user mode:",
             "CLI user",
@@ -54,12 +67,19 @@ public class OutPutConstants {
             "Your choice: "
     );
 
+    /**
+     * This list is used to store the adding or deleting requests
+     */
     public static List<String> requestConstant = Arrays.asList(
             "Choose Operation:",
             "Create Request",
             "Delete Request",
             "Your choice: "
     );
+    /**
+     * to identify the type of the request
+     */
+    //TODO: it goes on like this and clear from the name and usage so no more comments
     public static List<String> requestTypeConstant = Arrays.asList(
             "Choose Request Type:",
             "DELETE_ACCOUNT",
@@ -206,4 +226,10 @@ public class OutPutConstants {
             "Update Performances",
             "Your choice: "
   );
+    public static List<String> solveRequest = Arrays.asList(
+            "Choose Operation:",
+            "Resolve Request",
+            "Reject Request",
+            "Your choice: "
+    );
 }

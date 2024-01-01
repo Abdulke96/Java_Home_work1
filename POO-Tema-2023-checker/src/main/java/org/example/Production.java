@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
+import org.constants.WriteOutput;
 import org.jetbrains.annotations.NotNull;
 
 @Data
@@ -75,12 +76,12 @@ public abstract class Production implements Comparable<Production> {
 
     public void displayActor(){
         for(String actor:actors){
-            System.out.println("    "+actor);
+            WriteOutput.printGreen("    "+actor);
         }
     }
     public void displayDirectors(){
         for(String dir: directors){
-            System.out.println("    "+dir);
+            WriteOutput.printGreen("    "+dir);
         }
     }
     public void displayGenres(){
@@ -88,7 +89,7 @@ public abstract class Production implements Comparable<Production> {
             return;
         }
         for(Genre genre: genres){
-            System.out.println("    "+genre);
+            WriteOutput.printGreen("    "+genre);
         }
     }
 

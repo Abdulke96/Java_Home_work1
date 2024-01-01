@@ -2,13 +2,24 @@ package org.constants;
 
 import org.example.*;
 import java.util.*;
+/**
+ * This class is used to create the operations
+ * it takes an integer, and based on it calls the corresponding function from the functions factory
+ *
+ *
+ */
 public class OperationFactory {
+
     static List<Actor> actors = IMDB.getInstance().getActors();
     static List<Production> productions = IMDB.getInstance().getProductions();
     static List<User<?>> users = IMDB.getInstance().getUsers();
     static List<Request> requests = IMDB.getInstance().getRequests();
     static User<?> currentUser = IMDB.getInstance().getCurrentUser();
 
+    /**
+     * This function is used to create the operations
+     * @param choice the choice of the user
+     */
     public static void operation(int choice) {
         switch (choice) {
 
@@ -54,7 +65,7 @@ public class OperationFactory {
             case 14:
                 System.exit(0);
             default:
-                System.out.println("Invalid choice");
+                WriteOutput.printRed("Invalid choice");
                 break;
         }
 
@@ -64,9 +75,9 @@ public class OperationFactory {
     public static void viewProductionDetails() {
         productions.sort((o1, o2) -> Double.compare(o2.getAverageRating(), o1.getAverageRating()));
         for (Production P : productions) {
-            System.out.println("\n======================================\n");
+           WriteOutput.makeBreak();
             P.displayInfo();
-            System.out.println("\n======================================\n");
+            WriteOutput.makeBreak();
 
         }
     }
@@ -74,25 +85,25 @@ public class OperationFactory {
     public static void viewActorsDetails() {
         actors.sort(Actor::compareTo);
         for (Actor actor : actors) {
-            System.out.println("\n======================================\n");
+            WriteOutput.makeBreak();
             actor.displayInfo();
-            System.out.println("\n======================================\n");
+            WriteOutput.makeBreak();
         }
     }
 
     public static void viewNotifications() {
         List<String> notification =  currentUser.getNotifications();
          if (notification.isEmpty()){
-             System.out.println("No notifications");
+             WriteOutput.printGreen("No notifications");
              return;
          }
         for (String s : notification) {
-            System.out.println(Arrays.toString(s.split("\n")));
+            WriteOutput.printGreen(Arrays.toString(s.split("\n")));
         }
     }
 
     public static void searchForActorsMoviesSeries() {
-        System.out.println("Enter the name of the actor/movie/series you want to search for:");
+        WriteOutput.printBlue("Enter the name of the actor/movie/series you want to search for:");
         String name = ReadInput.readLine();
         for (Actor actor : actors) {
             if (actor.getName().equals(name)) {
@@ -106,7 +117,7 @@ public class OperationFactory {
                 return;
             }
         }
-        System.out.println(name + " Does not found in the System!!");
+        WriteOutput.printRed(name + " Does not found in the System!!");
     }
 
     public static void addDeleteActorsMoviesSeriesToFavorites() {
@@ -128,7 +139,7 @@ public class OperationFactory {
             if (user.getName().equals(name)) {
                admin.removeUser(user);
                admin.removeUserDetails(user);
-                System.out.println("User removed from the system");
+                WriteOutput.printRed("User removed from the system");
                 return;
             }
         }
@@ -150,10 +161,10 @@ public class OperationFactory {
             users.add(newUser);
             FunctionsFactory.createUserInfoFunction(newUser);
             FunctionsFactory.createUserDetailsFunction(newUser);
-            System.out.println("User added to the system");
+            WriteOutput.printGreen("User added to the system");
 
         } else {
-            System.out.println("User not added to the system");
+            WriteOutput.printRed("User not added to the system");
         }
     }
 
@@ -172,33 +183,44 @@ public class OperationFactory {
                 WriteOutput.write(OutPutConstants.reviewConstant);
                 int choice = ReadInput.readInteger(1, 2);
                 if (choice == 1) {
-                    System.out.println("Enter the score:");
+                    WriteOutput.printBlue("Enter the score:");
                     int score = ReadInput.readInteger(1, 10);
                     String review = ReadInput.readLine("Enter the review:");
                     Rating rating = new Rating(currentUser.getUsername(), score, review);
                     production.addRating(rating);
+                    // notify all users who added review to the production that a new review was added
+                    for (User<?> user : users) {
+                       for (Rating rating1 : production.getRatings()) {
+                           if (rating1.getUsername().equals(user.getUsername())){
+                              String message = "A new review was added to the production "+production.getTitle()+"\nby "+currentUser.getUsername()+"\n comment "+rating1.getComment()+"\n rated"+rating1.getRating();
+                               rating1.addObserver(user);
+                               rating1.notifyObservers(message);
+                               rating1.removeObserver(user);
+                           }
+                       }
+                    }
 
-                    System.out.println("Review added");
+                    WriteOutput.printGreen("Review added");
                     UserExperienceContext userExperienceContext = new UserExperienceContext();
                     userExperienceContext.setExperienceStrategy(new AddReviewStrategy());
                     int experience = userExperienceContext.calculateUserExperience();
                     currentUser.updateExperience(experience);
                 } else {
-                    System.out.println("Enter the review you want to delete:");
+                    WriteOutput.printBlue("Enter the review you want to delete:");
                     String review = ReadInput.readLine();
                     for (Rating rating : production.getRatings()) {
                         if (rating.getComment().equals(review) && rating.getUsername().equals(currentUser.getUsername())) {
                             production.getRatings().remove(rating);
                             return;
                         }else {
-                            System.out.println(currentUser.getUsername()+ " has no this review");
+                            WriteOutput.printRed(currentUser.getUsername()+ " has no this review");
                         }
                     }
                 }
                 return;
             }
         }
-        System.out.println("Production not found in the system");
+        WriteOutput.printRed("Production not found in the system");
 
 
     }
@@ -212,7 +234,7 @@ public class OperationFactory {
         int choice1 = ReadInput.readInteger(1, 2);
         if (choice == 1) {
             if( choice1 == 1) {
-                System.out.println("Enter the name of the actor you want to delete:");
+                WriteOutput.printBlue("Enter the name of the actor you want to delete:");
                 String name = ReadInput.readLine();
                 for (Actor actor : actors) {
                     if (actor.getName().equals(name)) {
@@ -222,7 +244,7 @@ public class OperationFactory {
                             contributor.removeActorSystem(name);
 
                         }
-                        System.out.println("Actor removed from favorites");
+                        WriteOutput.printRed("Actor removed from favorites");
                     }
                 }
             }else {
@@ -231,12 +253,12 @@ public class OperationFactory {
             }
         } else {
             if( choice1 == 1) {
-                System.out.println("Enter the name of the production you want to delete:");
+                WriteOutput.printBlue("Enter the name of the production you want to delete:");
                 String name = ReadInput.readLine();
                 for (Production production : productions) {
                     if (production.getTitle().equals(name)) {
                         productions.remove(production);
-                        System.out.println("Production removed from favorites");
+                        WriteOutput.printRed("Production removed from favorites");
                     }
                 }
             }else {
@@ -263,7 +285,7 @@ public class OperationFactory {
                 return;
             }
         }
-        System.out.println("Production not found in the system");
+        WriteOutput.printRed("Production not found in the system");
 
 
     }
@@ -277,53 +299,105 @@ public class OperationFactory {
                 return;
             }
         }
-        System.out.println("Actor not found in the system");
+        WriteOutput.printRed("Actor not found in the system");
 
 
     }
 
     public static void solveRequests() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the name of the user you want to add/delete:");
-
+        Admin admin = new Admin();
+        Contributor contributor = new Contributor();
+        WriteOutput.write(OutPutConstants.solveRequest);
+        int choice = ReadInput.readInteger(1, 2);
+        FunctionsFactory.displayRequests(requests);
+        String name;
+        if (choice == 1) {
+            name = ReadInput.readLine("Enter the Username of the request you want to solve:");
+            for (Request request : requests) {
+                if (request.getUsername().equals(name) ) {
+                    if (!request.getStatus().equals(RequestStatus.Pending)){
+                        WriteOutput.printRed("Request already "+request.getStatus());
+                        return;
+                    }
+                    if (currentUser instanceof Admin) {
+                        admin.resolveRequests(request);
+                    } else {
+                        contributor.resolveRequests(request);
+                    }
+                    // send notification to the user
+                    sendNotification(request);
+                }
+            }
+        } else {
+            name = ReadInput.readLine("Enter the username of the request you want to reject:");
+            for (Request request : requests) {
+                if (request.getUsername().equals(name)) {
+                    if (!request.getStatus().equals(RequestStatus.Pending)){
+                        WriteOutput.printRed("Request already "+request.getStatus());
+                        return;
+                    }
+                    if (currentUser instanceof Admin) {
+                        admin.rejectRequests(request);
+                    } else {
+                        contributor.rejectRequests(request);
+                    }
+                    // send notification to the user
+                    sendNotification(request);
+                    return;
+                }
+            }
+        }
+        WriteOutput.printRed("Request not found in the system");
 
     }
-public static void addRemoveActor(){
-    System.out.println("Enter the name:");
+
+    private static void sendNotification(Request request) {
+        for (User<?> user : users) {
+            if (user.getUsername().equals(request.getUsername())) {
+                String message = ReadInput.readLine("Enter the message you want to send to the user:");
+              request.addObserver(user);
+                request.notifyObservers(message);
+                request.removeObserver(user);
+            }
+        }
+    }
+
+    public static void addRemoveActor(){
+        WriteOutput.printBlue("Enter the name:");
             String name = ReadInput.readLine();
             for (Actor actor :actors) {
             if (actor.getName().equals(name)) {
                 if (currentUser.getFavoriteActors().contains(actor)) {
                    currentUser.getFavoriteActors().remove(actor);
-                    System.out.println("Actor removed from favorites");
+                    WriteOutput.printRed("Actor removed from favorites");
                 } else {
                     currentUser.addToFavoriteActors(actor);
-                    System.out.println("Actor added to favorites");
+                     WriteOutput.printGreen("Actor added to favorites");
                 }
                 return;
             }
 
         }
-        System.out.println("Actor not found in the system");
+      WriteOutput.printRed("Actor not found in the system");
 
 }
 
 public static void addRemoveProduction(){
-    System.out.println("enter the name production");
+    WriteOutput.printBlue("enter the name production");
         String name = ReadInput.readLine();
             for (Production production : productions) {
             if (production.getTitle().equals(name)) {
                 if (currentUser.getFavoriteProductions().contains(production)) {
                    currentUser.getFavoriteProductions().remove(production);
-                    System.out.println("Production removed from favorites");
+                    WriteOutput.printRed("Production removed from favorites");
                 } else {
 
                     currentUser.addToFavoriteProductions(production);
-                    System.out.println("Production added to favorites");
+                    WriteOutput.printGreen("Production added to favorites");
                 }
                 return;
             }
         }
-        System.out.println("Production not found in the system");
+    WriteOutput.printRed("Production not found in the system");
 }
 }

@@ -28,6 +28,8 @@ public class Contributor extends Staff implements RequestsManager , Observer {
                             user.updateExperience(experience);
                     }
                 }
+                request.removeObserver(this);
+                return;
 
             }
         }
@@ -36,6 +38,8 @@ public class Contributor extends Staff implements RequestsManager , Observer {
         for (Request request : RequestsHolder.getRequests()) {
             if (request.getStatus().equals(RequestStatus.Pending) && request.getTo().equals("CONTRIBUTOR/ADMIN") && request.equals(r)) {
                 request.setStatus(RequestStatus.Rejected);
+                request.removeObserver(this);
+                return;
 
             }
         }

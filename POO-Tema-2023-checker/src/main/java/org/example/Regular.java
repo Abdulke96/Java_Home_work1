@@ -24,7 +24,6 @@ public class Regular<T> extends User implements RequestsManager , Observer{
 
     @Override
     public void removeRequest(Request r) {
-        //TODO: he should be able to remove only his own requests
        for (Request request : RequestsHolder.getRequests()) {
            if (request.equals(r) && request.getUsername().equals(r.getUsername())) {
                RequestsHolder.removeRequest(request);
