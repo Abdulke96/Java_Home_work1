@@ -17,12 +17,10 @@ import java.util.TreeSet;
 public abstract class Staff<T extends Comparable<T>> extends User<T> implements StaffInterface {
 
     private List<Request> assignedRequests;
-    //@JsonDeserialize(using = ContributionsHandler.class)
     public SortedSet<T> contributions;
     public Staff(String fullName) {
         super(fullName);
         this.assignedRequests = new ArrayList<>();
-//        this.contributions = new SortedSet<T>()
         this.contributions = new TreeSet<>();
 
     }

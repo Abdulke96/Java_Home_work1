@@ -100,9 +100,11 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     private String experience;
     private List<String> notifications;
     public SortedSet<T> favorites ;
+    private String addedBy;
     public User(){
+        this.addedBy = "null";
         this.username = "null";
-        this.experience = "null";
+        this.experience = "0";
         this.favorites = new TreeSet<>();
         this.information = new Information.InformationBuilder().build();
         this.userType = AccountType.Regular;
@@ -113,9 +115,9 @@ public abstract class User<T extends Comparable<T>> implements Observer{
         this.favoriteProductions = new ArrayList<>();
     }
     public User(String fullName) {
-
+        this.addedBy = "null";
         this.username = generateUniqueUsername(fullName);
-        this.experience = "null";
+        this.experience = "0";
         this.favorites = new TreeSet<>();
         this.information = new Information.InformationBuilder().build();
         this.userType = AccountType.Regular;
@@ -140,7 +142,9 @@ public abstract class User<T extends Comparable<T>> implements Observer{
    public void addToFavorites(T favorite) {
         favorites.add(favorite);
    }
-
+   public void addNotification(String notification) {
+        notifications.add(notification);
+    }
 
 
     public void removeFromFavorites(T favorite) {
@@ -148,7 +152,11 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     }
 
     public void updateExperience(int points) {
-        experience += points;
+        if (this.experience.equals("null")) {
+            this.experience = "0";
+        }
+        int experience = Integer.parseInt(this.experience);
+       this.experience = String.valueOf(experience + points);
     }
     public abstract void logout();
 

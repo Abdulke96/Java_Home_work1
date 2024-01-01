@@ -1,54 +1,44 @@
 package org.example;
 import org.constants.RequestStatus;
-import org.example.*;
-public class Admin<T> extends Staff  implements Observer{
+
+public class Admin extends Staff implements Observer{
     public Admin() {
         super( "Admin");
+
 
     }
     public Admin(String fullName) {
         super(fullName);
     }
-
-    public void resolveRequests() {
+    public void resolveRequests( Request r) {
+        UserExperienceContext userExperienceContext = new UserExperienceContext();
+        int experience;
         for (Request request : RequestsHolder.getRequests()) {
-            if (request.getStatus().equals(RequestStatus.Pending)) {
+            if (request.getStatus().equals(RequestStatus.Pending) && request.equals(r)) {
                 request.setStatus(RequestStatus.Resolved);
-
             }
+          
             for (User<?> user :IMDB.getInstance().getUsers()) {
                 if (user.getUsername().equals(request.getUsername())) {
-                    user.setExperience(user.getExperience()+1);
+                   if (request.getType().equals(RequestTypes.ACTOR_ISSUE) ||request.getType().equals(RequestTypes.MOVIE_ISSUE)){
+                       userExperienceContext.setExperienceStrategy(new CreateIssueStrategy());
+                          experience = userExperienceContext.calculateUserExperience();
+                            user.updateExperience(experience);
+                   }
                 }
             }
+            request.removeObserver(this);
 
         }
 
     }
-    public void rejectRequests() {
+    public void rejectRequests(Request r) {
         for (Request request : RequestsHolder.getRequests()) {
-            if (request.getStatus().equals(RequestStatus.Pending)) {
+            if (request.getStatus().equals(RequestStatus.Pending) && request.equals(r)) {
                 request.setStatus(RequestStatus.Rejected);
-
+                request.removeObserver(this);
             }
         }
-
-    }
-
-    public void addProduction(Production production) {
-
-
-
-
-    }
-
-    public void removeProduction(Production production) {
-
-    }
-
-    public void updateProductionInformation(Production production) {
-
-
 
     }
 
@@ -58,13 +48,11 @@ public class Admin<T> extends Staff  implements Observer{
     }
 
     public void removeUser(User<?> user) {
-        if (user != null) {
-            removeUserDetails(user);
+        IMDB.getInstance().getUsers().remove(user);
 
-        }
     }
 
-    private void removeUserDetails(User<?> user) {
+    public void removeUserDetails(User<?> user) {
         for (Production production : user.getFavorites()) {
             production.removeReviewsByUser(user.getUsername());
         }
@@ -77,12 +65,15 @@ public class Admin<T> extends Staff  implements Observer{
     }
 
     @Override
+    public void update(String notification) {
+        addNotification(notification);
+    }
+
+    @Override
     public void logout() {
         System.out.println("Admin logged out.");
         System.exit(0);
     }
-
-
 
 }
 

@@ -121,17 +121,13 @@ public class OperationFactory {
     }
 
     public static void addDeleteUser() {
+        Admin admin = new Admin();
        FunctionsFactory.displayUsersName(users);
         String name = FunctionsFactory.readFullName();
         for (User<?> user : users) {
             if (user.getName().equals(name)) {
-                users.remove(user);
-                   for (Production production : productions) {
-                       production.getRatings().removeIf(rating -> rating.getUsername().equals(user.getUsername()));
-                   }
-
-                requests.removeIf(request -> request.getUsername().equals(user.getUsername()));
-
+               admin.removeUser(user);
+               admin.removeUserDetails(user);
                 System.out.println("User removed from the system");
                 return;
             }
@@ -141,7 +137,6 @@ public class OperationFactory {
         WriteOutput.write(OutPutConstants.accountType);
         int choice = ReadInput.readInteger(1, 3);
         User<?> newUser;
-        Admin<?> admin = new Admin<>();
         if (choice == 1) {
           newUser = admin.addUser(name, AccountType.Admin);
         } else if (choice == 2) {
@@ -182,7 +177,12 @@ public class OperationFactory {
                     String review = ReadInput.readLine("Enter the review:");
                     Rating rating = new Rating(currentUser.getUsername(), score, review);
                     production.addRating(rating);
+
                     System.out.println("Review added");
+                    UserExperienceContext userExperienceContext = new UserExperienceContext();
+                    userExperienceContext.setExperienceStrategy(new AddReviewStrategy());
+                    int experience = userExperienceContext.calculateUserExperience();
+                    currentUser.updateExperience(experience);
                 } else {
                     System.out.println("Enter the review you want to delete:");
                     String review = ReadInput.readLine();
@@ -204,6 +204,8 @@ public class OperationFactory {
     }
 
     public static void addDeleteActorMovieSeriesFromSystem() {
+        Admin admin = new Admin();
+        Contributor contributor = new Contributor();
         WriteOutput.write(OutPutConstants.addDeleteActorOrMovieConstants);
         int choice = ReadInput.readInteger(1, 2);
         WriteOutput.write(OutPutConstants.addDeleteConstant);
@@ -214,13 +216,17 @@ public class OperationFactory {
                 String name = ReadInput.readLine();
                 for (Actor actor : actors) {
                     if (actor.getName().equals(name)) {
-                        actors.remove(actor);
+                        if (currentUser instanceof Admin) {
+                            admin.removeActorSystem(name);
+                        } else {
+                            contributor.removeActorSystem(name);
 
+                        }
                         System.out.println("Actor removed from favorites");
                     }
                 }
             }else {
-             FunctionsFactory.createAndActor(actors);
+             FunctionsFactory.createAndAddActor(actors);
 
             }
         } else {

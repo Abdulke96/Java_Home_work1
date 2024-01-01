@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import static org.constants.OperationFactory.currentUser;
 public class FunctionsFactory {
+    static Admin admin = new Admin();
+   static Contributor contributor = new Contributor();
+   static Regular<?> regular = new Regular<>();
     public static List<Integer> storeUserDetails(int max, List<String> options) {
         List<Integer> userDetailsOperations = new ArrayList<>();
         WriteOutput.write(options);
@@ -140,8 +143,9 @@ public class FunctionsFactory {
         }
     }
 
-    static void createAndActor(List<Actor> actors) {
+    static void createAndAddActor(List<Actor> actors) {
         List<Integer> options = FunctionsFactory.storeUserDetails(4, OutPutConstants.addActorDetailConstants);
+
         Actor actor = new Actor();
         List<Map.Entry<String, String>> performances = new ArrayList<>();
         for (Integer option : options) {
@@ -167,7 +171,17 @@ public class FunctionsFactory {
                     break;
                 case 4:
                     if (actor.getName() != null) {
-                        actors.add(actor);
+                        if (currentUser instanceof Admin){
+                            admin.addActorSystem(actor);
+                        } else if (currentUser instanceof Contributor){
+                            actor.setAddedBy(currentUser.getUsername());
+                            contributor.addActorSystem(actor);
+                            // increment the experience of the contributor
+                            UserExperienceContext userExperienceContext = new UserExperienceContext();
+                            userExperienceContext.setExperienceStrategy(new AddProductStrategy());
+                            int experience = userExperienceContext.calculateUserExperience();
+                            currentUser.updateExperience(experience);
+                        }
                     }
                     break;
                 default:
@@ -261,7 +275,7 @@ public class FunctionsFactory {
                     break;
                 case 9:
                     if (movie.getTitle() != null) {
-                        productions.add(movie);
+                        addProductionAndIncreaseExperience(movie);
                     }
                     break;
                 default:
@@ -339,7 +353,7 @@ public class FunctionsFactory {
                     break;
                 case 9:
                     if (series.getTitle() != null) {
-                        productions.add(series);
+                        addProductionAndIncreaseExperience(series);
                     }
                     break;
                 default:
@@ -348,6 +362,21 @@ public class FunctionsFactory {
             }
         }
         series.calculateAverageRating() ;
+    }
+
+    private static void addProductionAndIncreaseExperience(Production series) {
+        if (currentUser instanceof Admin){
+            admin.addProductionSystem(series);
+        } else if (currentUser instanceof Contributor){
+            series.setAddedBy(currentUser.getUsername());
+            contributor.addProductionSystem(series);
+            // increment the experience of the contributor
+            UserExperienceContext userExperienceContext = new UserExperienceContext();
+            userExperienceContext.setExperienceStrategy(new AddProductStrategy());
+            int experience = userExperienceContext.calculateUserExperience();
+            currentUser.updateExperience(experience);
+
+        }
     }
 
     public static List<Episode> createAndAddEpisode() {
@@ -561,38 +590,47 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
             WriteOutput.write(OutPutConstants.requestTypeConstant);
             int requestType = ReadInput.readInteger(1,4);
             String to = null;
+            Request request = null;
             switch (requestType){
                 case 1:
-                    Request request = new Request(RequestTypes.DELETE_ACCOUNT,description,currentUser.getUsername());
-                    requests.add(request);
+                    request = new Request(RequestTypes.DELETE_ACCOUNT,description,currentUser.getUsername());
+                    //requests.add(request);
                     to = ReadInput.readLine("Enter the name of the admin you want to send the request to:");
                     break;
                 case 2:
-                    Request request1 = new Request(RequestTypes.ACTOR_ISSUE,description, currentUser.getUsername());
-                    requests.add(request1);
+                  request = new Request(RequestTypes.ACTOR_ISSUE,description, currentUser.getUsername());
+
                     to = ReadInput.readLine("Enter the name of the contributor/admin you want to send the request to:");
                     break;
                 case 3:
-                    Request request2 = new Request(RequestTypes.MOVIE_ISSUE,description, currentUser.getUsername());
-                    requests.add(request2);
+                     request = new Request(RequestTypes.MOVIE_ISSUE,description, currentUser.getUsername());
                     to = ReadInput.readLine("Enter the name of the contributor/admin you want to send the request to:");
                     break;
                 case 4:
-                    Request request3 = new Request(RequestTypes.OTHERS,description, currentUser.getUsername());
-                    requests.add(request3);
+                    request = new Request(RequestTypes.OTHERS,description, currentUser.getUsername());
                     to = ReadInput.readLine("Enter the name of the admin you want to send the request to:");
                     break;
                 default:
                     System.out.println("Invalid choice");
                     break;
             }
-            requests.get(requests.size()-1).setTo(to);
+            assert request != null;
+            request.setTo(to);
+            if (currentUser instanceof  Admin){
+                contributor.createRequest(request);
+            }else {
+                regular.createRequest(request);
+            }
             System.out.println("Request created");
         } else {
             String currentDescription = ReadInput.readLine("Enter the name of the request you want to delete:");
             for (Request request : requests) {
                 if (request.getDescription().equals(currentDescription) && request.getUsername().equals(currentUser.getUsername())) {
-                    requests.remove(request);
+                    if (currentUser instanceof Contributor){
+                        contributor.removeRequest(request);
+                    }else{
+                        regular.removeRequest(request);
+                    }
                     System.out.println("Request deleted");
                     return;
                 }

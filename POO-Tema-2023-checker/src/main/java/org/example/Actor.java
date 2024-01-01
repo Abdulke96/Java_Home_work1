@@ -19,13 +19,13 @@ public class Actor implements Comparable<Actor> {
         this.name = "null";
         this.performances = new ArrayList<>();
         this.biography = null;
-        this.addedBy = "ADMIN/CONTRIBUTOR";
+        this.addedBy = "null";
     }
     public Actor(String name, List<Map.Entry<String, String>> performances, String biography) {
         this.name = name;
         this.performances = performances;
         this.biography = biography;
-        this.addedBy = "ADMIN/CONTRIBUTOR";
+        this.addedBy = "null";
     }
     public int getNumberOfPerformances(){
         return performances.size();

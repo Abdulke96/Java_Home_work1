@@ -27,7 +27,7 @@ public abstract class Production implements Comparable<Production> {
         this.averageRating = 0;
         this.plot = "null";
         this.type = "null";
-        this.addedBy = "ADMIN/CONTRIBUTOR";
+        this.addedBy = "null";
     }
     public Production(String title, String type, List<String> directors, List<String> actors, List<Genre> genres,
                       List<Rating> ratings) {

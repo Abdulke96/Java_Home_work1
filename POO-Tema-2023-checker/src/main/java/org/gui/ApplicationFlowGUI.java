@@ -3,9 +3,12 @@ package org.gui;
 import org.constants.Constants;
 import org.constants.FunctionsFactory;
 import org.constants.GuiConstants;
+import org.constants.RequestStatus;
 import org.example.*;
 import org.jetbrains.annotations.NotNull;
-
+//emily.wilson@example.com
+//P@ssw0rd!23
+//bossuAlMare@ymail.com,cont@tributor.ro
 import javax.swing.*;
 import java.awt.*;
 
@@ -87,7 +90,7 @@ public class ApplicationFlowGUI extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(null, "Authentication failed. Retry.");
                 }
-            } catch (Exception exception) {
+            } catch (Throwable exception) {
                 JOptionPane.showMessageDialog(null, "Error during authentication: " + exception.getMessage());
             }
         });
@@ -126,7 +129,7 @@ public class ApplicationFlowGUI extends JFrame {
 
     /**
      * The configureFrame method is used to configure the frame.
-     * it sets the title, size and default close operation.
+     * it sets the title, size, and default close operation.
      */
     private void configureFrame() {
         setTitle("IMDB APP");
@@ -702,21 +705,19 @@ public class ApplicationFlowGUI extends JFrame {
         accountLabel.setLayout(new BorderLayout());
         accountLabel.add(Box.createRigidArea(new Dimension(0, 200)));
         notificationsPanel.add(accountLabel, BorderLayout.NORTH);
-        StringBuilder notificationsString = new StringBuilder();
-        notificationsString.append("\n\n\n").append("Notifications: ").append("\t");
+        JPanel notificationsListPanel = new JPanel();
+        notificationsListPanel.setLayout(new BoxLayout(notificationsListPanel, BoxLayout.Y_AXIS));
 
         if (notifications.isEmpty()){
-            notificationsString.append("No notifications");
+            notificationsListPanel.add(ImdbLabel("No notifications"));
         }
         else {
             for (String notification : notifications) {
-                notificationsString.append(notification).append("\n");
+                notificationsListPanel.add(ImdbLabel(notification));
             }
         }
-        JTextArea notificationsArea = new JTextArea(GuiConstants.breakString(notificationsString.toString(),120));
-        notificationsArea.setEditable(false);
-        notificationsArea.setFont(new Font("Arial", Font.BOLD, 40));
-        notificationsPanel.add(notificationsArea, BorderLayout.CENTER);
+
+        notificationsPanel.add(new JScrollPane(notificationsListPanel), BorderLayout.CENTER);
         setCurrentPanel(notificationsPanel);
 
     }
@@ -959,6 +960,7 @@ public class ApplicationFlowGUI extends JFrame {
                     request.setTo(to);
                 }
                 IMDB.getInstance().getRequests().add(request);
+                // increment user Experience
                 deleteRequestPanel.removeAll();
                 deleteRequestMethod(deleteRequestPanel);
                 deleteRequestPanel.revalidate();
@@ -1091,6 +1093,7 @@ public class ApplicationFlowGUI extends JFrame {
                         Rating rate = new Rating(username, rating,comment);
                        for (Rating checkRating : production.getRatings()){
                            if ( checkRating.getUsername().equals(username)){
+
                                String message = "hello " + currentUser.getName() + "\n" +
                                        "you have updated your review for " + production.getTitle()+" from\n"+
                                        "comment: "+checkRating.getComment()+"\n"+ "rating: "+checkRating.getRating()+"\n"+
@@ -1098,10 +1101,28 @@ public class ApplicationFlowGUI extends JFrame {
 
                                checkRating.setRating(rating);
                                  checkRating.setComment(comment);
+
+
                                  dialogBox(message);
                                return;
                            }
                           }
+                        // increment user experience
+                        UserExperienceContext userExperienceContext = new UserExperienceContext();
+                        userExperienceContext.setExperienceStrategy(new AddReviewStrategy());
+                        int experience = userExperienceContext.calculateUserExperience();
+                        currentUser.updateExperience(experience);
+                        for (User<?> user : users){
+                           for (Rating raters : production.getRatings()){
+                                 if (raters.getUsername().equals(user.getUsername())){
+                                     String message = "hello " + user.getName() + "\n " +
+                                             currentUser.getName() + " has added a review for " + production.getTitle()+
+                                                " with comment: "+comment+" and rating: "+rating;
+                                     raters.addObserver(user);
+                                    raters.notifyObservers(message);
+                                 }
+                           }
+                        }
                         production.addRating(rate);
                         dialogBox("added to system");
                         deleteReviewPanel.removeAll();
@@ -1275,9 +1296,10 @@ public class ApplicationFlowGUI extends JFrame {
                 dialogBox("your age may not be correct ");
             }else{
                 username = FunctionsFactory.generateUniqueUsername(name);
-                Admin<?> admin = new Admin<>();
+                Admin admin = new Admin();
                 User<?> newUser = admin.addUser(name, accountType);
                 newUser.setName(name);
+                newUser.setAddedBy(currentUser.getUsername());
                 newUser.setEmail(email);
                 newUser.setUsername(username);
                 IMDB.getInstance().getUsers().add(newUser);
@@ -1318,7 +1340,6 @@ public class ApplicationFlowGUI extends JFrame {
         addUserPanel.add(usernamePanel);
         addUserPanel.add(emailPanel);
         addUserPanel.add(userTypePanel);
-        //add extra info for the user
         addUserPanel.add(userAgePanel);
         addUserPanel.add(userGenderPanel);
         addUserPanel.add(userCountryPanel);
@@ -1471,14 +1492,23 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 }
                 production.setType(Objects.requireNonNull(typeComboBox.getSelectedItem()).toString());
                 production.setPlot(plot);
+                production.setAddedBy(currentUser.getUsername());
                 productions.add(production);
-                String message = "Hello Admin " + currentUser.getName() + ",\n\n" +
+                // increment the exprience of the contributor
+                if (currentUser instanceof Contributor) {
+                    UserExperienceContext userExperienceContext = new UserExperienceContext();
+                    userExperienceContext.setExperienceStrategy(new AddProductStrategy());
+                    int experience = userExperienceContext.calculateUserExperience();
+                    currentUser.updateExperience(experience);
+                }
+
+                String message = "Hello  " + currentUser.getName() + ",\n\n" +
                         "The production " + production.getTitle() + " has been added to the system.\n\n" +
                         "you can update it if you want to add more details"+
                         "Best regards,\n" +
                         "IMDB Team";
                 dialogBox(message);
-                // renew the user list
+
                 addProductionPanel.removeAll();
                 addProductionPanel.add(addaActorOrProductionComboBox);
                 addProduction(addProductionPanel);
@@ -1555,7 +1585,15 @@ private  void addProductionOrActor(JPanel addProductionPanel){
             }else{
                 Actor actor = new Actor(name,performances,biography);
                 actor.setPerformances(performances);
+                actor.setAddedBy(currentUser.getUsername());
                 actors.add(actor);
+                // increment the exprience of the contributor
+                if (currentUser instanceof Contributor) {
+                    UserExperienceContext userExperienceContext = new UserExperienceContext();
+                    userExperienceContext.setExperienceStrategy(new AddProductStrategy());
+                    int experience = userExperienceContext.calculateUserExperience();
+                    currentUser.updateExperience(experience);
+                }
                 String message = "Hello Admin " + currentUser.getName() + ",\n\n" +
                         "The actor " + actor.getName() + " has been added to the system.\n\n" +
                         "you can update it if you want to add more details"+
@@ -2024,14 +2062,169 @@ addPerformanceButton.addActionListener(e->{
      */
 
     public void solveRequests() {
-        getDimension(screenSize);
-        JPanel solveRequests =  new JPanel();
+       JPanel solveRequestPanel = new JPanel(new GridLayout(1,2));
+       JPanel listPanel = new JPanel(new BorderLayout());
+       JPanel detailsPanel = new JPanel(new BorderLayout());
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+        detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
+        detailsPanel.setSize(screenSize.width*3/4, screenSize.height);
+        listPanel.setSize(screenSize.width/4, screenSize.height);
+        JLabel titleLabel = ImdbLabel("Requests List");
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        listPanel.add(titleLabel);
+        listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        JLabel detailsLabel = ImdbLabel("Requests Details");
+        detailsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        detailsPanel.add(detailsLabel);
+        if (currentUser instanceof Admin) {
+            for (Request request : requests) {
+                JButton button = ImdbButton(request.getUsername(), 40);
+                listPanel.add(button);
+                listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+                button.addActionListener(e -> {
+                    JPanel editPanel = editRequestDetails(request);
+                    editPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+                    detailsPanel.removeAll();
+                    detailsPanel.add(editPanel);
+                    detailsPanel.revalidate();
+                    detailsPanel.repaint();
+                });
+            }
+        } else{
+            for (Request request : requests) {
+                if (request.getUsername().equals(currentUser.getUsername())) {
+                    JButton button = ImdbButton(request.getUsername(), 40);
+                    listPanel.add(button);
+                    listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+                    button.addActionListener(e -> {
+                        JPanel editPanel = editRequestDetails(request);
+                        editPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+                        detailsPanel.removeAll();
+                        detailsPanel.add(editPanel);
+                        detailsPanel.revalidate();
+                        detailsPanel.repaint();
+                    });
+                }
+            }
+        }
+        detailsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        JScrollPane scrollPane = new JScrollPane(listPanel);
+        JScrollPane scrollPane1 = new JScrollPane(detailsPanel);
+        solveRequestPanel.add(scrollPane);
+        solveRequestPanel.add(scrollPane1);
+        setCurrentPanel(solveRequestPanel);
 
 
 
     }
+
+    private JPanel editRequestDetails(Request request) {
+// helper method for the solveRequests method to edit the details of a request
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        JPanel usernamePanel = ImdbLabelPanel(ImdbLabel("Username: "), ImdbLabel(request.getUsername()));
+        usernamePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        JPanel typePanel = ImdbLabelPanel(ImdbLabel("Type: "), ImdbLabel(String.valueOf(request.getType())));
+        typePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        JPanel createDatePanel = ImdbLabelPanel(ImdbLabel("Create Date: "), ImdbLabel(String.valueOf(request.getCreatedDate())));
+        createDatePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        JPanel statusPanel = ImdbLabelPanel(ImdbLabel("Status: "), ImdbLabel(String.valueOf(request.getStatus())));
+        statusPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        JTextArea descriptionArea = new JTextArea(GuiConstants.breakString(request.getDescription(), 50));
+        descriptionArea.setEditable(false);
+        descriptionArea.setFont(new Font("Arial", Font.BOLD, 40));
+
+        JPanel descriptionPanel = ImdbLabelScrollablePanel(ImdbLabel("Description: "), new JScrollPane(descriptionArea));
+        descriptionPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        JPanel actorNamePanel = ImdbLabelPanel(ImdbLabel("Actor Name: "), ImdbLabel(request.getActorName()));
+        actorNamePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        JPanel movieTitlePanel = ImdbLabelPanel(ImdbLabel("Movie Title: "), ImdbLabel(request.getMovieTitle()));
+        movieTitlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+
+        panel.add(usernamePanel);
+        panel.add(typePanel);
+        panel.add(createDatePanel);
+        panel.add(statusPanel);
+        panel.add(descriptionPanel);
+        panel.add(actorNamePanel);
+        panel.add(movieTitlePanel);
+
+        JButton resolveButton = ImdbButton("Resolve",40);
+        resolveButton.addActionListener(e->{
+            String notify = GuiConstants.showInputDialog("Enter notification", "", 300, 200);
+            if(notify == null) return; // User canceled the input
+            if (currentUser instanceof Admin) {
+                ((Admin) currentUser).resolveRequests(request);
+            } else {
+
+                ((Contributor) currentUser).resolveRequests(request);
+            }
+
+            for (User<?> user : users) {
+                if (user.getUsername().equals(request.getUsername())) {
+                   request.addObserver(user);
+                    user.addNotification(notify);
+                }
+            }
+            String message = "Hello " + currentUser.getName()+ ",\n\n" +
+                    "The request has been resolved.\n\n" +
+                    "Best regards,\n" +
+                    "IMDB Team";
+            dialogBox(message);
+            panel.removeAll();
+
+            panel.add(editRequestDetails(request));
+            panel.revalidate();
+            panel.repaint();
+
+
+        });
+
+
+ JButton rejectButton = ImdbButton("Reject",40);
+        rejectButton.addActionListener(e->{
+            String notify = GuiConstants.showInputDialog("Enter notification", "", 300, 200);
+            if(notify == null) return; // User canceled the input
+            if (currentUser instanceof Admin) {
+                ((Admin) currentUser).rejectRequests(request);
+            } else {
+                ((Contributor) currentUser).rejectRequests(request);
+            }
+            for (User<?> user : users) {
+                if (user.getUsername().equals(request.getUsername())) {
+                    request.addObserver(user);
+                    user.addNotification(notify);
+                }
+            }
+            String message = "Hello " + request.getUsername() + ",\n\n" +
+                    "Your request has been rejected.\n\n" +
+                    "Best regards,\n" +
+                    "IMDB Team";
+            dialogBox(message);
+            panel.removeAll();
+            panel.add(editRequestDetails(request));
+            panel.revalidate();
+            panel.repaint();
+
+
+        });
+
+       JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 60, 20));
+        buttonPanel.add(resolveButton);
+        buttonPanel.add(rejectButton);
+        panel.add(buttonPanel);
+        return panel;
+
+
+    }
+
+
     /**
-     * logout method is used to logout from the system and go back to the login screen.
+     * logout method is used to log out from the system and go back to the login screen.
      */
    public void logout() {
             getDimension(screenSize);
@@ -2473,6 +2666,13 @@ addPerformanceButton.addActionListener(e->{
         inputPanel.add(label);
         inputPanel.add(scrollPane);
         return inputPanel;
+    }
+    private JPanel ImdbLabelPanel(JLabel label1, JLabel label2){
+        // custom panel with a label
+        JPanel labelPanel = new JPanel();
+        labelPanel.add(label1);
+        labelPanel.add(label2);
+        return labelPanel;
     }
 
     private void imdbTextAreaWithBack(JPanel previousPanel , String title, String details) {

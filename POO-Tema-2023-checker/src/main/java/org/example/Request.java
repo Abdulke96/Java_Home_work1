@@ -7,6 +7,8 @@ import org.constants.RequestStatus;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class Request implements Subject{
@@ -20,6 +22,7 @@ public class Request implements Subject{
     // additional fields
     @Getter @Setter
     RequestStatus status;
+    List<Observer> observers = new ArrayList<>();
 
     public Request() {
         this.type = RequestTypes.OTHERS;
@@ -66,17 +69,20 @@ public class Request implements Subject{
 
     @Override
     public void addObserver(Observer observer) {
-
+        observers.add(observer);
     }
 
     @Override
     public void removeObserver(Observer observer) {
+        observers.remove(observer);
 
     }
 
     @Override
     public void notifyObservers(String notification) {
-
+        for (Observer observer : observers) {
+            observer.update(notification);
+        }
     }
 
 
