@@ -137,8 +137,6 @@ public abstract class User<T extends Comparable<T>> implements Observer{
         favoriteActors.add(favorite.getName());
     }
     public void addToFavoriteProductions(Production favorite) {
-      //  T favorites = (T) favorite.getTitle();
-        addToFavorites((T) favorite.getTitle());
         favoriteProductions.add(favorite.getTitle());
     }
    public void addToFavorites(T favorite) {
@@ -151,6 +149,12 @@ public abstract class User<T extends Comparable<T>> implements Observer{
 
     public void removeFromFavorites(T favorite) {
         favorites.remove(favorite);
+    }
+    public SortedSet<T> getFavorites() {
+        // add favorite actors and productions to favorites
+        favorites.addAll((Collection<? extends T>) favoriteActors);
+        favorites.addAll((Collection<? extends T>) favoriteProductions);
+        return favorites;
     }
 
     public void updateExperience(int points) {
@@ -178,9 +182,7 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     public void update(String notification) {
         notifications.add(notification);
     }
-    protected Production[] getFavorites() {
-        return new Production[0];
-    }
+
 
     // for use
 

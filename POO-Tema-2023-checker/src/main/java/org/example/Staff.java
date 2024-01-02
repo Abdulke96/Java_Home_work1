@@ -3,10 +3,8 @@ package org.example;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.constants.FunctionsFactory;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+
+import java.util.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -14,10 +12,14 @@ public abstract class Staff<T extends Comparable<T>> extends User<T> implements 
 
     private List<Request> assignedRequests;
     public SortedSet<T> contributions;
+    private  List<String> productionsContribution;
+    private List<String> actorsContribution;
     public Staff(String fullName) {
         super(fullName);
         this.assignedRequests = new ArrayList<>();
         this.contributions = new TreeSet<>();
+        this.productionsContribution = new ArrayList<>();
+        this.actorsContribution = new ArrayList<>();
 
     }
     public void addProductionSystem(Production p){
@@ -43,6 +45,20 @@ public abstract class Staff<T extends Comparable<T>> extends User<T> implements 
 
         }
 
+    }
+    public void addContributions(T contribution){
+        this.contributions.add(contribution);
+    }
+    public void removeContributions(T contribution){
+        this.contributions.remove(contribution);
+    }
+
+    public SortedSet<T> getContributions(){
+        //add actors contributions and productions contributions
+        contributions.addAll((Collection<? extends T>) productionsContribution);
+        contributions.addAll((Collection<? extends T>) actorsContribution);
+
+        return this.contributions;
     }
     public void updateActor(Actor a){
         FunctionsFactory.updateActor(a, this);

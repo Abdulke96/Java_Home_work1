@@ -53,7 +53,7 @@ public class Admin extends Staff implements Observer{
     }
 
     public void removeUserDetails(User<?> user) {
-        for (Production production : user.getFavorites()) {
+        for (Production production : IMDB.getInstance().getProductions()) {
             production.removeReviewsByUser(user.getUsername());
         }
         for (Request request : RequestsHolder.getRequests()) {

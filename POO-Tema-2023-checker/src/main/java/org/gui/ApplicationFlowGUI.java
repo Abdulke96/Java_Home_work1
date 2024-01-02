@@ -68,9 +68,10 @@ public class ApplicationFlowGUI extends JFrame {
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 80));
         topPanel.add(welcomeLabel);
         loginPanel.add(topPanel);
-        JLabel userLabel = ImdbLabel("Email: ");
-        JLabel passwordLabel = ImdbLabel("Password:");
+        JLabel userLabel =    ImdbLabel("User Email: ");
+        JLabel passwordLabel = ImdbLabel("Password:   ");
         JCheckBox showPassword = new  JCheckBox("Show Password");
+        showPassword.setFont(new Font("Arial", Font.BOLD, 20));
         JButton loginButton = ImdbButton("Login", 40);
         JButton resetButton = ImdbButton("Reset", 40);
 
@@ -122,7 +123,7 @@ public class ApplicationFlowGUI extends JFrame {
          loginPanel.add(middlePanel);
          JPanel bottomPanel = new JPanel();
          // display IMDB icon on the login screen
-         JLabel iconLabel = new JLabel(GuiConstants.getIcon("imdbicon.png", 300, 300));
+         JLabel iconLabel = new JLabel(GuiConstants.getIcon("imdbicon.png", 400, 400));
             bottomPanel.add(iconLabel);
          loginPanel.add(bottomPanel);
         setCurrentPanel(loginPanel);

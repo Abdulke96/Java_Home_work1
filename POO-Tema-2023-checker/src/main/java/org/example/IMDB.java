@@ -16,6 +16,7 @@ import org.helper.ProductionDeserializer;
 import org.constants.Constants;
 
 import javax.swing.*;
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -101,6 +102,7 @@ public class IMDB  extends JFrame {
     public void runCli() {
         loadDataFromJsonFiles();
        while(this.currentUser==null){
+
        authenticateUser();
        startApplicationFlow();
        }
@@ -161,14 +163,14 @@ public class IMDB  extends JFrame {
 //            System.out.print("password: ");
 //            String password = ReadInput.readLine();
             //Contributor account
-//            String username = "emily.wilson@example.com";
-//            String password = "P@ssw0rd!23";
+            String username = "emily.wilson@example.com";
+            String password = "P@ssw0rd!23";
             // Admin account
 //           String username = "bossuAlMare@ymail.com";
 //             String password = "test";
             // Regular account
-            String username = "susan.smith@example.com";
-            String password = "R8F!b&e9m3U6";
+//            String username = "susan.smith@example.com";
+//            String password = "R8F!b&e9m3U6";
             try {
                this.currentUser = authenticate(username, password);
                 if (this.currentUser != null) {
@@ -188,6 +190,10 @@ public class IMDB  extends JFrame {
      */
     private void startApplicationFlow() {
         if (currentUser!=null) {
+            System.out.println(currentUser.getFavorites());
+            Staff<?> staff = (Staff<?>) currentUser;
+            // print contributions
+            System.out.println(staff.getContributions());
             ApplicationFlow.appFlow();
         } else {
             WriteOutput.printRed("No user logged in.");
