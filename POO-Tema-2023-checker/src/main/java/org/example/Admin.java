@@ -1,6 +1,8 @@
 package org.example;
 import org.constants.RequestStatus;
 
+import java.util.List;
+
 public class Admin extends Staff implements Observer{
     public Admin() {
         super( "Admin");
@@ -51,7 +53,15 @@ public class Admin extends Staff implements Observer{
         IMDB.getInstance().getUsers().remove(user);
 
     }
-
+    public void addToAssignedRequests(Request request) {
+       this.getAssignedRequests().add(request);
+    }
+    public void removeFromAssignedRequests(Request request) {
+        this.getAssignedRequests().remove(request);
+    }
+    public List<Request> getAssignedRequest() {
+        return  this.getAssignedRequests();
+    }
     public void removeUserDetails(User<?> user) {
         for (Production production : IMDB.getInstance().getProductions()) {
             production.removeReviewsByUser(user.getUsername());

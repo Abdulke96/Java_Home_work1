@@ -1,16 +1,13 @@
 package org.constants;
 
-import org.example.AccountType;
-import org.example.Genre;
+import org.example.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.security.PublicKey;
 import java.time.LocalDateTime;
-import java.util.Calendar;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.StringTokenizer;
 
 public class GuiConstants extends JFrame {
     public static List<String> contributor = List.of("home ", "View productions details", "View actors details", "View notifications", "Search for actors/movies/series", "Add/Delete actors/movies/series to/from favorites", "Create/DeleteRequest", "Add/Delete actor/movie/series/ from system", "Update productions details", "Update actor details", "Solve requests", "Logout", "Exit");
@@ -25,18 +22,6 @@ public class GuiConstants extends JFrame {
    public static Image getScaledImage(Image srcImg, int width, int height) {
         return srcImg.getScaledInstance(width, height, Image.SCALE_SMOOTH);
     }
-   public static AccountType convertToAccountType(int userType) {
-       return switch (userType) {
-           case 0 -> AccountType.Admin;
-           case 1 -> AccountType.Contributor;
-           case 2 -> AccountType.Regular;
-           default -> throw new IllegalStateException("Unexpected value: " + userType);
-       };
-    }
-
-//   // public static boolean isFullName(String name) {
-//        return name.matches("^[a-zA-Z\\s]*$");
-//    }
     public static String showInputDialog(String instruction, String preFilledValue, int width, int height) {
 
         JTextArea inputArea = new JTextArea(preFilledValue);
@@ -177,5 +162,44 @@ public static JComboBox<Integer> createComboBox(Integer[] items) {
                 null);
         return (result == JOptionPane.OK_OPTION) ? (int) comboBox.getSelectedItem() : -1;
 
+    }
+
+    public static Production selectProduction(){
+    List<String> productions = new ArrayList<>();
+        for (Production production : IMDB.getInstance().getProductions()) {
+            productions.add(production.getTitle());
+        }
+
+        JComboBox<String> comboBox = new JComboBox<>(productions.toArray(new String[0]));
+
+        int result = JOptionPane.showOptionDialog(
+                null,
+                comboBox,
+                "Select a production",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                null);
+        return (result == JOptionPane.OK_OPTION) ? IMDB.getInstance().getProductions().get(comboBox.getSelectedIndex()) : null;
+    }
+    public static Actor selectActor(){
+       List<String> actors = new ArrayList<>();
+        for (Actor actor : IMDB.getInstance().getActors()) {
+            actors.add(actor.getName());
+        }
+
+        JComboBox<String> comboBox = new JComboBox<>(actors.toArray(new String[0]));
+
+        int result = JOptionPane.showOptionDialog(
+                null,
+                comboBox,
+                "Select an actor",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                null);
+        return (result == JOptionPane.OK_OPTION) ? IMDB.getInstance().getActors().get(comboBox.getSelectedIndex()) : null;
     }
 }

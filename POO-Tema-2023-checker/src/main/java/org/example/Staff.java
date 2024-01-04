@@ -64,4 +64,7 @@ public abstract class Staff<T extends Comparable<T>> extends User<T> implements 
         FunctionsFactory.updateActor(a, this);
     }
 
+    public Iterable<? extends Request> getAssignedRequest() {
+        return this.assignedRequests;
+    }
 }

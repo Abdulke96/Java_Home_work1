@@ -6,27 +6,27 @@ import org.constants.GuiConstants;
 import org.constants.RequestStatus;
 import org.example.*;
 import org.jetbrains.annotations.NotNull;
-//emily.wilson@example.com
-//P@ssw0rd!23
-//bossuAlMare@ymail.com,cont@tributor.ro
+
 import javax.swing.*;
 import java.awt.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
-//TODO: admin and contributor  to be notified about their product and actor requests
-//
 public class ApplicationFlowGUI extends JFrame {
     private User<?> currentUser; // to track the current user
-
-    // lists of users, actors, productions, requests
+    /**
+     * list of users, actors, productions, requests
+     */
     List<Actor> actors = IMDB.getInstance().getActors();
     List<Production> productions = IMDB.getInstance().getProductions();
-    List<User<?>> users = IMDB.getInstance().getUsers();
+    static List<User<?>> users = IMDB.getInstance().getUsers();
     List<Request> requests = IMDB.getInstance().getRequests();
-
+    /**
+     * panels for fields for Gui
+     */
     private JLabel photoLabel; // fancy photo display
     private int currentPhotoIndex = 1; // to track the current photo index
     private JPanel currentPanel; //to track the current panel
@@ -196,7 +196,7 @@ public class ApplicationFlowGUI extends JFrame {
     }
     /**
      * The homeMenu method is used to create the home menu.
-     * it calls the showMenu method to create the home menu.
+     * It calls the showMenu method to create the home menu.
      */
     private JMenu homeMenu() {
         JMenu homeMenu = new JMenu("Home");
@@ -239,12 +239,16 @@ public class ApplicationFlowGUI extends JFrame {
      * The showAccountMenu method is used to display the user account.
      * It has two parameters:
      * @param accountMenu: JMenu
-     * @param info: List<String>
+     * @param info List<String>
      * It returns the account menu.
      */
     private JMenu showAccountMenu( JMenu accountMenu, List<String> info){
         for (String s : info) {
             JMenuItem action = new JMenuItem(s);
+            action.addActionListener(e -> {
+                JPanel userDetails = userDetails(currentUser,mainScreenPanel);
+                setCurrentPanel(userDetails);
+            });
             action.setFont(new Font("Arial", Font.BOLD, 24));
             accountMenu.add(action);
         }
@@ -256,7 +260,7 @@ public class ApplicationFlowGUI extends JFrame {
      * The showMenu method is used to create  a menu checking the user type.
      * It has two parameters:
      * @param accountMenu: JMenu
-     * @param info: List<String>
+     * @param info List<String>
      * It returns the menu.
      */
     private JMenu showMenu(JMenu accountMenu, List<String> info) {
@@ -280,7 +284,7 @@ public class ApplicationFlowGUI extends JFrame {
     }
 
     /**
-     * The  createPhotoDisplayAndButtons method is used to create the photo display and the buttons.
+     * The createPhotoDisplayAndButtons method is used to create the photo display and the buttons.
      *  It calls the loadPhoto method to load the photo.
      * It is responsible for decorating the main screen panel.
      *
@@ -327,7 +331,7 @@ public class ApplicationFlowGUI extends JFrame {
         buttonsPanel.add(leftButton, BorderLayout.WEST);
         buttonsPanel.add(Box.createHorizontalGlue()); // Creates space between leftButton and label
 
-        JLabel label = new JLabel("WEL COME TO IMDB !!!");
+        JLabel label = new JLabel("WELCOME TO IMDB !!!");
         label.setFont(new Font("Arial", Font.BOLD, 40));
         label.setHorizontalAlignment(JLabel.CENTER);
         buttonsPanel.add(label, BorderLayout.CENTER);
@@ -582,10 +586,8 @@ public class ApplicationFlowGUI extends JFrame {
     }
 
     /**
-     *viewProductionDetails method is used to view the production details.
-     *
+     * viewProductionDetails method is used to view the production details.
      */
-
     public void viewProductionDetails() {
         JPanel productionPanel = new JPanel(new GridLayout(1, 2));
         JPanel listPanel = new JPanel(new BorderLayout());
@@ -635,12 +637,11 @@ public class ApplicationFlowGUI extends JFrame {
         productionPanel.add(detailsPanel);
         setCurrentPanel(productionPanel);
     }
+
+
     /**
-     *  viewActorDetails method is used to view the actor details.
-     *
+     * viewActorDetails method is used to view the actor details.
      */
-
-
     public void viewActorDetails() {
         JPanel actorPanel = new JPanel(new GridLayout(1, 2));
         JPanel listPanel = new JPanel(new BorderLayout());
@@ -693,15 +694,14 @@ public class ApplicationFlowGUI extends JFrame {
         setCurrentPanel(actorPanel);
     }
 
+
     /**
      * viewNotifications method is used to view the notifications.
      */
-
-
     public void viewNotifications() {
         JPanel notificationsPanel = new JPanel(new BorderLayout());
         List<String> notifications = currentUser.getNotifications();
-        JTextArea accountLabel = new JTextArea("\t\t\t\tName: "+currentUser.getName() + "\n" + "\t\t\t\tUser Name: "+ currentUser.getUsername() + "\n" +"\t\t\t\tUser Email: "+ currentUser.getEmail() + "\n" +"\t\t\t\tUser Type: "+ currentUser.getUserType());
+        JTextArea accountLabel = new JTextArea("\t\t\t\tName: "+currentUser.getName() + "\n" + "\t\t\t\tUser Name: "+ currentUser.getUsername() + "\n" +"\t\t\t\tUser Email: "+ currentUser.getEmail() + "\n" + "\t\t\t\tUser Type: "+ currentUser.getClass().getSimpleName());
         accountLabel.setEditable(false);
         accountLabel.setFont(new Font("Arial", Font.BOLD, 30));
         accountLabel.setLayout(new BorderLayout());
@@ -715,7 +715,12 @@ public class ApplicationFlowGUI extends JFrame {
         }
         else {
             for (String notification : notifications) {
-                notificationsListPanel.add(ImdbLabel(notification));
+                JTextArea notificationLabel = new JTextArea(GuiConstants.breakString(notification, 150));
+                notificationLabel.setEditable(false);
+                notificationLabel.setFont(new Font("Arial", Font.BOLD, 30));
+                notificationLabel.setLayout(new BoxLayout(notificationLabel, BoxLayout.Y_AXIS));
+                notificationLabel.add(Box.createRigidArea(new Dimension(0, 20)));
+                notificationsListPanel.add(notificationLabel);
             }
         }
 
@@ -785,8 +790,6 @@ public class ApplicationFlowGUI extends JFrame {
      * addDeleteFavorites method is used to add or delete a production or an actor from the favorites.
      */
     public void addDeleteFavorites() {
-
-
         JPanel favoritesPanel = new JPanel(new GridLayout(1, 2));
         JPanel addToFavoritePanel = new JPanel(new FlowLayout());
         JPanel deleteFromFavoritePanel = new JPanel(new FlowLayout());
@@ -925,18 +928,13 @@ public class ApplicationFlowGUI extends JFrame {
         descriptionArea.setWrapStyleWord(true);
         JComboBox<String> requestTypeComboBox = new JComboBox<>(new String[]{"DELETE_ACCOUNT", "ACTOR_ISSUE", "MOVIE_ISSUE", "OTHERS"});
         requestTypeComboBox.setFont(new Font("Arial", Font.BOLD, 40));
-         JTextField toField = ImdbTextField(20,40);
          JLabel descriptionLabel = ImdbLabel("Description: ");
-         JLabel toLabel = ImdbLabel("Request To:  ");
          JLabel requestLabel = ImdbLabel("Request Type:              ");
 
          JPanel descriptionPanel =ImdbLabelScrollablePanel(descriptionLabel,new JScrollPane(descriptionArea));
          addRequestPanel.add(descriptionPanel);
 
-         JPanel thirdFiled =  ImdbInputPanel(toLabel,toField);
-        addRequestPanel.add(thirdFiled);
-
-         JPanel secondFiled =  ImdbComboPanel(requestLabel,requestTypeComboBox);
+        JPanel secondFiled =  ImdbComboPanel(requestLabel,requestTypeComboBox);
          addRequestPanel.add(secondFiled);
 
 
@@ -953,15 +951,118 @@ public class ApplicationFlowGUI extends JFrame {
             }
 
             String description = descriptionArea.getText();
-            String to = toField.getText();
+
             if (description.isEmpty()){
                 dialogBox("one or more fields are empty");
             } else {
                 Request request = new Request(requestTypes, description, currentUser.getUsername());
-                if (!to.isEmpty()){
-                    request.setTo(to);
+
+                if (requestTypes.equals(RequestTypes.DELETE_ACCOUNT ) || requestTypes.equals(RequestTypes.OTHERS)){
+                    if (currentUser.getAddedBy().equals("null")){
+                        // send notification to every admin to solve the request
+                        request.setTo("all admins");
+                        RequestsHolder.addRequest(request);
+                    } else{
+                        // send notification to the user who added the contributor to solve the request
+                       User<?> user = null;
+                        for (User<?> newUser : users){
+                            if (newUser.getUsername().equals(currentUser.getAddedBy())){
+                                user = newUser;
+                            }
+
+                        }
+                        if (user == null){
+                            dialogBox("no user found");
+                            return;
+                        }
+                        String message = " Hello " + user.getUsername() + "\n" +
+                                "\n  you have a new request from:  " + request.getUsername() + "\n  Request TYPE:  " + request.getType() + "\n  Request Date: " + request.getFormattedCreationDate();
+                        request.setTo(user.getUsername());
+                        request.addObserver(user);
+                        request.notifyObservers(message );
+                        ((Admin) user).addToAssignedRequests(request);
+                        RequestsHolder.addRequest(request);
+                    }
+
+
+                } else if (requestTypes.equals(RequestTypes.ACTOR_ISSUE)){
+                   Actor actor = GuiConstants.selectActor();
+                    if (actor == null){
+                        dialogBox("no actor selected");
+                        return;
+                    }
+                    request.setActorName(actor.getName());
+                    System.out.println(actor.getName());
+                   if (actor.getAddedBy().equals("null")){
+                            // send notification to every admin to solve the request
+                            request.setTo("all admins");
+                            RequestsHolder.addRequest(request);
+                   }else{
+                       User<?> user = null;
+                          // send notification to the user who added the actor to solve the request
+                          for (User<?> ownerUser : IMDB.getInstance().getUsers()){
+                            if (ownerUser.getUsername().equals(actor.getAddedBy())){
+                                user = ownerUser;
+                          }}
+                            if (user == null){
+                                dialogBox("no user found");
+                                return;
+                            } else if (user.getUsername().equals(currentUser.getUsername())){
+                                dialogBox(" you are trying to send a request to yourself");
+                                return;
+
+                            }
+                       String message = "Hello " + user.getUsername() + "\n" +
+                               "you have a new request from:-> " + request.getUsername() + "\nRequest TYPE:->  " + request.getType() + "\nRequest Date:-> " + request.getFormattedCreationDate();
+                              request.setTo(user.getUsername());
+                              if (user instanceof Admin){
+                                  ((Admin) user).addToAssignedRequests(request);
+                              }else{
+                                  ((Contributor) user).addToAssignedRequests(request);
+                              }
+                              request.addObserver(user);
+                              request.notifyObservers(message );
+                              RequestsHolder.addRequest(request);
+
+
+                   }
+                } else if (requestTypes.equals(RequestTypes.MOVIE_ISSUE)) {
+                    User<?> user = null;
+                    Production production = GuiConstants.selectProduction();
+                    request.setMovieTitle(production.getTitle());
+                    if (production.getAddedBy().equals("null") ){
+                        // send notification to every admin to solve the request
+                        request.setTo("all admins");
+                        RequestsHolder.addRequest(request);
+                    }else{
+                        // send notification to the user who added the actor to solve the request
+                        for (User<?> ownerUser : IMDB.getInstance().getUsers()){
+                            if (ownerUser.getUsername().equals(production.getAddedBy())){
+                                user = ownerUser;
+
+                            }
+
+                        }
+                        if (user == null){
+                            dialogBox("no user found");
+                            return;
+                        } else if (user.getUsername().equals(currentUser.getUsername())){
+                            dialogBox(" you are trying to send a request to yourself");
+                            return;
+                        }
+                        String message = "Hello " + user.getUsername() + "\n" +
+                                "you have a new request from:-> " + request.getUsername() + "\nRequest TYPE:->  " + request.getType() + "\nRequest Date:-> " + request.getFormattedCreationDate();
+                        request.setTo(user.getUsername());
+                        if (user instanceof Admin){
+                            ((Admin) user).addToAssignedRequests(request);
+                        }else{
+                            ((Contributor) user).addToAssignedRequests(request);
+                        }
+                        request.addObserver(user);
+                        request.notifyObservers(message );
+                        RequestsHolder.addRequest(request);
+                    }
                 }
-                IMDB.getInstance().getRequests().add(request);
                 // increment user Experience
                 deleteRequestPanel.removeAll();
                 deleteRequestMethod(deleteRequestPanel);
@@ -970,7 +1071,7 @@ public class ApplicationFlowGUI extends JFrame {
                 // and refresh the  add request panel
                 // clear the fields
                 descriptionArea.setText("");
-                toField.setText("");
+               // toField.setText("");
                 requestTypeComboBox.setSelectedIndex(1);
 
             }
@@ -994,7 +1095,8 @@ public class ApplicationFlowGUI extends JFrame {
         JLabel deleteRequestLabel = ImdbLabel("DELETE REQUEST");
         deleteRequestLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         deleteRequestPanel.add(deleteRequestLabel);
-        for (Request request : requests) {
+        // those requests for all admins
+        for (Request request : RequestsHolder.getRequests()) {
             if (request.getUsername().equals(currentUser.getUsername())){
                 JLabel RequestTypeLabel = ImdbLabel("Request Type: "+request.getType());
                 JButton button = new JButton(GuiConstants.getIcon("delete.png",40,50));
@@ -1026,6 +1128,79 @@ public class ApplicationFlowGUI extends JFrame {
                 });
             }
         }
+        for (User<?> user: users){
+            if (user instanceof Admin && !(currentUser instanceof Regular<?>)){
+                for (Request request : ((Staff<?>) currentUser).getAssignedRequests()){
+                    if (request.getUsername().equals(currentUser.getUsername())){
+                        JLabel RequestTypeLabel = ImdbLabel("Request Type: "+request.getType());
+                        JButton button = new JButton(GuiConstants.getIcon("delete.png",40,50));
+                        JPanel requestTypePanel = ImdbButtonLabelPanel(RequestTypeLabel,button);
+
+                        JButton detailsButton = new JButton(GuiConstants.getIcon("detail.png",40,50 ));
+                        detailsButton.addActionListener(e -> {
+                            String message = "Request Type: " + request.getType() + "\n" +
+                                    "Description: " + request.getDescription() + "\n" +
+                                    "Request From: " + request.getUsername() + "\n" +
+                                    "Request To: " + request.getTo() + "\n" +
+                                    "Request Date: " + request.getFormattedCreationDate();
+                            dialogArea(message);
+                        });
+                        requestTypePanel.add(detailsButton);
+                        deleteRequestPanel.add(requestTypePanel);
+                        deleteRequestPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+                        button.addActionListener(e -> {
+                            request.displayInfo();
+                            String message = "hello " + currentUser.getName() + "\n" +
+                                    "you have deleted " + request.getFormattedCreationDate() + " from your requests";
+                            dialogBox(message);
+                            ((Admin) user).getAssignedRequests().remove(request);
+                            deleteRequestPanel.removeAll();
+                            deleteRequestMethod(deleteRequestPanel);
+
+                            deleteRequestPanel.revalidate();
+                            deleteRequestPanel.repaint();
+                        });
+                        return;
+                    }
+                }
+            }else if (user instanceof Contributor && !(currentUser instanceof Regular<?>)){
+                for (Request request : ((Staff<?>) currentUser).getAssignedRequests()){
+                    if (request.getUsername().equals(currentUser.getUsername())){
+                        JLabel RequestTypeLabel = ImdbLabel("Request Type: "+request.getType());
+                        JButton button = new JButton(GuiConstants.getIcon("delete.png",40,50));
+                        JPanel requestTypePanel = ImdbButtonLabelPanel(RequestTypeLabel,button);
+
+                        JButton detailsButton = new JButton(GuiConstants.getIcon("detail.png",40,50 ));
+                        detailsButton.addActionListener(e -> {
+                            String message = "Request Type: " + request.getType() + "\n" +
+                                    "Description: " + request.getDescription() + "\n" +
+                                    "Request From: " + request.getUsername() + "\n" +
+                                    "Request To: " + request.getTo() + "\n" +
+                                    "Request Date: " + request.getFormattedCreationDate();
+                            dialogArea(message);
+                        });
+                        requestTypePanel.add(detailsButton);
+                        deleteRequestPanel.add(requestTypePanel);
+                        deleteRequestPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+                        button.addActionListener(e -> {
+                            request.displayInfo();
+                            String message = "hello " + currentUser.getName() + "\n" +
+                                    "you have deleted " + request.getFormattedCreationDate() + " from your requests";
+                            dialogBox(message);
+                            ((Contributor) user).getAssignedRequests().remove(request);
+                            deleteRequestPanel.removeAll();
+                            deleteRequestMethod(deleteRequestPanel);
+
+                            deleteRequestPanel.revalidate();
+                            deleteRequestPanel.repaint();
+                        });
+                        return;
+                    }
+                }
+            }
+        }
+
+
     }
 
     /**
@@ -1233,7 +1408,6 @@ public class ApplicationFlowGUI extends JFrame {
 
         //age
         JLabel userAgeLabel = ImdbLabel("Age: ");
-        //  JTextField userAgeField = ImdbTextField(20,20);
         JComboBox<Integer> userAgeComboBox = new JComboBox<>(GuiConstants.getAgeList());
         JPanel userAgePanel = ImdbComboPanel(userAgeLabel,userAgeComboBox);
         //gender
@@ -1304,6 +1478,7 @@ public class ApplicationFlowGUI extends JFrame {
                 newUser.setUsername(username);
                 IMDB.getInstance().getUsers().add(newUser);
                 String password = FunctionsFactory.generateRandomPassword();
+                System.out.println(password);//TODO: remove this line
                 newUser.setPassword(password);
                 String message = "Hello " + name + ",\n\n" +
                         "Welcome to IMDB. Your account has been created successfully.\n" +
@@ -1311,6 +1486,7 @@ public class ApplicationFlowGUI extends JFrame {
                         "Your password is: " + password + "\n\n" +
                         "Best regards,\n" +
                         "IMDB Team";
+
                 dialogBox(message );
                 newUser.setAge(age);
                 if(!userCountryField.getText().isEmpty()){
@@ -1365,13 +1541,8 @@ public class ApplicationFlowGUI extends JFrame {
             deleteUserPanel.add(namePanel);
             deleteUserPanel.add(Box.createRigidArea(new Dimension(0, 20)));
             nameButton.addActionListener(e -> {
-                // display user info
-                List<String> info = Constants.userInfo(user);
-                StringBuilder message = new StringBuilder();
-                for (String s : info) {
-                    message.append(s).append("\n");
-                }
-               imdbTextAreaWithBack(addDeleteUserPanel, user.getUsername(), message.toString());
+                JPanel panel = userDetails(user, addDeleteUserPanel);
+                setCurrentPanel(panel);
             });
             button.addActionListener(e -> {
                 users.remove(user);
@@ -1494,6 +1665,8 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 production.setPlot(plot);
                 production.setAddedBy(currentUser.getUsername());
                 productions.add(production);
+                // and aslo add to current user production contibution
+                currentUser.addToProductionsContribution(production.getTitle());
                 // increment the exprience of the contributor
                 if (currentUser instanceof Contributor) {
                     UserExperienceContext userExperienceContext = new UserExperienceContext();
@@ -1586,7 +1759,9 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 Actor actor = new Actor(name,performances,biography);
                 actor.setPerformances(performances);
                 actor.setAddedBy(currentUser.getUsername());
+                actor.setAddedBy(currentUser.getUsername());
                 actors.add(actor);
+                currentUser.addToActorsContribution(actor.getName());
                 // increment the exprience of the contributor
                 if (currentUser instanceof Contributor) {
                     UserExperienceContext userExperienceContext = new UserExperienceContext();
@@ -1657,6 +1832,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 //delete rating by the user
                 for (User<?> user : users) {
                     user.getFavoriteProductions().removeIf(favoriteProduction -> favoriteProduction.equals(production.getTitle()));
+                    user.getProductionsContribution().removeIf(contribution -> contribution.equals(production.getTitle()));
                 }
                 // renew the user list
                 deleteProduction.removeAll();
@@ -1665,7 +1841,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 deleteProduction.revalidate();
                 deleteProduction.repaint();
 
-                String message = "Hello Admin " + currentUser.getName() + ",\n\n" +
+                String message = "Hello  " + currentUser.getName() + ",\n\n" +
                         "The production " + production.getTitle() + " has been deleted from the system.\n\n" +
                         "Best regards,\n" +
                         "IMDB Team";
@@ -1687,6 +1863,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 //delete rating by the user
                 for (User<?> user : users) {
                     user.getFavoriteActors().removeIf(favoriteActor -> favoriteActor.equals(actor.getName()));
+                    user.getActorsContribution().removeIf(contribution -> contribution.equals(actor.getName()));
                 }
                 // renew the user list
                 deleteProduction.removeAll();
@@ -1695,7 +1872,7 @@ private  void addProductionOrActor(JPanel addProductionPanel){
                 deleteProduction.revalidate();
                 deleteProduction.repaint();
 
-                String message = "Hello Admin " + currentUser.getName() + ",\n\n" +
+                String message = "Hello  " + currentUser.getName() + ",\n\n" +
                         "The actor " + actor.getName() + " has been deleted from the system.\n\n" +
                         "Best regards,\n" +
                         "IMDB Team";
@@ -2077,23 +2254,25 @@ addPerformanceButton.addActionListener(e->{
         detailsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         detailsPanel.add(detailsLabel);
         if (currentUser instanceof Admin) {
-            for (Request request : requests) {
-                JButton button = ImdbButton(request.getUsername(), 40);
-                listPanel.add(button);
-                listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+            for (Request request :RequestsHolder.getRequests()) {
+                if (request.getTo().equals("all admins") || request.getTo().equals(currentUser.getUsername())){
+                    JButton button = ImdbButton(request.getUsername(), 40);
+                    listPanel.add(button);
+                    listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-                button.addActionListener(e -> {
-                    JPanel editPanel = editRequestDetails(request);
-                    editPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-                    detailsPanel.removeAll();
-                    detailsPanel.add(editPanel);
-                    detailsPanel.revalidate();
-                    detailsPanel.repaint();
-                });
+                    button.addActionListener(e -> {
+                        JPanel editPanel = editRequestDetails(request);
+                        editPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+                        detailsPanel.removeAll();
+                        detailsPanel.add(editPanel);
+                        detailsPanel.revalidate();
+                        detailsPanel.repaint();
+                    });
+                }
             }
         } else{
-            for (Request request : requests) {
-                if (request.getUsername().equals(currentUser.getUsername())) {
+            for (Request request : RequestsHolder.getRequests()) {
+                if (request.getTo().equals(currentUser.getUsername()) ) {
                     JButton button = ImdbButton(request.getUsername(), 40);
                     listPanel.add(button);
                     listPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -2116,8 +2295,6 @@ addPerformanceButton.addActionListener(e->{
         solveRequestPanel.add(scrollPane);
         solveRequestPanel.add(scrollPane1);
         setCurrentPanel(solveRequestPanel);
-
-
 
     }
 
@@ -2156,9 +2333,13 @@ addPerformanceButton.addActionListener(e->{
         JButton resolveButton = ImdbButton("Resolve",40);
         resolveButton.addActionListener(e->{
             String notify = GuiConstants.showInputDialog("Enter notification", "", 300, 200);
-            if(notify == null) return; // User canceled the input
+            if(notify.isEmpty()) {
+                dialogBox("notification can't be empty please leave something for "+ request.getUsername() + " to know");
+                return;
+            }
+
             if (!request.getStatus().equals(RequestStatus.Pending)){
-                dialogBox("the request status is not pending");
+                dialogBox("the request status is already " + request.getStatus());
                 return;
             }
             if (currentUser instanceof Admin) {
@@ -2167,18 +2348,23 @@ addPerformanceButton.addActionListener(e->{
 
                 ((Contributor) currentUser).resolveRequests(request);
             }
-
+            String messageToUser = "Hello " + request.getUsername() + "\n" +
+                    "  you have a new notification from :" + currentUser.getUsername() + ":\n" +
+                    " for your request: " + request.getType() + "\n" +
+                      "  the request status is: " + request.getStatus() + "\n" +
+                    "message by:" + currentUser.getUsername() + ":\n " +
+                    notify + "\n" ;
             for (User<?> user : users) {
                 if (user.getUsername().equals(request.getUsername())) {
                    request.addObserver(user);
-                    user.addNotification(notify);
+                    user.addNotification(messageToUser);
                 }
             }
             String message = "Hello " + currentUser.getName()+ ",\n\n" +
                     "The request has been resolved.\n\n" +
                     "Best regards,\n" +
                     "IMDB Team";
-            dialogBox(message);
+            //dialogBox(message);
             panel.removeAll();
 
             panel.add(editRequestDetails(request));
@@ -2194,7 +2380,7 @@ addPerformanceButton.addActionListener(e->{
             String notify = GuiConstants.showInputDialog("Enter notification", "", 300, 200);
             if(notify == null) return; // User canceled the input
             if (!request.getStatus().equals(RequestStatus.Pending)){
-                dialogBox("the request status is not pending");
+                dialogBox("the request status is already " + request.getStatus());
                 return;
             }
             if (currentUser instanceof Admin) {
@@ -2202,17 +2388,20 @@ addPerformanceButton.addActionListener(e->{
             } else {
                 ((Contributor) currentUser).rejectRequests(request);
             }
+            String messageToUser = "Hello " + request.getUsername() + "\n" +
+                    "  you have a new notification from :" + currentUser.getUsername() + ":\n" +
+                    " for your request: " + request.getType() + "\n" +
+                    "  the request status is: " + request.getStatus() + "\n" +
+                    "message by:" + currentUser.getUsername() + ":\n " +
+                    notify + "\n" ;
             for (User<?> user : users) {
                 if (user.getUsername().equals(request.getUsername())) {
                     request.addObserver(user);
-                    user.addNotification(notify);
+                    user.addNotification(messageToUser);
                 }
             }
-            String message = "Hello " + request.getUsername() + ",\n\n" +
-                    "Your request has been rejected.\n\n" +
-                    "Best regards,\n" +
-                    "IMDB Team";
-            dialogBox(message);
+
+
             panel.removeAll();
             panel.add(editRequestDetails(request));
             panel.revalidate();
@@ -2719,4 +2908,101 @@ addPerformanceButton.addActionListener(e->{
 
         return null;
     }
+    private JPanel userDetails(User<?> user, JPanel prepanel){
+        JPanel panel = new JPanel(new BorderLayout());
+        //back button
+        JButton backButton = new JButton(GuiConstants.getIcon("left_arrow.png", 60, 60));
+        backButton.addActionListener(e -> setCurrentPanel(prepanel));
+        panel.add(backButton, BorderLayout.WEST);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        JPanel usernamePanel = ImdbLabelPanel(ImdbLabel("Username: "),ImdbLabel(user.getUsername()));
+        usernamePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        panel.add(usernamePanel);
+
+        JPanel emailPanel = ImdbLabelPanel(ImdbLabel("Email: "),ImdbLabel(user.getEmail()));
+        emailPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        panel.add(emailPanel);
+
+        JPanel userNamPanel = ImdbLabelPanel(ImdbLabel("Name: "),ImdbLabel(user.getName()));
+        userNamPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        panel.add(userNamPanel);
+
+        //country
+        JPanel countryPanel = ImdbLabelPanel(ImdbLabel("Country: "),ImdbLabel(user.getCountry()));
+        countryPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        panel.add(countryPanel);
+
+// UserType
+        String userType = "";
+        if (user instanceof Admin) {
+            userType = "Admin";
+        } else if (user instanceof Contributor) {
+            userType = "Contributor";
+        } else if (user instanceof Staff) {
+            userType = "Regular";
+        }
+        JPanel userTypePanel = ImdbLabelPanel(ImdbLabel("User Type: "), ImdbLabel(userType));
+        userTypePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        panel.add(userTypePanel);
+
+// Gender
+        JPanel genderPanel = ImdbLabelPanel(ImdbLabel("Gender: "), ImdbLabel(user.getGender()));
+        genderPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        panel.add(genderPanel);
+
+// Birth Date
+        JPanel birthDatePanel = ImdbLabelPanel(ImdbLabel("Birth Date: "), ImdbLabel( user.getBirthDate().format(DateTimeFormatter.ISO_DATE)));
+        birthDatePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        panel.add(birthDatePanel);
+
+// Age
+        JPanel agePanel = ImdbLabelPanel(ImdbLabel("Age: "), ImdbLabel(String.valueOf(user.getAge())));
+        agePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        panel.add(agePanel);
+
+// Experience
+        JPanel experiencePanel = ImdbLabelPanel(ImdbLabel("Experience: "), ImdbLabel(user.getExperience()));
+        experiencePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 60, 20));
+        panel.add(experiencePanel);
+
+// Favorite
+        JPanel favoriteContributionPanel = new JPanel();
+        favoriteContributionPanel.setLayout(new BoxLayout(favoriteContributionPanel, BoxLayout.Y_AXIS));
+        JLabel favoriteLabel = ImdbLabel("Favorite: ");
+        favoriteContributionPanel.add(favoriteLabel);
+        JPanel innerPanel = new JPanel();
+        for (Object favorite : user.getFavorites()) {
+            innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
+            JLabel favoriteLabel1 = ImdbLabel(String.valueOf(favorite));
+            innerPanel.add(favoriteLabel1);
+        }
+        favoriteContributionPanel.add(new JScrollPane(innerPanel));
+        panel.add(favoriteContributionPanel);
+
+
+// Contributions
+        if (user instanceof Contributor || user instanceof Admin) {
+            JLabel contributionsLabel = ImdbLabel("Contributions: ");
+            favoriteContributionPanel.add(contributionsLabel);
+            JPanel innerPanel1 = new JPanel();
+            Staff staff = (Staff) user;
+            for (Object contribution : staff.getContributions()) {
+                innerPanel1.setLayout(new BoxLayout(innerPanel1, BoxLayout.Y_AXIS));
+                JLabel contributionLabel = ImdbLabel((String) contribution);
+                innerPanel1.add(contributionLabel);
+            }
+
+            favoriteContributionPanel .add(new JScrollPane(innerPanel1));
+            panel.add(favoriteContributionPanel );
+        }
+
+        JPanel deatailsPanel = new JPanel();
+        deatailsPanel.setLayout(new BoxLayout(deatailsPanel, BoxLayout.Y_AXIS));
+        deatailsPanel.add(new JScrollPane(panel));
+
+
+      return deatailsPanel;
+    }
+
 }

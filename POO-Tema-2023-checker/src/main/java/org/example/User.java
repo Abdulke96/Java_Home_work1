@@ -139,6 +139,18 @@ public abstract class User<T extends Comparable<T>> implements Observer{
     public void addToFavoriteProductions(Production favorite) {
         favoriteProductions.add(favorite.getTitle());
     }
+    public void addToProductionsContribution(String contribution) {
+        productionsContribution.add(contribution);
+    }
+    public void addToActorsContribution(String contribution) {
+        actorsContribution.add(contribution);
+    }
+    public void removeFromFavoriteActors(Actor favorite) {
+        favoriteActors.remove(favorite.getName());
+    }
+    public void removeFromFavoriteProductions(Production favorite) {
+        favoriteProductions.remove(favorite.getTitle());
+    }
    public void addToFavorites(T favorite) {
         favorites.add(favorite);
    }

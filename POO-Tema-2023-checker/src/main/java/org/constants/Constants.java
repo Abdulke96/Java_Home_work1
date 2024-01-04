@@ -119,7 +119,6 @@ public class Constants {
           userInfo.add("Country: "+user.getCountry());
           userInfo.add("Gender: "+user.getGender());
           userInfo.add("Age: "+user.getAge());
-          userInfo.add("Experience: "+user.getExperience());
           userInfo.add("Birth Date: "+ user.getBirthDate().format(DateTimeFormatter.ISO_DATE));
         if(user instanceof Admin){
             userInfo.add("UserType: Admin");
@@ -128,24 +127,7 @@ public class Constants {
         }else{
             userInfo.add("UserType: Regular");
         }
-        userInfo.add("Product Contribution: ");
 
-         for(String s: user.getProductionsContribution()){
-             userInfo.add("          " + s);
-         }
-        userInfo.add("Favorite Production: ");
-
-        for(String s: user.getFavoriteProductions()){
-            userInfo.add("          " + s);
-        }
-        userInfo.add("Actors Contribution: ");
-        for(String s: user.getActorsContribution()){
-            userInfo.add("          " + s);
-        }
-        userInfo.add("Favorite Actors: ");
-        for(String s: user.getFavoriteActors()){
-            userInfo.add("          " + s);
-        }
 
 return userInfo;
     }

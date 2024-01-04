@@ -61,8 +61,18 @@ public class Contributor extends Staff implements RequestsManager , Observer {
         }
         RequestsHolder.removeRequest(r);
     }
+    //add to assigned requests
+    public void addToAssignedRequests(Request request) {
+        this.getAssignedRequests().add(request);
+    }
+    //remove from assigned requests
+    public void removeFromAssignedRequests(Request request) {
+        this.getAssignedRequests().remove(request);
+    }
 
-
+    public List<Request> getAssignedRequest() {
+        return  this.getAssignedRequests();
+    }
     @Override
     public void update(String notification) {
         addNotification(notification);
