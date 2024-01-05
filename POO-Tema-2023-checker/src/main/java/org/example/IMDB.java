@@ -29,35 +29,11 @@ import java.util.List;
 
 import lombok.*;
 @EqualsAndHashCode(callSuper = true)
-/**
- * The IMDB class is the main class of the application.
- * It contains the main method and the run method.
- * The run method is used to run the application.
- * The main method is used to run the run method.
- * The IMDB class is a singleton class.
- * The IMDB class has the following fields:
- * - instance: IMDB
- * - users: List<User<?>>
- * - actors: List<Actor>
- * - requests: List<Request>
- * - productions: List<Production>
- * - currentUser: User<?>
- * The IMDB class has the following methods:
- * - getInstance(): IMDB
- * - run(): void
- * - runCli(): void
- * - runGui(): void
- * - loadDataFromJsonFiles(): void
- * - authenticateUser(): void
- * - startApplicationFlow(): void
- * - authenticate(String email, String password): User<?>
- * - authenticateGUIUser(): void
- * The IMDB class has the following static class:
- * - LocalDateTimeDeserializer: JsonDeserializer<LocalDateTime>
- */
 @Data
 public class IMDB  extends JFrame {
-
+    /**
+     * list for storing data
+     */
     private static IMDB instance = null;
     private List<User<?>> users;
     private List<Actor> actors;
@@ -155,22 +131,12 @@ public class IMDB  extends JFrame {
       WriteOutput.makeBreak()  ;
       WriteOutput.printBlue("Welcome back! Enter your credentials!");
       WriteOutput.makeBreak();
-      //print it in a red color and bold and increase the font size;
         while (true) {
-            // read input from console
-            System.out.print("email: ");
+            WriteOutput.printBlue("Email: ");
             String username = ReadInput.readLine();
-            System.out.print("password: ");
+            WriteOutput.printBlue("Password: ");
             String password = ReadInput.readLine();
-            //Contributor account
-//            String username = "emily.wilson@example.com";
-//            String password = "P@ssw0rd!23";
-            // Admin account 3fG#pikm
-           //String username = "bossuAlMare@ymail.com";
-            // String password = "test"; 3fT!qgdq
-            // Regular account
-//            String username = "susan.smith@example.com";
-//            String password = "R8F!b&e9m3U6";
+
             try {
                this.currentUser = authenticate(username, password);
                 if (this.currentUser != null) {
@@ -227,8 +193,6 @@ public class IMDB  extends JFrame {
     public static void main(String[] args) {
         IMDB imdb = IMDB.getInstance();
         imdb.run();
-
-
     }
 
     /**

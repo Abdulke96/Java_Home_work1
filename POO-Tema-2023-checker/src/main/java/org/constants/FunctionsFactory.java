@@ -11,6 +11,12 @@ public class FunctionsFactory {
     static Admin admin = new Admin();
    static Contributor contributor = new Contributor();
    static Regular<?> regular = new Regular<>();
+   /**
+     * This method is used to store the user details
+     * @param max the maximum number of options
+     * @param options the list of options
+     * @return List<Integer> the list of options chosen by the user
+     */
     public static List<Integer> storeUserDetails(int max, List<String> options) {
         List<Integer> userDetailsOperations = new ArrayList<>();
         WriteOutput.write(options);
@@ -24,6 +30,11 @@ public class FunctionsFactory {
         return userDetailsOperations;
 
     }
+
+    /**
+     * This method is used to add information about the user for extra information
+     * @param newUser the new user
+     */
 
     static void createUserInfoFunction(User<?> newUser) {
         List<Integer> infoOperations = FunctionsFactory.storeUserDetails(5, OutPutConstants.addUserInformationsDetailConstants);
@@ -57,6 +68,10 @@ public class FunctionsFactory {
         }
     }
 
+    /**
+     * This method is used to add information about the user for extra information again
+     * @param newUser the new user
+     */
     public static void createUserDetailsFunction(User<?> newUser) {
         List<Integer> operations = FunctionsFactory.storeUserDetails(6, OutPutConstants.addUserDetailConstants);
         for (Integer operation : operations) {
@@ -115,7 +130,10 @@ public class FunctionsFactory {
         }
     }
 
-    static void createAndAddActor(List<Actor> actors) {
+    /**
+     * This method is used to authenticate the user
+     */
+    static void createAndAddActor() {
         List<Integer> options = FunctionsFactory.storeUserDetails(4, OutPutConstants.addActorDetailConstants);
 
         Actor actor = new Actor();
@@ -154,6 +172,12 @@ public class FunctionsFactory {
                             int experience = userExperienceContext.calculateUserExperience();
                             IMDB.getInstance().getCurrentUser().updateExperience(experience);
                         }
+                        //add added actor to users contributions
+                        for (User<?> user : users) {
+                            if (user.getUsername().equals(IMDB.getInstance().getCurrentUser().getUsername())){
+                                user.getActorsContribution().add(actor.getName());
+                            }
+                        }
                     }
                     break;
                 default:
@@ -165,6 +189,10 @@ public class FunctionsFactory {
 
     }
 
+    /**
+     * This method is used create and add a production to the system
+     * @param productions the list of productions
+     */
     public static void createAndAddProduction(List<Production> productions) {
 
         WriteOutput.write(OutPutConstants.chooseMovieSeries);
@@ -174,17 +202,22 @@ public class FunctionsFactory {
             Series series = new Series();
             series.setTitle(title);
             List<Integer> options = FunctionsFactory.storeUserDetails(8, OutPutConstants.seriesAddProductionDetailConstants);
-            createSeries(productions, options, series);
+            createSeries( options, series);
 
         } else {
             Movie movie = new Movie();
             movie.setTitle(title);
             List<Integer> options = FunctionsFactory.storeUserDetails(8, OutPutConstants.movieAddProductionDetailConstants);
-            createMovie(productions, options, movie);
+            createMovie( options, movie);
         }
     }
 
-    private static void createMovie(List<Production> productions, List<Integer> options, Movie movie) {
+    /**
+     * This method is used to create a movie
+     * @param options the list of options
+     * @param movie the movie
+     */
+    private static void createMovie( List<Integer> options, Movie movie) {
         movie.setType("Movie");
         for (Integer option : options) {
             switch (option) {
@@ -222,17 +255,10 @@ public class FunctionsFactory {
                     break;
                 case 4:
                     List<Genre> genres = new ArrayList<>();
-//                     int i = 1;
-//                    for (Genre genre: Genre.values()) {
-//                        WriteOutput.printBlue((i++)+")"+genre);
-//                    }
                     WriteOutput.printBlue("enter the genres of the movie you want to add ");
                     WriteOutput.printBlue("enter the number of genres");
                     int numberOfGenres = ReadInput.readInteger(1, 100);
                     for (int j = 1; j <= numberOfGenres; j++) {
-//                        int genreChoice = ReadInput.readInteger(1, 23);
-//                        genres.add(Genre.values()[genreChoice - 1]);
-                        //
                         Genre genre = GuiConstants.selectGenre("Select a genre");
                         if (genre != null){
                             genres.add(genre);
@@ -264,10 +290,21 @@ public class FunctionsFactory {
                     break;
             }
         }
+        // add production to the user contributions
+        for (User<?> user : users) {
+            if (user.getUsername().equals(IMDB.getInstance().getCurrentUser().getUsername())){
+                user.getProductionsContribution().add(movie.getTitle());
+            }
+        }
+        // calculate the average rating of the movie
         movie.calculateAverageRating() ;
     }
-
-    private static void createSeries(List<Production> productions, List<Integer> options, Series series) {
+/**
+     * This method is used to create a series
+     * @param options the list of options
+     * @param series the series
+ */
+    private static void createSeries( List<Integer> options, Series series) {
         series.setType("Series");
 
         for (Integer option : options) {
@@ -306,15 +343,10 @@ public class FunctionsFactory {
                     break;
                 case 4:
                     List<Genre> genres = new ArrayList<>();
-//                    int i = 1;
-//                    for (Genre genre: Genre.values()) {
-//                        WriteOutput.printGreen((i++)+")"+genre);
-//                    }
                     WriteOutput.printBlue("enter the genres of the movie you want to add ");
                     WriteOutput.printBlue("enter the number of genres");
                     int numberOfGenres = ReadInput.readInteger(1, 100);
                     for (int j = 1; j <= numberOfGenres; j++) {
-//
                         Genre genre = GuiConstants.selectGenre("Select a genre");
                         if (genre != null){
                             genres.add(genre);
@@ -345,9 +377,20 @@ public class FunctionsFactory {
                     break;
             }
         }
+        // add production to the user contributions
+        for (User<?> user : users) {
+            if (user.getUsername().equals(IMDB.getInstance().getCurrentUser().getUsername())){
+                user.getProductionsContribution().add(series.getTitle());
+            }
+        }
+        // calculate the average rating of the series
         series.calculateAverageRating() ;
     }
 
+    /**
+     * This method is used to add a production to the system
+     * @param series  the series
+     */
     private static void addProductionAndIncreaseExperience(Production series) {
         if (IMDB.getInstance().getCurrentUser() instanceof Admin){
             admin.addProductionSystem(series);
@@ -362,7 +405,10 @@ public class FunctionsFactory {
 
         }
     }
-
+/**
+     * This method is used to create and return
+     * @return List<Episode> the list of episodes
+ */
     public static List<Episode> createAndAddEpisode() {
        Episode episode = new Episode();
        List<Episode> episodes = new ArrayList<>();
@@ -379,6 +425,10 @@ public class FunctionsFactory {
         return episodes;
     }
 
+    /**
+     * This method is used to create and add a season to the system
+     * @param series the series
+     */
     public static void createAndAddSeason(Series series ) {
         Map<String, List<Episode>> seasons = new HashMap<>();
         int seasonNumber = series.getNumSeasons();
@@ -390,6 +440,12 @@ public class FunctionsFactory {
         }
         series.setSeasons(seasons);
     }
+
+    /**
+     * This method is used to update the Movie details
+     * @param production the production
+     * @param currentUser the current user
+     */
   public static boolean updateMovieProduction(Production production, User<?> currentUser) {
       WriteOutput.printRed("You are ready to update Series:");
         List<Integer> update = FunctionsFactory.storeUserDetails(7,OutPutConstants.updateMovieDetails);
@@ -459,6 +515,11 @@ public class FunctionsFactory {
         }
         return false;
     }
+    /**
+     * This method is used to update the Series details
+     * @param production the production
+     * @param currentUser the current user
+     */
 
     public static boolean updateSeriesProduction(Production production, User<?> currentUser) {
         WriteOutput.printRed("You are ready to update Series:");
@@ -522,6 +583,14 @@ public class FunctionsFactory {
         return false;
     }
 
+    /**
+     * This method is used to edit the rating
+     * @param production the production
+     * @param currentUser the current user
+     * @param oldRating the old rating
+     * @param rating the new rating
+     * @param review the review
+     */
     private static boolean editRating(Production production, User<?> currentUser, int oldRating, int rating, String review) {
         for (Rating rating1 : production.getRatings()) {
             if (rating1.getComment().equals(review) && rating1.getValue() == oldRating) {
@@ -534,6 +603,11 @@ public class FunctionsFactory {
         return false;
     }
 
+    /**
+     * This method is used to update the actor details
+     * @param actor the actor
+     * @param currentUser the current user
+     */
     public static void updateActor(Actor actor, User<?> currentUser) {
         WriteOutput.printRed("You are ready to update Actor:");
         List<Integer> update = FunctionsFactory.storeUserDetails(4,OutPutConstants.updateActorDetails);
@@ -567,7 +641,13 @@ public class FunctionsFactory {
             }
         }
     }
-public static void requestCreatorMoreover(List<Request> requests, int choice) {
+
+    /**
+     * This method is used to create or remove a request
+     * @param requests the list of requests
+     * @param choice the choice(1 for create, 2 for remove)
+     */
+    public static void requestCreatorMoreover(List<Request> requests, int choice) {
         if (choice == 1){
             WriteOutput.printBlue("Enter the description of the request:");
             String description = ReadInput.readLine();
@@ -679,7 +759,10 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
             WriteOutput.printRed("Request not found");
         }
     }
-
+/**
+     * This method is used to generate unique username
+     * @param fullName the full name of the user under consideration
+     */
 
     public static String generateUniqueUsername(String fullName) {
         String[] names = fullName.split(" ");
@@ -697,6 +780,7 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
     }
 
     private static boolean userExists(List<User<?>> users, String username) {
+        // helper function to check if a user with the given username already exists
         for (User<?> user : users) {
             if (user.getUsername().equals(username)) {
                 return true;
@@ -704,6 +788,10 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
         }
         return false;
     }
+
+    /**
+     * This method is used to read the full name of the user in cli
+     */
     @NotNull
     public static String readFullName() {
         WriteOutput.printBlue("Enter the name of the user you want to add/delete:");
@@ -716,6 +804,9 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
         }
         return name;
     }
+    /**
+     * This method is used to show users in the system
+     */
     static void displayUsersName(List<User<?>> users) {
         WriteOutput.printBlue("do you wanna see users details 1 yes 2 no");
         int choice = ReadInput.readInteger(1,2);
@@ -727,6 +818,10 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
             WriteOutput.makeBreak();
         }
     }
+
+    /**
+     * This method is used to generate a random password with 8 characters
+     */
     public static String generateRandomPassword(){
         // the password will be 8 characters long and will contain at least one digit, one lowercase letter, one uppercase letter and one special character
         StringBuilder password = new StringBuilder();
@@ -755,6 +850,10 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
         return password.toString();
     }
 
+    /**
+     * This method is used to display the requests in the system
+     * @param requests the list of requests
+     */
     public static void displayRequests(List<Request> requests) {
 
         WriteOutput.printBlue("do you wanna see requests details 1 yes 2 no");

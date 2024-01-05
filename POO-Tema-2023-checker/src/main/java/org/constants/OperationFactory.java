@@ -1,6 +1,8 @@
 package org.constants;
 
 import org.example.*;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 /**
  * This class is used to create the operations
@@ -72,6 +74,9 @@ public class OperationFactory {
 
     }
 
+    /**
+     * This function is used to view the production details
+     */
     public static void viewProductionDetails() {
         productions.sort((o1, o2) -> Double.compare(o2.getAverageRating(), o1.getAverageRating()));
         for (Production P : productions) {
@@ -82,6 +87,9 @@ public class OperationFactory {
         }
     }
 
+    /**
+     * This function is used to view the actor details
+     */
     public static void viewActorsDetails() {
         actors.sort(Actor::compareTo);
         for (Actor actor : actors) {
@@ -91,6 +99,9 @@ public class OperationFactory {
         }
     }
 
+    /**
+     * This function is used to view the notifications
+     */
     public static void viewNotifications() {
         List<String> notification = IMDB.getInstance().getCurrentUser().getNotifications();
          if (notification.isEmpty()){
@@ -102,15 +113,20 @@ public class OperationFactory {
         }
     }
 
+    /**
+     * This function is used to search for actors/movies/series
+     */
     public static void searchForActorsMoviesSeries() {
         WriteOutput.printBlue("Enter the name of the actor/movie/series you want to search for:");
         String name = ReadInput.readLine();
+        // search for the actor
         for (Actor actor : actors) {
             if (actor.getName().equals(name)) {
                 actor.displayInfo();
                 return;
             }
         }
+        // search for the production
         for (Production production : productions) {
             if (production.getTitle().equals(name)) {
                 production.displayInfo();
@@ -120,6 +136,9 @@ public class OperationFactory {
         WriteOutput.printRed(name + " Does not found in the System!!");
     }
 
+    /**
+     * This function is used to add/delete actors/movies/series to favorites
+     */
     public static void addDeleteActorsMoviesSeriesToFavorites() {
      WriteOutput.write(OutPutConstants.actorOrProduction);
        int choice =  ReadInput.readInteger(1,2);
@@ -131,10 +150,14 @@ public class OperationFactory {
 
     }
 
+    /**
+     * This function is used to add/delete users
+     */
     public static void addDeleteUser() {
         Admin admin = new Admin();
        FunctionsFactory.displayUsersName(users);
         String name = FunctionsFactory.readFullName();
+         //delete user
         for (User<?> user : users) {
             if (user.getName().equals(name)) {
                admin.removeUser(user);
@@ -174,6 +197,7 @@ public class OperationFactory {
 
             FunctionsFactory.createUserInfoFunction(newUser);
             FunctionsFactory.createUserDetailsFunction(newUser);
+            // give the user his credentials
             WriteOutput.printGreen("User added to the system");
             WriteOutput.printGreen("Username: " + newUser.getUsername());
             WriteOutput.printGreen("Password: " + newUser.getPassword());
@@ -185,13 +209,18 @@ public class OperationFactory {
     }
 
 
-
+    /**
+     * This function is used to create/delete requests
+     */
     public static void createDeleteRequest() {
         WriteOutput.write(OutPutConstants.requestConstant);
         int choice = ReadInput.readInteger(1, 2);
         FunctionsFactory.requestCreatorMoreover(requests, choice);
     }
 
+    /**
+     * This function is used to add/delete reviews
+     */
     public static void addDeleteReview() {
       String name = ReadInput.readLine("Enter the name of the production you want to add/delete a review to:");
         for (Production production : productions) {
@@ -247,6 +276,9 @@ public class OperationFactory {
 
     }
 
+    /**
+     * This function is used to add/delete actors/movies/series from the system
+     */
     public static void addDeleteActorMovieSeriesFromSystem() {
         Admin admin = new Admin();
         Contributor contributor = new Contributor();
@@ -270,7 +302,7 @@ public class OperationFactory {
                     }
                 }
             }else {
-             FunctionsFactory.createAndAddActor(actors);
+             FunctionsFactory.createAndAddActor();
 
             }
         } else {
@@ -292,7 +324,9 @@ public class OperationFactory {
     }
 
 
-
+    /**
+     * This function is used to update the movie details
+     */
     public static void updateMovieDetails() {
        String productName = ReadInput.readLine("Enter the name of the production you want to update:");
         for (Production production : productions) {
@@ -312,7 +346,9 @@ public class OperationFactory {
 
     }
 
-
+    /**
+     * This function is used to update the actor details
+     */
     public static void updateActorDetails() {
         String actorName = ReadInput.readLine("Enter the name of the actor you want to update:");
         for (Actor actor : actors) {
@@ -326,6 +362,9 @@ public class OperationFactory {
 
     }
 
+    /**
+     * This function is used to solve the requests
+     */
     public static void solveRequests() {
         Admin admin = new Admin();
         Contributor contributor = new Contributor();
@@ -333,71 +372,55 @@ public class OperationFactory {
         int choice = ReadInput.readInteger(1, 2);
         FunctionsFactory.displayRequests(requests);
         String name;
+        RequestTypes requestTypes;
         if (choice == 1) {
+            // user wants to solve the request
             name = ReadInput.readLine("Enter the Username of the request you want to solve:");
+            requestTypes = choseRequestTypes();
             for (Request request : requests) {
-                if (request.getUsername().equals(name)  ) {
-                    // ask request type and delete the request and if it is the same type as the request type solve it
-                    WriteOutput.write(OutPutConstants.requestTypeConstant);
-                    int choice1 = ReadInput.readInteger(1, 4);
-                    if (choice1 == 1) {
-                        if (request.getType().equals(RequestTypes.DELETE_ACCOUNT)) {
-                            solveTheRequest(request, admin, contributor);
-                            return;
-                        }
-                    } else if (choice1 == 2) {
-                        if (request.getType().equals(RequestTypes.ACTOR_ISSUE)) {
-                            solveTheRequest(request, admin, contributor);
-                            return;
-                        }
-                    } else if (choice1 == 3) {
-                        if (request.getType().equals(RequestTypes.MOVIE_ISSUE)) {
-                            solveTheRequest(request, admin, contributor);
-                            return;
-                        }
-                    } else {
-                        if (request.getType().equals(RequestTypes.OTHERS)) {
-                            solveTheRequest(request, admin, contributor);
-                            return;
-                        }
-                    }
+                if (request.getUsername().equals(name) && request.getType().equals(requestTypes)) {
+                    solveTheRequest(request, admin, contributor);
+                    return;
                 }
             }
         } else {
+            // user wants to reject the request
             name = ReadInput.readLine("Enter the username of the request you want to reject:");
+            requestTypes = choseRequestTypes();
             for (Request request : requests) {
-                if (request.getUsername().equals(name)) {
-                    // ask request type and delete the request and if it is the same type as the request type solve it
-                    WriteOutput.write(OutPutConstants.requestTypeConstant);
-                    int choice1 = ReadInput.readInteger(1, 4);
-                    if (choice1 == 1) {
-                        if (request.getType().equals(RequestTypes.DELETE_ACCOUNT)) {
-                            rejectTheRequest(request, admin, contributor);
-                            return;
-                        }
-                    } else if (choice1 == 2) {
-                        if (request.getType().equals(RequestTypes.ACTOR_ISSUE)) {
-                            rejectTheRequest(request, admin, contributor);
-                            return;
-                        }
-                    } else if (choice1 == 3) {
-                        if (request.getType().equals(RequestTypes.MOVIE_ISSUE)) {
-                            rejectTheRequest(request, admin, contributor);
-                            return;
-                        }
-                    } else {
-                        if (request.getType().equals(RequestTypes.OTHERS)) {
-                            rejectTheRequest(request, admin, contributor);
-                            return;
-                        }
-                    }
-
+                if (request.getUsername().equals(name) && request.getType().equals(requestTypes)) {
+                    rejectTheRequest(request, admin, contributor);
+                 return;
                 }
             }
         }
         WriteOutput.printRed("Request not found in the system");
 
     }
+
+    /**
+     * This function is used to choose the request type
+     */
+    @Nullable
+    private static RequestTypes choseRequestTypes() {
+        RequestTypes requestTypes;
+        WriteOutput.printBlue("Choose the request type:");
+        WriteOutput.write(OutPutConstants.requestTypeConstant);
+        int choice1 = ReadInput.readInteger(1, 4);
+        requestTypes = switch (choice1) {
+          case 1 -> RequestTypes.DELETE_ACCOUNT;
+          case 2 -> RequestTypes.ACTOR_ISSUE;
+          case 3 -> RequestTypes.MOVIE_ISSUE;
+          case 4 -> RequestTypes.OTHERS;
+          default -> null;};
+        return requestTypes;
+    }
+    /**
+     * This function is used to solve the request
+     * @param request the request to be solved
+     * @param admin the admin who solves the request
+     * @param contributor the contributor who solves the request
+     */
 
     private static void solveTheRequest(Request request, Admin admin, Contributor contributor) {
         if (!request.getStatus().equals(RequestStatus.Pending)){
@@ -413,6 +436,12 @@ public class OperationFactory {
         sendNotification(request);
     }
 
+    /**
+     * This function is used to reject the request
+     * @param request the request to be rejected
+     * @param admin the admin who rejects the request
+     * @param contributor the contributor who rejects the request
+     */
     private static void rejectTheRequest(Request request, Admin admin, Contributor contributor) {
         if (!request.getStatus().equals(RequestStatus.Pending)){
             WriteOutput.printRed("Request already "+request.getStatus());
@@ -425,6 +454,10 @@ public class OperationFactory {
         }
         sendNotification(request);
     }
+    /**
+     * This function is used to send the notification
+     * @param request the request to be sent
+     */
 
     private static void sendNotification(Request request) {
         for (User<?> user : users) {
@@ -438,6 +471,9 @@ public class OperationFactory {
         }
     }
 
+    /**
+     * This function is used to add/remove an actor
+     */
     public static void addRemoveActor(){
         WriteOutput.printBlue("Enter the name:");
             String name = ReadInput.readLine();
@@ -457,7 +493,9 @@ public class OperationFactory {
       WriteOutput.printRed("Actor not found in the system");
 
 }
-
+/**
+ * This function is used to add/remove a production
+ */
 public static void addRemoveProduction(){
     WriteOutput.printBlue("enter the name production");
         String name = ReadInput.readLine();

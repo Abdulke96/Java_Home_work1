@@ -37,6 +37,8 @@ public class Request implements Subject{
 
 
     }
+
+
     public Request(RequestTypes type, String description, String username) {
         this.type = type;
         this.createdDate = LocalDateTime.now();
@@ -60,6 +62,10 @@ public class Request implements Subject{
         return createdDate.format(formatter);
     }
 
+    /**
+     * This method is used to display the information about the request.
+     * It is used in the command line interface.
+     */
     public void displayInfo() {
         WriteOutput.printGreen("Request Type: " + type);
         WriteOutput.printGreen("Status: " + status);
@@ -73,6 +79,7 @@ public class Request implements Subject{
 
     @Override
     public void addObserver(Observer observer) {
+
         observers.add(observer);
     }
 

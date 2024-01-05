@@ -71,10 +71,6 @@ public class ActorDeserializer extends StdDeserializer<Actor> {
             return old;
         }
 
-        public void setKey(K key) {
-            this.key = key;
-        }
-
         public String toString() {
             return "\ntitle: " + key + "\ntype: " + value + "\n";
         }

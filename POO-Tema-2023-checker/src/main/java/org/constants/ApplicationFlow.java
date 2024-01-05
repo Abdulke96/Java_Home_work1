@@ -2,6 +2,9 @@ package org.constants;
 
 import org.example.*;
 
+/**
+ * This class is used to welcome the user and display the options he can choose from in cli
+ */
 public  class  ApplicationFlow {
     public static void appFlow() {
         User<?> currentUser = IMDB.getInstance().getCurrentUser();

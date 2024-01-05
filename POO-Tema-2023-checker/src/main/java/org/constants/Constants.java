@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Constants {
+    /**
+     * This class is used to store the constants used in the project and we search in 2 paths for the files
+     */
     private static final String accountPath1= "src/test/resources/testResources/accounts.json";
     private static final String accountPath2= "POO-Tema-2023-checker/src/main/resources/input/accounts.json";
     private static final String actorsPath1= "src/test/resources/testResources/actors.json";
@@ -27,6 +30,13 @@ public class Constants {
     public static final String path1 = "POO-Tema-2023-checker/src/main/resources/assets/";
     public static final String path2 = "src/test/resources/testResources/assets/";
     public static final String path = findPath(path1, path2);
+
+    /**
+     * This method is used to find the path of the assets folder
+     * @param path1  provide the first path
+     * @param path2 provide the second path
+     * @return String any of the two paths where the assets folder is found
+     */
     public static String findPath(String path1, String path2){
         try{
             File file = new File(path1 +"imdb1.png");
@@ -45,6 +55,12 @@ public class Constants {
         }
         return path1;
     }
+    /**
+     * This method is used to find the path of the files
+     * @param path1  provide the first path
+     * @param path2 provide the second path
+     * @return String any of the two paths where the files are found
+     */
     public static String findFile(String path1, String path2){
         try{
             File file = new File(path1);
@@ -59,9 +75,15 @@ public class Constants {
             return path2;
         }
     }
+
     static int[] adminActions = {1,2,3,4,5,6,9,10,11,12,13,14};
     static int[] contributorActions = {1,2,3,4,5,7,9,10,11,12,13,14};
     static int[] regularActions = {1,2,3,4,5,7,8,13,14};
+    /**
+     * This method is used to display the options for the user
+     * @param user provide the user
+     * @return int[] the options for the user
+     */
    public static int[]  displayOption(User<?> user){
        if(user instanceof Admin){
            WriteOutput.makeBreak();
@@ -99,18 +121,12 @@ public class Constants {
         }
         return false;
     }
-    public static List<String> displayOptionsGuide(User<?> user){
-        if(user instanceof Admin){
-            return OutPutConstants.adminActions;
-        }
-        else if(user instanceof Contributor){
-            return OutPutConstants.contributorActions;
-        }
-        else{
-            return OutPutConstants.regularActions;
-        }
-    }
 
+    /**
+     * This method is used to display the information about the user
+     * @param user provide the user
+     * @return List<String> the information about the user
+     */
     public static List<String> userInfo(User<?> user){
        List<String> userInfo = new ArrayList<>();
           userInfo.add("name: "+user.getName());
