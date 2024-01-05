@@ -33,7 +33,7 @@ public class OutPutConstants {
             "3) View notifications", // for all
             "4) Search for actors/movies/series", // for all
             "5) Add/Delete actors/movies/series to/from favorites",
-            "7)Create/Delete a request", // for regular and contributor
+            "7) Create/Delete a request", // for regular and contributor
             "9) Add/Delete actor/movie/series/ from system", // for admin and contributor
             "10) Update movie details", // for admin and contributor
             "11) Update actor details", // for admin and contributor
@@ -51,7 +51,7 @@ public class OutPutConstants {
             "3) View notifications", // for all
             "4) Search for actors/movies/series", // for all
             "5) Add/Delete actors/movies/series to/from favorites",
-            "7)Create/Delete a request",
+            "7) Create/Delete a request",
             "8) Add/Delete a review for a product.",
             "13) Logout",
             "14) Exit"
@@ -129,15 +129,12 @@ public class OutPutConstants {
             "actorsContribution ",
             "favoriteProductions",
             "favoriteActors",
-            "notifications",
             "done",
             "Your choices: "
     );
 
     public static List<String> addUserInformationsDetailConstants = Arrays.asList(
-            " chose the information's detail you want to add and chose done when  you are done:",
-            "email",
-            "password",
+            "chose the information's detail you want to add and chose done when  you are done:",
             "age",
             "gender",
             "birthDate",
@@ -156,7 +153,6 @@ public class OutPutConstants {
 
     public static List<String> movieAddProductionDetailConstants = Arrays.asList(
             "choose the details you want to add for the production and type done when you are done:",
-            "title",
             "directors",
             "actors",
             "ratings",
@@ -169,7 +165,6 @@ public class OutPutConstants {
     );
     public static List<String> seriesAddProductionDetailConstants = Arrays.asList(
             "choose the details you want to add for the production and type done when you are done:",
-            "title",
             "directors",
             "actors",
             "ratings",

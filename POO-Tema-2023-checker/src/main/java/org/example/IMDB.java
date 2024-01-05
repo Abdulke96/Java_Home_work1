@@ -158,16 +158,16 @@ public class IMDB  extends JFrame {
       //print it in a red color and bold and increase the font size;
         while (true) {
             // read input from console
-//            System.out.print("email: ");
-//            String username = ReadInput.readLine();
-//            System.out.print("password: ");
-//            String password = ReadInput.readLine();
+            System.out.print("email: ");
+            String username = ReadInput.readLine();
+            System.out.print("password: ");
+            String password = ReadInput.readLine();
             //Contributor account
-            String username = "emily.wilson@example.com";
-            String password = "P@ssw0rd!23";
-            // Admin account
-//           String username = "bossuAlMare@ymail.com";
-//             String password = "test";
+//            String username = "emily.wilson@example.com";
+//            String password = "P@ssw0rd!23";
+            // Admin account 3fG#pikm
+           //String username = "bossuAlMare@ymail.com";
+            // String password = "test"; 3fT!qgdq
             // Regular account
 //            String username = "susan.smith@example.com";
 //            String password = "R8F!b&e9m3U6";
@@ -191,9 +191,10 @@ public class IMDB  extends JFrame {
     private void startApplicationFlow() {
         if (currentUser!=null) {
             System.out.println(currentUser.getFavorites());
-            Staff<?> staff = (Staff<?>) currentUser;
-            // print contributions
-            System.out.println(staff.getContributions());
+            if (!(currentUser instanceof Regular<?>)) {
+                Staff<?> staff = (Staff<?>) currentUser;
+                System.out.println(staff.getContributions());
+            };
             ApplicationFlow.appFlow();
         } else {
             WriteOutput.printRed("No user logged in.");

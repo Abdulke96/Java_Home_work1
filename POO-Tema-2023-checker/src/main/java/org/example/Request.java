@@ -30,7 +30,7 @@ public class Request implements Subject{
         this.createdDate = LocalDateTime.now();
         this.description = "null";
         this.username = "null";
-        this.to = "CONTRIBUTOR/ADMIN";
+        this.to = "ADMIN";
         this.actorName = "null";
         this.movieTitle = "null";
         this.status = RequestStatus.Pending;

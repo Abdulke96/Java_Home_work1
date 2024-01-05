@@ -5,7 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import static org.constants.OperationFactory.currentUser;
+import static org.constants.OperationFactory.users;
+
 public class FunctionsFactory {
     static Admin admin = new Admin();
    static Contributor contributor = new Contributor();
@@ -25,52 +26,28 @@ public class FunctionsFactory {
     }
 
     static void createUserInfoFunction(User<?> newUser) {
-        List<Integer> infoOperations = FunctionsFactory.storeUserDetails(7, OutPutConstants.addUserInformationsDetailConstants);
+        List<Integer> infoOperations = FunctionsFactory.storeUserDetails(5, OutPutConstants.addUserInformationsDetailConstants);
         for (Integer operations : infoOperations) {
             switch (operations) {
                 case 1:
-                    while (true) {
-                        String email = ReadInput.readLine("Enter the email:");
-                        if (email.contains("@") && email.contains(".")) {
-                            newUser.setEmail(email);
-                            break;
-                        } else {
-                            WriteOutput.printRed("Invalid email should contain @ and .");
-                        }
-                    }
-
-                    break;
-                case 2:
-                    while (true) {
-                        String password = ReadInput.readLine("Enter the password:");
-                        if (password.length() > 4) {
-                            newUser.setPassword(password);
-                            break;
-                        } else {
-                            WriteOutput.printRed("password must be at least 4 characters");
-                        }
-                    }
-
-                    break;
-                case 3:
                     WriteOutput.printBlue("Enter the age:");
                     newUser.setAge(ReadInput.readInteger(0, 100));
                     break;
-                case 4:
+                case 2:
                     WriteOutput.write(OutPutConstants.genderConstants);
                     int genderChoice = ReadInput.readInteger(1, 3);
                     newUser.setGender(OutPutConstants.genderConstants.get(genderChoice));
                     break;
-                case 5:
+                case 3:
                     WriteOutput.printBlue("Enter the birth date:");
                     LocalDateTime birthDate = ReadInput.readDate();
                     newUser.setBirthDate(birthDate);
                     break;
-                case 6:
+                case 4:
                     String country = ReadInput.readLine("Enter the country:");
                     newUser.setCountry(country);
                     break;
-                case 7:
+                case 5:
 
                     break;
                 default:
@@ -81,7 +58,7 @@ public class FunctionsFactory {
     }
 
     public static void createUserDetailsFunction(User<?> newUser) {
-        List<Integer> operations = FunctionsFactory.storeUserDetails(7, OutPutConstants.addUserDetailConstants);
+        List<Integer> operations = FunctionsFactory.storeUserDetails(6, OutPutConstants.addUserDetailConstants);
         for (Integer operation : operations) {
             switch (operation) {
                 case 1:
@@ -129,11 +106,6 @@ public class FunctionsFactory {
                     newUser.setFavoriteActors(favoriteActors);
                     break;
                 case 6:
-                    WriteOutput.printBlue("notifications");
-                    String notification = ReadInput.readLine();
-                    newUser.setEmail(notification);
-                    break;
-                case 7:
 
                     break;
                 default:
@@ -171,16 +143,16 @@ public class FunctionsFactory {
                     break;
                 case 4:
                     if (actor.getName() != null) {
-                        if (currentUser instanceof Admin){
+                        if (IMDB.getInstance().getCurrentUser() instanceof Admin){
                             admin.addActorSystem(actor);
-                        } else if (currentUser instanceof Contributor){
-                            actor.setAddedBy(currentUser.getUsername());
+                        } else if (IMDB.getInstance().getCurrentUser() instanceof Contributor){
+                            actor.setAddedBy(IMDB.getInstance().getCurrentUser().getUsername());
                             contributor.addActorSystem(actor);
                             // increment the experience of the contributor
                             UserExperienceContext userExperienceContext = new UserExperienceContext();
                             userExperienceContext.setExperienceStrategy(new AddProductStrategy());
                             int experience = userExperienceContext.calculateUserExperience();
-                            currentUser.updateExperience(experience);
+                            IMDB.getInstance().getCurrentUser().updateExperience(experience);
                         }
                     }
                     break;
@@ -197,13 +169,17 @@ public class FunctionsFactory {
 
         WriteOutput.write(OutPutConstants.chooseMovieSeries);
         int choice = ReadInput.readInteger(1, 2);
+        String title = ReadInput.readLine("enter the title of the production you want to add");
         if (choice == 1) {
             Series series = new Series();
-            List<Integer> options = FunctionsFactory.storeUserDetails(9, OutPutConstants.seriesAddProductionDetailConstants);
+            series.setTitle(title);
+            List<Integer> options = FunctionsFactory.storeUserDetails(8, OutPutConstants.seriesAddProductionDetailConstants);
             createSeries(productions, options, series);
+
         } else {
             Movie movie = new Movie();
-            List<Integer> options = FunctionsFactory.storeUserDetails(9, OutPutConstants.movieAddProductionDetailConstants);
+            movie.setTitle(title);
+            List<Integer> options = FunctionsFactory.storeUserDetails(8, OutPutConstants.movieAddProductionDetailConstants);
             createMovie(productions, options, movie);
         }
     }
@@ -213,10 +189,6 @@ public class FunctionsFactory {
         for (Integer option : options) {
             switch (option) {
                 case 1:
-                    String title = ReadInput.readLine("enter the title of the movie you want to add");
-                    movie.setTitle(title);
-                    break;
-                case 2:
                     List<String> directors = new ArrayList<>();
                     WriteOutput.printBlue("enter number of directors");
                     int numberOfDirectors = ReadInput.readInteger(1, 100);
@@ -225,16 +197,20 @@ public class FunctionsFactory {
                     }
                     movie.setDirectors(directors);
                     break;
-                case 3:
+                case 2:
                     List<String> actors = new ArrayList<>();
                     WriteOutput.printBlue("enter number of actors");
                     int numberOfActors = ReadInput.readInteger(1, 100);
                     for (int i = 1; i <= numberOfActors; i++) {
-                        actors.add(ReadInput.readLine("enter the actors of the movie you want to add"));
+                      //  actors.add(ReadInput.readLine("enter the actors of the movie you want to add"));
+                        Actor actor = GuiConstants.selectActor();
+                        if (actor != null){
+                           actors.add(actor.getName());
+                           }
                     }
                     movie.setActors(actors);
                     break;
-                case 4:
+                case 3:
                     List<Rating> ratings = new ArrayList<>();
                     System.out.println("enter number of ratings you want to add");
                     int numberOfRatings = ReadInput.readInteger(1, 100);
@@ -244,36 +220,41 @@ public class FunctionsFactory {
                     }
                     movie.setRatings(ratings);
                     break;
-                case 5:
+                case 4:
                     List<Genre> genres = new ArrayList<>();
-                     int i = 1;
-                    for (Genre genre: Genre.values()) {
-                        WriteOutput.printBlue((i++)+")"+genre);
-                    }
+//                     int i = 1;
+//                    for (Genre genre: Genre.values()) {
+//                        WriteOutput.printBlue((i++)+")"+genre);
+//                    }
                     WriteOutput.printBlue("enter the genres of the movie you want to add ");
                     WriteOutput.printBlue("enter the number of genres");
                     int numberOfGenres = ReadInput.readInteger(1, 100);
                     for (int j = 1; j <= numberOfGenres; j++) {
-                        int genreChoice = ReadInput.readInteger(1, 23);
-                        genres.add(Genre.values()[genreChoice - 1]);
+//                        int genreChoice = ReadInput.readInteger(1, 23);
+//                        genres.add(Genre.values()[genreChoice - 1]);
+                        //
+                        Genre genre = GuiConstants.selectGenre("Select a genre");
+                        if (genre != null){
+                            genres.add(genre);
+                        }
                     }
                     movie.setGenres(genres);
 
                     break;
-                case 6:
+                case 5:
                     String plot = ReadInput.readLine("enter the plot of the movie you want to add");
                     movie.setPlot(plot);
                     break;
-                case 7:
+                case 6:
                     WriteOutput.printBlue("enter the duration of the movie you want to add");
                     int duration = ReadInput.readInteger(0, 1000);
                     movie.setDuration(duration + " minutes");
                     break;
-                case 8:
+                case 7:
                     WriteOutput.printBlue("enter the release year of the movie you want to add");
                     movie.setReleaseYear(ReadInput.readInteger(1000, 2024));
                     break;
-                case 9:
+                case 8:
                     if (movie.getTitle() != null) {
                         addProductionAndIncreaseExperience(movie);
                     }
@@ -292,10 +273,6 @@ public class FunctionsFactory {
         for (Integer option : options) {
             switch (option) {
                 case 1:
-                    String title = ReadInput.readLine("enter the title of the series you want to add");
-                    series.setTitle(title);
-                    break;
-                case 2:
                     List<String> directors = new ArrayList<>();
                     WriteOutput.printBlue("enter number of directors");
                     int numberOfDirectors = ReadInput.readInteger(1, 100);
@@ -304,16 +281,20 @@ public class FunctionsFactory {
                     }
                     series.setDirectors(directors);
                     break;
-                case 3:
+                case 2:
                     List<String> actors = new ArrayList<>();
                     WriteOutput.printBlue("enter number of actors");
                     int numberOfActors = ReadInput.readInteger(1, 100);
+                    WriteOutput.printBlue("enter the actors of the series you want to add");
                     for (int i = 1; i <= numberOfActors; i++) {
-                        actors.add(ReadInput.readLine("enter the actors of the series you want to add"));
+                        Actor actor = GuiConstants.selectActor();
+                        if (actor != null){
+                            actors.add(actor.getName());
+                        }
                     }
                     series.setActors(actors);
                     break;
-                case 4:
+                case 3:
                     List<Rating> ratings = new ArrayList<>();
                     WriteOutput.printBlue("enter number of ratings you want to add");
                     int numberOfRatings = ReadInput.readInteger(1, 100);
@@ -323,35 +304,38 @@ public class FunctionsFactory {
                     }
                      series.setRatings(ratings);
                     break;
-                case 5:
+                case 4:
                     List<Genre> genres = new ArrayList<>();
-                    int i = 1;
-                    for (Genre genre: Genre.values()) {
-                        WriteOutput.printGreen((i++)+")"+genre);
-                    }
+//                    int i = 1;
+//                    for (Genre genre: Genre.values()) {
+//                        WriteOutput.printGreen((i++)+")"+genre);
+//                    }
                     WriteOutput.printBlue("enter the genres of the movie you want to add ");
                     WriteOutput.printBlue("enter the number of genres");
                     int numberOfGenres = ReadInput.readInteger(1, 100);
                     for (int j = 1; j <= numberOfGenres; j++) {
-                        int genreChoice = ReadInput.readInteger(1, 23);
-                        genres.add(Genre.values()[genreChoice - 1]);
+//
+                        Genre genre = GuiConstants.selectGenre("Select a genre");
+                        if (genre != null){
+                            genres.add(genre);
+                        }
                     }
                     series.setGenres(genres);
                     break;
-                case 6:
+                case 5:
                     String plot = ReadInput.readLine("enter the plot of the series you want to add");
                     series.setPlot(plot);
                     break;
-                case 7:
+                case 6:
                     WriteOutput.printBlue("enter the release year of the series you want to add");
                     series.setReleaseYear(ReadInput.readInteger(1000, 2024));
                     break;
-                case 8:
+                case 7:
                     WriteOutput.printBlue("enter the number of seasons of the series you want to add");
                     series.setNumSeasons(ReadInput.readInteger(1, 100));
                     createAndAddSeason(series);
                     break;
-                case 9:
+                case 8:
                     if (series.getTitle() != null) {
                         addProductionAndIncreaseExperience(series);
                     }
@@ -365,16 +349,16 @@ public class FunctionsFactory {
     }
 
     private static void addProductionAndIncreaseExperience(Production series) {
-        if (currentUser instanceof Admin){
+        if (IMDB.getInstance().getCurrentUser() instanceof Admin){
             admin.addProductionSystem(series);
-        } else if (currentUser instanceof Contributor){
-            series.setAddedBy(currentUser.getUsername());
+        } else if (IMDB.getInstance().getCurrentUser() instanceof Contributor){
+            series.setAddedBy(IMDB.getInstance().getCurrentUser().getUsername());
             contributor.addProductionSystem(series);
             // increment the experience of the contributor
             UserExperienceContext userExperienceContext = new UserExperienceContext();
             userExperienceContext.setExperienceStrategy(new AddProductStrategy());
             int experience = userExperienceContext.calculateUserExperience();
-            currentUser.updateExperience(experience);
+            IMDB.getInstance().getCurrentUser().updateExperience(experience);
 
         }
     }
@@ -593,40 +577,97 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
             Request request = null;
             switch (requestType){
                 case 1:
-                    request = new Request(RequestTypes.DELETE_ACCOUNT,description,currentUser.getUsername());
-                    //requests.add(request);
-                    to = ReadInput.readLine("Enter the name of the admin you want to send the request to:");
+                    request = new Request(RequestTypes.DELETE_ACCOUNT,description,IMDB.getInstance().getCurrentUser().getUsername());
+
                     break;
                 case 2:
-                  request = new Request(RequestTypes.ACTOR_ISSUE,description, currentUser.getUsername());
+                  request = new Request(RequestTypes.ACTOR_ISSUE,description, IMDB.getInstance().getCurrentUser().getUsername());
 
-                    to = ReadInput.readLine("Enter the name of the contributor/admin you want to send the request to:");
                     break;
                 case 3:
-                     request = new Request(RequestTypes.MOVIE_ISSUE,description, currentUser.getUsername());
-                    to = ReadInput.readLine("Enter the name of the contributor/admin you want to send the request to:");
+                     request = new Request(RequestTypes.MOVIE_ISSUE,description,IMDB.getInstance().getCurrentUser().getUsername());
                     break;
                 case 4:
-                    request = new Request(RequestTypes.OTHERS,description, currentUser.getUsername());
-                    to = ReadInput.readLine("Enter the name of the admin you want to send the request to:");
+                    request = new Request(RequestTypes.OTHERS,description, IMDB.getInstance().getCurrentUser().getUsername());
                     break;
                 default:
                     WriteOutput.printRed("Invalid choice");
                     break;
             }
             assert request != null;
-            request.setTo(to);
-            if (currentUser instanceof  Admin){
-                contributor.createRequest(request);
-            }else {
-                regular.createRequest(request);
+            if ( requestType == 1 || requestType == 4) {
+                if (IMDB.getInstance().getCurrentUser().getAddedBy().equals("null")){
+                    request.setTo("ADMIN");
+                    RequestsHolder.addRequest(request);
+                }else{
+                    request.setTo(IMDB.getInstance().getCurrentUser().getAddedBy());
+                    RequestsHolder.addRequest(request);
+                    for (User<?> user : users) {
+                        if (user.getUsername().equals(IMDB.getInstance().getCurrentUser().getAddedBy())){
+                            String message = "Hello "+user.getName()+" you have new request " + request.getType() + " from " + request.getUsername();
+                            request.addObserver(user);
+                            request.notifyObservers(message);
+                        }
+                    }
+                }
+            } else if (requestType == 2){
+
+                WriteOutput.printBlue("Enter the name of the actor/movie you want to add:");
+                Actor actor = GuiConstants.selectActor();
+                if (actor == null){
+                    WriteOutput.printRed("Actor not found");
+                    return;
+                }else{
+                    if (IMDB.getInstance().getCurrentUser().getAddedBy().equals("null")){
+                        request.setTo("ADMIN");
+                        request.setActorName(actor.getName());
+                        RequestsHolder.addRequest(request);
+                    } else{
+                        request.setTo(IMDB.getInstance().getCurrentUser().getAddedBy());
+                        request.setActorName(actor.getName());
+                        RequestsHolder.addRequest(request);
+                        for (User<?> user : users) {
+                            if (user.getUsername().equals(IMDB.getInstance().getCurrentUser().getAddedBy())){
+                                String message = "Hello "+user.getName()+" you have new request " + request.getType() + " from " + request.getUsername();
+                                request.addObserver(user);
+                                request.notifyObservers(message);
+                            }
+                        }
+                    }
+                }
+            } else if (requestType == 3){
+                WriteOutput.printBlue("Enter the title of the movie/series you want to add:");
+                Production production = GuiConstants.selectProduction();
+                if (production == null){
+                    WriteOutput.printRed("Production not found");
+                    return;
+                }else{
+                    if (IMDB.getInstance().getCurrentUser().getAddedBy().equals("null")){
+                        request.setTo("ADMIN");
+                        request.setMovieTitle(production.getTitle());
+                        RequestsHolder.addRequest(request);
+                    } else{
+                        request.setTo(IMDB.getInstance().getCurrentUser().getAddedBy());
+                        request.setMovieTitle(production.getTitle());
+                        RequestsHolder.addRequest(request);
+                        for (User<?> user : users) {
+                            if (user.getUsername().equals(IMDB.getInstance().getCurrentUser().getAddedBy())){
+                                String message = "Hello "+user.getName()+" you have new reques t" + request.getType() + " from " + request.getUsername();
+                                request.addObserver(user);
+                                request.notifyObservers(message);
+                            }
+                        }
+                    }
+                }
+
             }
+
             WriteOutput.printGreen("Request created");
         } else {
             String currentDescription = ReadInput.readLine("Enter the name of the request you want to delete:");
             for (Request request : requests) {
-                if (request.getDescription().equals(currentDescription) && request.getUsername().equals(currentUser.getUsername())) {
-                    if (currentUser instanceof Contributor){
+                if (request.getDescription().equals(currentDescription) && request.getUsername().equals(IMDB.getInstance().getCurrentUser().getUsername())) {
+                    if (IMDB.getInstance().getCurrentUser() instanceof Contributor){
                         contributor.removeRequest(request);
                     }else{
                         regular.removeRequest(request);
@@ -720,9 +761,22 @@ public static void requestCreatorMoreover(List<Request> requests, int choice) {
         int choice = ReadInput.readInteger(1,2);
         if (choice == 1){
             WriteOutput.makeBreak();
+            if (IMDB.getInstance().getCurrentUser() instanceof Admin) {
             for (Request request : requests) {
-                WriteOutput.makeBreak();
-                request.displayInfo();
+
+                   if (request.getTo().equals("ADMIN") || request.getTo().equals(IMDB.getInstance().getCurrentUser().getUsername())) {
+                       request.displayInfo();
+                       WriteOutput.makeBreak();
+
+                   }
+               }
+            } else{
+                for (Request request : requests) {
+                    if (request.getTo().equals(IMDB.getInstance().getCurrentUser().getUsername())) {
+                        request.displayInfo();
+                        WriteOutput.makeBreak();
+                    }
+                }
             }
           WriteOutput.makeBreak();
         }

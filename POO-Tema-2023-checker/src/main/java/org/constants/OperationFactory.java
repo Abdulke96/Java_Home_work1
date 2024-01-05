@@ -14,7 +14,7 @@ public class OperationFactory {
     static List<Production> productions = IMDB.getInstance().getProductions();
     static List<User<?>> users = IMDB.getInstance().getUsers();
     static List<Request> requests = IMDB.getInstance().getRequests();
-    static User<?> currentUser = IMDB.getInstance().getCurrentUser();
+   // static User<?> currentUser = IMDB.getInstance().getCurrentUser();
 
     /**
      * This function is used to create the operations
@@ -92,7 +92,7 @@ public class OperationFactory {
     }
 
     public static void viewNotifications() {
-        List<String> notification =  currentUser.getNotifications();
+        List<String> notification = IMDB.getInstance().getCurrentUser().getNotifications();
          if (notification.isEmpty()){
              WriteOutput.printGreen("No notifications");
              return;
@@ -158,10 +158,26 @@ public class OperationFactory {
         if (newUser != null) {
             newUser.setName(name);
             newUser.setUsername(FunctionsFactory.generateUniqueUsername(name));
+            newUser.setPassword(FunctionsFactory.generateRandomPassword());
+            newUser.setAddedBy(IMDB.getInstance().getCurrentUser().getUsername());
+            while (true) {
+                String email = ReadInput.readLine("Enter the email:");
+                if (email.contains("@") && email.contains(".")) {
+                    newUser.setEmail(email);
+                    break;
+                } else {
+                    WriteOutput.printRed("Invalid email should contain @ and .");
+                }
+            }
             users.add(newUser);
+
+
             FunctionsFactory.createUserInfoFunction(newUser);
             FunctionsFactory.createUserDetailsFunction(newUser);
             WriteOutput.printGreen("User added to the system");
+            WriteOutput.printGreen("Username: " + newUser.getUsername());
+            WriteOutput.printGreen("Password: " + newUser.getPassword());
+            WriteOutput.printGreen("Email: " + newUser.getEmail());
 
         } else {
             WriteOutput.printRed("User not added to the system");
@@ -186,13 +202,19 @@ public class OperationFactory {
                     WriteOutput.printBlue("Enter the score:");
                     int score = ReadInput.readInteger(1, 10);
                     String review = ReadInput.readLine("Enter the review:");
-                    Rating rating = new Rating(currentUser.getUsername(), score, review);
+                    Rating rating = new Rating(IMDB.getInstance().getCurrentUser().getUsername(), score, review);
+                    for (Rating rating1 : production.getRatings()) {
+                        if (rating1.getUsername().equals(IMDB.getInstance().getCurrentUser().getUsername())) {
+                            WriteOutput.printRed("You already added a review to this production");
+                            return;
+                        }
+                    }
                     production.addRating(rating);
                     // notify all users who added review to the production that a new review was added
                     for (User<?> user : users) {
                        for (Rating rating1 : production.getRatings()) {
-                           if (rating1.getUsername().equals(user.getUsername())){
-                              String message = "A new review was added to the production "+production.getTitle()+"\nby "+currentUser.getUsername()+"\n comment "+rating1.getComment()+"\n rated"+rating1.getRating();
+                           if (rating1.getUsername().equals(user.getUsername()) && !user.getUsername().equals(IMDB.getInstance().getCurrentUser().getUsername())){
+                              String message = "A new review was added to the production "+production.getTitle()+"\nby "+user.getUsername()+"\n comment "+rating1.getComment()+"\n rated "+rating1.getRating();
                                rating1.addObserver(user);
                                rating1.notifyObservers(message);
                                rating1.removeObserver(user);
@@ -204,16 +226,16 @@ public class OperationFactory {
                     UserExperienceContext userExperienceContext = new UserExperienceContext();
                     userExperienceContext.setExperienceStrategy(new AddReviewStrategy());
                     int experience = userExperienceContext.calculateUserExperience();
-                    currentUser.updateExperience(experience);
+                    IMDB.getInstance().getCurrentUser().updateExperience(experience);
                 } else {
                     WriteOutput.printBlue("Enter the review you want to delete:");
                     String review = ReadInput.readLine();
                     for (Rating rating : production.getRatings()) {
-                        if (rating.getComment().equals(review) && rating.getUsername().equals(currentUser.getUsername())) {
+                        if (rating.getComment().equals(review) && rating.getUsername().equals(IMDB.getInstance().getCurrentUser().getUsername())) {
                             production.getRatings().remove(rating);
                             return;
                         }else {
-                            WriteOutput.printRed(currentUser.getUsername()+ " has no this review");
+                            WriteOutput.printRed(IMDB.getInstance().getCurrentUser().getUsername()+ " has no this review");
                         }
                     }
                 }
@@ -238,7 +260,7 @@ public class OperationFactory {
                 String name = ReadInput.readLine();
                 for (Actor actor : actors) {
                     if (actor.getName().equals(name)) {
-                        if (currentUser instanceof Admin) {
+                        if (IMDB.getInstance().getCurrentUser() instanceof Admin) {
                             admin.removeActorSystem(name);
                         } else {
                             contributor.removeActorSystem(name);
@@ -277,9 +299,9 @@ public class OperationFactory {
             if (production.getTitle().equals(productName)) {
               WriteOutput.write(OutPutConstants.chooseMovieSeries);
                 if (production instanceof Movie){
-                    if ( FunctionsFactory.updateMovieProduction(production,currentUser )) return;
+                    if ( FunctionsFactory.updateMovieProduction(production,IMDB.getInstance().getCurrentUser() )) return;
                 }else if (production instanceof Series){
-                    if ( FunctionsFactory.updateSeriesProduction(production,currentUser )) return;
+                    if ( FunctionsFactory.updateSeriesProduction(production,IMDB.getInstance().getCurrentUser() )) return;
 
                 }
                 return;
@@ -295,7 +317,7 @@ public class OperationFactory {
         String actorName = ReadInput.readLine("Enter the name of the actor you want to update:");
         for (Actor actor : actors) {
             if (actor.getName().equals(actorName)) {
-                FunctionsFactory.updateActor(actor,currentUser);
+                FunctionsFactory.updateActor(actor,IMDB.getInstance().getCurrentUser());
                 return;
             }
         }
@@ -314,36 +336,62 @@ public class OperationFactory {
         if (choice == 1) {
             name = ReadInput.readLine("Enter the Username of the request you want to solve:");
             for (Request request : requests) {
-                if (request.getUsername().equals(name) ) {
-                    if (!request.getStatus().equals(RequestStatus.Pending)){
-                        WriteOutput.printRed("Request already "+request.getStatus());
-                        return;
-                    }
-                    if (currentUser instanceof Admin) {
-                        admin.resolveRequests(request);
+                if (request.getUsername().equals(name)  ) {
+                    // ask request type and delete the request and if it is the same type as the request type solve it
+                    WriteOutput.write(OutPutConstants.requestTypeConstant);
+                    int choice1 = ReadInput.readInteger(1, 4);
+                    if (choice1 == 1) {
+                        if (request.getType().equals(RequestTypes.DELETE_ACCOUNT)) {
+                            solveTheRequest(request, admin, contributor);
+                            return;
+                        }
+                    } else if (choice1 == 2) {
+                        if (request.getType().equals(RequestTypes.ACTOR_ISSUE)) {
+                            solveTheRequest(request, admin, contributor);
+                            return;
+                        }
+                    } else if (choice1 == 3) {
+                        if (request.getType().equals(RequestTypes.MOVIE_ISSUE)) {
+                            solveTheRequest(request, admin, contributor);
+                            return;
+                        }
                     } else {
-                        contributor.resolveRequests(request);
+                        if (request.getType().equals(RequestTypes.OTHERS)) {
+                            solveTheRequest(request, admin, contributor);
+                            return;
+                        }
                     }
-                    // send notification to the user
-                    sendNotification(request);
                 }
             }
         } else {
             name = ReadInput.readLine("Enter the username of the request you want to reject:");
             for (Request request : requests) {
                 if (request.getUsername().equals(name)) {
-                    if (!request.getStatus().equals(RequestStatus.Pending)){
-                        WriteOutput.printRed("Request already "+request.getStatus());
-                        return;
-                    }
-                    if (currentUser instanceof Admin) {
-                        admin.rejectRequests(request);
+                    // ask request type and delete the request and if it is the same type as the request type solve it
+                    WriteOutput.write(OutPutConstants.requestTypeConstant);
+                    int choice1 = ReadInput.readInteger(1, 4);
+                    if (choice1 == 1) {
+                        if (request.getType().equals(RequestTypes.DELETE_ACCOUNT)) {
+                            rejectTheRequest(request, admin, contributor);
+                            return;
+                        }
+                    } else if (choice1 == 2) {
+                        if (request.getType().equals(RequestTypes.ACTOR_ISSUE)) {
+                            rejectTheRequest(request, admin, contributor);
+                            return;
+                        }
+                    } else if (choice1 == 3) {
+                        if (request.getType().equals(RequestTypes.MOVIE_ISSUE)) {
+                            rejectTheRequest(request, admin, contributor);
+                            return;
+                        }
                     } else {
-                        contributor.rejectRequests(request);
+                        if (request.getType().equals(RequestTypes.OTHERS)) {
+                            rejectTheRequest(request, admin, contributor);
+                            return;
+                        }
                     }
-                    // send notification to the user
-                    sendNotification(request);
-                    return;
+
                 }
             }
         }
@@ -351,12 +399,40 @@ public class OperationFactory {
 
     }
 
+    private static void solveTheRequest(Request request, Admin admin, Contributor contributor) {
+        if (!request.getStatus().equals(RequestStatus.Pending)){
+            WriteOutput.printRed("Request already "+request.getStatus());
+            return;
+        }
+        if (IMDB.getInstance().getCurrentUser() instanceof Admin) {
+            admin.resolveRequests(request);
+        } else {
+            contributor.resolveRequests(request);
+        }
+        // send notification to the user
+        sendNotification(request);
+    }
+
+    private static void rejectTheRequest(Request request, Admin admin, Contributor contributor) {
+        if (!request.getStatus().equals(RequestStatus.Pending)){
+            WriteOutput.printRed("Request already "+request.getStatus());
+            return;
+        }
+        if (IMDB.getInstance().getCurrentUser() instanceof Admin) {
+            admin.rejectRequests(request);
+        } else {
+            contributor.rejectRequests(request);
+        }
+        sendNotification(request);
+    }
+
     private static void sendNotification(Request request) {
         for (User<?> user : users) {
             if (user.getUsername().equals(request.getUsername())) {
                 String message = ReadInput.readLine("Enter the message you want to send to the user:");
+                String notification = "Your request was "+request.getStatus()+" by "+IMDB.getInstance().getCurrentUser().getUsername()+"\n"+message;
               request.addObserver(user);
-                request.notifyObservers(message);
+                request.notifyObservers(notification);
                 request.removeObserver(user);
             }
         }
@@ -367,11 +443,11 @@ public class OperationFactory {
             String name = ReadInput.readLine();
             for (Actor actor :actors) {
             if (actor.getName().equals(name)) {
-                if (currentUser.getFavoriteActors().contains(actor)) {
-                   currentUser.getFavoriteActors().remove(actor);
+                if (IMDB.getInstance().getCurrentUser().getFavoriteActors().contains(actor)) {
+                    IMDB.getInstance().getCurrentUser().getFavoriteActors().remove(actor);
                     WriteOutput.printRed("Actor removed from favorites");
                 } else {
-                    currentUser.addToFavoriteActors(actor);
+                    IMDB.getInstance().getCurrentUser().addToFavoriteActors(actor);
                      WriteOutput.printGreen("Actor added to favorites");
                 }
                 return;
@@ -387,12 +463,12 @@ public static void addRemoveProduction(){
         String name = ReadInput.readLine();
             for (Production production : productions) {
             if (production.getTitle().equals(name)) {
-                if (currentUser.getFavoriteProductions().contains(production)) {
-                   currentUser.getFavoriteProductions().remove(production);
+                if (IMDB.getInstance().getCurrentUser().getFavoriteProductions().contains(production)) {
+                    IMDB.getInstance().getCurrentUser().getFavoriteProductions().remove(production);
                     WriteOutput.printRed("Production removed from favorites");
                 } else {
 
-                    currentUser.addToFavoriteProductions(production);
+                    IMDB.getInstance().getCurrentUser().addToFavoriteProductions(production);
                     WriteOutput.printGreen("Production added to favorites");
                 }
                 return;
