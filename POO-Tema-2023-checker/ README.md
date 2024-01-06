@@ -1,7 +1,19 @@
-# IMDB Clone App
+# poo - Tema 2023-2024 - IMDB Clone App
+## Author:
+- **Name:** Abdulkadir Gobena Denboba
+- **Group:** 322CC
+- **Year:** 2023-2024
+- **University:** Politehnica University of Bucharest
+- **Faculty:** Automatic Control and Computer Science
+- **Department:** Computer Science
+- **Specialization:** CTI
+- **Course:** POO
+- **Project:** IMDB Clone App
+- **Duration:** 1 month 
+- 
 ===================
 ## Description
-This is a comprehensive IMDB GUI and CLI clone app designed for managing movies, actors, and related information. The app utilizes a local database to store users, movie and actor details. It provides functionalities such as adding, deleting, updating, and listing movies and actors. Additionally, users can search for movies and actors by name, and filter them by genre and average rating. It offers both a graphical user interface (GUI) and a command-line interface (CLI) version, allowing users flexibility in their interaction.
+This is a comprehensive IMDB GUI and CLI clone app designed for managing movies, actors, and related information. The app utilizes a local database to store users, movie and actor details. It provides functionalities such as adding, deleting, updating, and listing movies and actors. Additionally, users can search for movies and actors by name, and filter them by name and average rating. It offers both a graphical user interface (GUI) and a command-line interface (CLI) version, allowing users flexibility in their interaction.
 
 ## Packages
 The app is organized into the following packages:

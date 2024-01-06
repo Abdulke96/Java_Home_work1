@@ -350,12 +350,19 @@ public class ApplicationFlowGUI extends JFrame {
      *
      */
     private void sortProduct(JPanel scrollPanel, JComboBox<String> sortOptions) {
-        if (sortOptions.getSelectedIndex() == 0) {
-            productions.sort((o1, o2) -> Double.compare(o2.getAverageRating(), o1.getAverageRating()));
-        } else if (sortOptions.getSelectedIndex() == 1){
-            productions.sort(Comparator.comparing(Production::getTitle));
-        } else if (sortOptions.getSelectedIndex() == 2){
-            productions.sort((o1, o2) -> Double.compare(o2.getAverageRating(), o1.getAverageRating()));
+        String selected = (String) sortOptions.getSelectedItem();
+        if (selected != null) {
+            //use switch to sort the productions based on the selected option
+            switch (selected) {
+                case "Title" -> productions.sort(Production::compareTo);
+                case "averageRating" -> productions.sort((o1, o2) -> Double.compare(o2.getAverageRating(), o1.getAverageRating()));
+                case "type" -> productions.sort((o1, o2) -> o2.getType().compareTo(o1.getType()));
+                case "actors" -> productions.sort((o1, o2) -> Integer.compare(o2.getActors().size(), o1.getActors().size()));
+                case "directors" -> productions.sort((o1, o2) -> Integer.compare(o2.getDirectors().size(), o1.getDirectors().size()));
+                case "most rated" -> productions.sort((o1, o2) -> Double.compare(o2.getRatings().size(), o1.getRatings().size()));
+                case "least rated" -> productions.sort(Comparator.comparingDouble(o -> o.getRatings().size()));
+                case "has many genres" -> productions.sort((o1, o2) -> Integer.compare(o2.getGenres().size(), o1.getGenres().size()));
+            }
         }
         scrollPanel.removeAll();
     }
@@ -595,7 +602,7 @@ public class ApplicationFlowGUI extends JFrame {
          listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
          listPanel.setSize(screenSize.width/4, screenSize.height);
 
-        JComboBox<String> sortOptions = new JComboBox<>(new String[]{"Sort by rating", "Sort by name", "sort by average rating" });
+        JComboBox<String> sortOptions = new JComboBox<>(new String[]{"Title", "averageRating", "type", "actors", "directors","most rated","least rated","has many genres"});
         sortOptions.setFont(new Font("Arial", Font.BOLD, 40));
         sortOptions.addActionListener(e -> {
             sortProduct(listPanel, sortOptions);
@@ -648,7 +655,7 @@ public class ApplicationFlowGUI extends JFrame {
         JPanel detailsPanel = new JPanel(new BorderLayout());
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
         listPanel.setSize(screenSize.width/4, screenSize.height);
-        JComboBox<String> sortOptions = new JComboBox<>(new String[]{"Sort by name", "sort by performance" });
+        JComboBox<String> sortOptions = new JComboBox<>(new String[]{"Sort by name", "sort by performance"});
         sortOptions.setFont(new Font("Arial", Font.BOLD, 30));
 
         sortOptions.addActionListener(e -> {

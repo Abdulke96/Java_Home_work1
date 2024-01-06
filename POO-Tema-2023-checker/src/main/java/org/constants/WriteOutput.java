@@ -38,4 +38,10 @@ public class WriteOutput {
     public static void printBlue(String message){
         System.out.println("\u001B[34m"+ message +"\u001B[0m");
     }
+    public static void printBlueLine(String message){
+        System.out.print("\u001B[34m"+ message +"\u001B[0m");
+    }
+    public static void printGreenLine(String message){
+        System.out.print("\u001B[32m"+ message +" " +"\u001B[0m");
+    }
 }

@@ -3,6 +3,7 @@ package org.constants;
 import org.example.*;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.*;
 /**
  * This class is used to create the operations
@@ -79,6 +80,27 @@ public class OperationFactory {
      */
     public static void viewProductionDetails() {
         productions.sort((o1, o2) -> Double.compare(o2.getAverageRating(), o1.getAverageRating()));
+        // ask if the user wants to sort and based on the answer sort the productions
+        WriteOutput.printBlue("Do you want to sort the productions 1 for yes 2 for no");
+        int choice = ReadInput.readInteger(1, 2);
+        if (choice == 1) {
+            JComboBox<String> comboBox = new JComboBox<>( new String[]{"Title", "averageRating", "type", "actors", "directors","most rated","least rated","has many genres"});
+            JOptionPane.showMessageDialog(null, comboBox, "Sort by", JOptionPane.QUESTION_MESSAGE);
+            String selected = (String) comboBox.getSelectedItem();
+            if (selected != null) {
+                //use switch to sort the productions based on the selected option
+                switch (selected) {
+                    case "Title" -> productions.sort(Production::compareTo);
+                    case "averageRating" -> productions.sort((o1, o2) -> Double.compare(o2.getAverageRating(), o1.getAverageRating()));
+                    case "type" -> productions.sort((o1, o2) -> o2.getType().compareTo(o1.getType()));
+                    case "actors" -> productions.sort((o1, o2) -> Integer.compare(o2.getActors().size(), o1.getActors().size()));
+                    case "directors" -> productions.sort((o1, o2) -> Integer.compare(o2.getDirectors().size(), o1.getDirectors().size()));
+                    case "most rated" -> productions.sort((o1, o2) -> Double.compare(o2.getRatings().size(), o1.getRatings().size()));
+                    case "least rated" -> productions.sort(Comparator.comparingDouble(o -> o.getRatings().size()));
+                    case "has many genres" -> productions.sort((o1, o2) -> Integer.compare(o2.getGenres().size(), o1.getGenres().size()));
+                }
+            }
+        }
         for (Production P : productions) {
            WriteOutput.makeBreak();
             P.displayInfo();
@@ -92,6 +114,20 @@ public class OperationFactory {
      */
     public static void viewActorsDetails() {
         actors.sort(Actor::compareTo);
+        // ask if the user wants to sort and based on the answer sort the actors
+        WriteOutput.printBlue("Do you want to sort the actors 1 for yes 2 for no");
+        int choice = ReadInput.readInteger(1, 2);
+        if (choice == 1) {
+            JComboBox<String> comboBox = new JComboBox<>( new String[]{"Name", "performance"});
+            JOptionPane.showMessageDialog(null, comboBox, "Sort by", JOptionPane.QUESTION_MESSAGE);
+            String selected = (String) comboBox.getSelectedItem();
+            if (selected != null) {
+                switch (selected) {
+                    case "Name" -> actors.sort(Actor::compareTo);
+                    case "performance" -> actors.sort((o1, o2) -> Integer.compare(o2.getNumberOfPerformances(), o1.getNumberOfPerformances()));
+                }
+            }
+        }
         for (Actor actor : actors) {
             WriteOutput.makeBreak();
             actor.displayInfo();
@@ -476,9 +512,9 @@ public class OperationFactory {
      */
     public static void addRemoveActor(){
         WriteOutput.printBlue("Enter the name:");
-            String name = ReadInput.readLine();
+            Actor selctedActor = GuiConstants.selectActor();
             for (Actor actor :actors) {
-            if (actor.getName().equals(name)) {
+            if (actor.equals(selctedActor)) {
                 if (IMDB.getInstance().getCurrentUser().getFavoriteActors().contains(actor)) {
                     IMDB.getInstance().getCurrentUser().getFavoriteActors().remove(actor);
                     WriteOutput.printRed("Actor removed from favorites");
@@ -498,9 +534,10 @@ public class OperationFactory {
  */
 public static void addRemoveProduction(){
     WriteOutput.printBlue("enter the name production");
-        String name = ReadInput.readLine();
+        //String name = ReadInput.readLine();
+        Production selectedProduction = GuiConstants.selectProduction();
             for (Production production : productions) {
-            if (production.getTitle().equals(name)) {
+            if (production.equals(selectedProduction)) {
                 if (IMDB.getInstance().getCurrentUser().getFavoriteProductions().contains(production)) {
                     IMDB.getInstance().getCurrentUser().getFavoriteProductions().remove(production);
                     WriteOutput.printRed("Production removed from favorites");

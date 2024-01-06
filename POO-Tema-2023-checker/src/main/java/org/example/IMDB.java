@@ -156,10 +156,20 @@ public class IMDB  extends JFrame {
      */
     private void startApplicationFlow() {
         if (currentUser!=null) {
-            System.out.println(currentUser.getFavorites());
             if (!(currentUser instanceof Regular<?>)) {
                 Staff<?> staff = (Staff<?>) currentUser;
-                System.out.println(staff.getContributions());
+                WriteOutput.printBlue("Favorite productions: ");
+                WriteOutput.printBlueLine("[");
+                for (String production : staff.getFavoriteProductions()) {
+                    WriteOutput.printGreenLine(production + ", ");
+                }
+                WriteOutput.printBlueLine(" ]\n");
+                WriteOutput.printBlue("production Contribution: ");
+                WriteOutput.printBlueLine("[ ");
+                for (String production : staff.getProductionsContribution()) {
+                    WriteOutput.printGreenLine(production + ", ");
+                }
+                WriteOutput.printBlueLine("]\n");
             };
             ApplicationFlow.appFlow();
         } else {
